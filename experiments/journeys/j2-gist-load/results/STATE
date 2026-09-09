@@ -1,0 +1,20 @@
+2026-09-03T11:47:43Z download_start
+2026-09-03T11:49:46Z download_done 52G
+2026-09-03T11:49:52Z delta_done reload check passed; delta written to /root/gist/out/checkpoint_delta
+2026-09-03T11:49:59Z apply_done config vocab 253696 | embed [253696, 5120] | lm_head [253696, 5120] | tokenizer len 253602 | <gist_0> -> 248077
+2026-09-03T11:49:59Z serve_gist_launched
+2026-09-03T11:55:51Z gist_masked_launched
+2026-09-03T12:05:52Z gist_masked_FAILED_TO_START
+2026-09-03T12:06:00Z base_launched
+2026-09-03T12:07:40Z base_healthy
+2026-09-03T15:18:38Z delta2_done config vocab 252544 | embed [252544, 5120] | lm_head [252544, 5120] | tokenizer len 252464 | <gist_0> -> 248077
+2026-09-03T15:18:38Z train_smoke_start
+2026-09-03T15:19:58Z train_smoke_FAILED
+2026-09-03T15:22:53Z delta2_done config vocab 252544 | embed [252544, 5120] | lm_head [252544, 5120] | tokenizer len 252464 | <gist_0> -> 248077
+2026-09-03T15:22:53Z train_smoke_start
+2026-09-03T15:24:37Z train_smoke_ok step 0 eval KL/token 1.2243 step 1  train KL/token 0.0220  (35.8s/step) 
+2026-09-03T15:41:08Z train_done step 0 eval KL/token 0.6600 step 25  eval KL/token 0.4729 final eval KL/token 0.4729; gist rows saved to /root/gist_rows.pt 
+2026-09-03T15:41:10Z export_done wrote 4387 gist rows into /root/qwen3.8-27b-gist/model-00003-of-00018.safetensors | mean row change 0.8047 (max 1.1518) | row norm before 0.578 after 0.997
+2026-09-03T15:41:10Z gist_masked_launched
+2026-09-03T15:43:00Z gist_masked_healthy
+2026-09-03T15:44:08Z gen_test_masked: TOTAL gist ids emitted: 0 =>  PASS

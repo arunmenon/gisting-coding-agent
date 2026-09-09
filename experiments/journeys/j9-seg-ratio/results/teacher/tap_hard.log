@@ -1,0 +1,1109 @@
+127.0.0.1 code 501, message Unsupported method ('HEAD')
+127.0.0.1 "HEAD /api/hello HTTP/1.1" 501 -
+127.0.0.1 code 501, message Unsupported method ('HEAD')
+127.0.0.1 "HEAD /api/hello HTTP/1.1" 501 -
+127.0.0.1 code 501, message Unsupported method ('HEAD')
+127.0.0.1 "HEAD /api/hello HTTP/1.1" 501 -
+127.0.0.1 code 501, message Unsupported method ('HEAD')
+127.0.0.1 "HEAD /api/hello HTTP/1.1" 501 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 code 501, message Unsupported method ('HEAD')
+127.0.0.1 "HEAD /api/hello HTTP/1.1" 501 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 code 501, message Unsupported method ('HEAD')
+127.0.0.1 "HEAD /api/hello HTTP/1.1" 501 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 code 501, message Unsupported method ('HEAD')
+127.0.0.1 "HEAD /api/hello HTTP/1.1" 501 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 code 501, message Unsupported method ('HEAD')
+127.0.0.1 "HEAD /api/hello HTTP/1.1" 501 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 code 501, message Unsupported method ('HEAD')
+127.0.0.1 "HEAD /api/hello HTTP/1.1" 501 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 code 501, message Unsupported method ('HEAD')
+127.0.0.1 "HEAD /api/hello HTTP/1.1" 501 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 code 501, message Unsupported method ('HEAD')
+127.0.0.1 "HEAD /api/hello HTTP/1.1" 501 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 code 501, message Unsupported method ('HEAD')
+127.0.0.1 "HEAD /api/hello HTTP/1.1" 501 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 code 501, message Unsupported method ('HEAD')
+127.0.0.1 "HEAD /api/hello HTTP/1.1" 501 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 code 501, message Unsupported method ('HEAD')
+127.0.0.1 "HEAD /api/hello HTTP/1.1" 501 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages/count_tokens?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 code 501, message Unsupported method ('HEAD')
+127.0.0.1 "HEAD /api/hello HTTP/1.1" 501 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 code 501, message Unsupported method ('HEAD')
+127.0.0.1 "HEAD /api/hello HTTP/1.1" 501 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+----------------------------------------
+Exception occurred during processing of request from ('127.0.0.1', 60665)
+Traceback (most recent call last):
+  File "/opt/homebrew/Cellar/python@3.14/3.14.2/Frameworks/Python.framework/Versions/3.14/lib/python3.14/socketserver.py", line 697, in process_request_thread
+    self.finish_request(request, client_address)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.2/Frameworks/Python.framework/Versions/3.14/lib/python3.14/socketserver.py", line 362, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+    ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.2/Frameworks/Python.framework/Versions/3.14/lib/python3.14/socketserver.py", line 766, in __init__
+    self.handle()
+    ~~~~~~~~~~~^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.2/Frameworks/Python.framework/Versions/3.14/lib/python3.14/http/server.py", line 498, in handle
+    self.handle_one_request()
+    ~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.2/Frameworks/Python.framework/Versions/3.14/lib/python3.14/http/server.py", line 464, in handle_one_request
+    self.raw_requestline = self.rfile.readline(65537)
+                           ~~~~~~~~~~~~~~~~~~~^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.2/Frameworks/Python.framework/Versions/3.14/lib/python3.14/socket.py", line 725, in readinto
+    return self._sock.recv_into(b)
+           ~~~~~~~~~~~~~~~~~~~~^^^
+ConnectionResetError: [Errno 54] Connection reset by peer
+----------------------------------------
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+----------------------------------------
+Exception occurred during processing of request from ('127.0.0.1', 60566)
+Traceback (most recent call last):
+  File "/opt/homebrew/Cellar/python@3.14/3.14.2/Frameworks/Python.framework/Versions/3.14/lib/python3.14/socketserver.py", line 697, in process_request_thread
+    self.finish_request(request, client_address)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.2/Frameworks/Python.framework/Versions/3.14/lib/python3.14/socketserver.py", line 362, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+    ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.2/Frameworks/Python.framework/Versions/3.14/lib/python3.14/socketserver.py", line 766, in __init__
+    self.handle()
+    ~~~~~~~~~~~^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.2/Frameworks/Python.framework/Versions/3.14/lib/python3.14/http/server.py", line 498, in handle
+    self.handle_one_request()
+    ~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.2/Frameworks/Python.framework/Versions/3.14/lib/python3.14/http/server.py", line 484, in handle_one_request
+    method()
+    ~~~~~~^^
+  File "/Users/arunmenon/projects/gisting/experiments/proxy/tap.py", line 133, in do_POST
+    self.forward()
+    ~~~~~~~~~~~~^^
+  File "/Users/arunmenon/projects/gisting/experiments/proxy/tap.py", line 222, in forward
+    self.wfile.write(b"%x\r\n%s\r\n" % (len(chunk), chunk))
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.2/Frameworks/Python.framework/Versions/3.14/lib/python3.14/socketserver.py", line 845, in write
+    self._sock.sendall(b)
+    ~~~~~~~~~~~~~~~~~~^^^
+BrokenPipeError: [Errno 32] Broken pipe
+----------------------------------------
+127.0.0.1 code 501, message Unsupported method ('HEAD')
+127.0.0.1 "HEAD /api/hello HTTP/1.1" 501 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+----------------------------------------
+Exception occurred during processing of request from ('127.0.0.1', 60550)
+Traceback (most recent call last):
+  File "/opt/homebrew/Cellar/python@3.14/3.14.2/Frameworks/Python.framework/Versions/3.14/lib/python3.14/socketserver.py", line 697, in process_request_thread
+    self.finish_request(request, client_address)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.2/Frameworks/Python.framework/Versions/3.14/lib/python3.14/socketserver.py", line 362, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+    ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.2/Frameworks/Python.framework/Versions/3.14/lib/python3.14/socketserver.py", line 766, in __init__
+    self.handle()
+    ~~~~~~~~~~~^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.2/Frameworks/Python.framework/Versions/3.14/lib/python3.14/http/server.py", line 498, in handle
+    self.handle_one_request()
+    ~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.2/Frameworks/Python.framework/Versions/3.14/lib/python3.14/http/server.py", line 484, in handle_one_request
+    method()
+    ~~~~~~^^
+  File "/Users/arunmenon/projects/gisting/experiments/proxy/tap.py", line 133, in do_POST
+    self.forward()
+    ~~~~~~~~~~~~^^
+  File "/Users/arunmenon/projects/gisting/experiments/proxy/tap.py", line 222, in forward
+    self.wfile.write(b"%x\r\n%s\r\n" % (len(chunk), chunk))
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.2/Frameworks/Python.framework/Versions/3.14/lib/python3.14/socketserver.py", line 845, in write
+    self._sock.sendall(b)
+    ~~~~~~~~~~~~~~~~~~^^^
+BrokenPipeError: [Errno 32] Broken pipe
+----------------------------------------
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 code 501, message Unsupported method ('HEAD')
+127.0.0.1 "HEAD /api/hello HTTP/1.1" 501 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 code 501, message Unsupported method ('HEAD')
+127.0.0.1 "HEAD /api/hello HTTP/1.1" 501 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+----------------------------------------
+Exception occurred during processing of request from ('127.0.0.1', 60907)
+Traceback (most recent call last):
+  File "/opt/homebrew/Cellar/python@3.14/3.14.2/Frameworks/Python.framework/Versions/3.14/lib/python3.14/socketserver.py", line 697, in process_request_thread
+    self.finish_request(request, client_address)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.2/Frameworks/Python.framework/Versions/3.14/lib/python3.14/socketserver.py", line 362, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+    ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.2/Frameworks/Python.framework/Versions/3.14/lib/python3.14/socketserver.py", line 766, in __init__
+    self.handle()
+    ~~~~~~~~~~~^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.2/Frameworks/Python.framework/Versions/3.14/lib/python3.14/http/server.py", line 498, in handle
+    self.handle_one_request()
+    ~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.2/Frameworks/Python.framework/Versions/3.14/lib/python3.14/http/server.py", line 484, in handle_one_request
+    method()
+    ~~~~~~^^
+  File "/Users/arunmenon/projects/gisting/experiments/proxy/tap.py", line 133, in do_POST
+    self.forward()
+    ~~~~~~~~~~~~^^
+  File "/Users/arunmenon/projects/gisting/experiments/proxy/tap.py", line 222, in forward
+    self.wfile.write(b"%x\r\n%s\r\n" % (len(chunk), chunk))
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.2/Frameworks/Python.framework/Versions/3.14/lib/python3.14/socketserver.py", line 845, in write
+    self._sock.sendall(b)
+    ~~~~~~~~~~~~~~~~~~^^^
+BrokenPipeError: [Errno 32] Broken pipe
+----------------------------------------
+----------------------------------------
+Exception occurred during processing of request from ('127.0.0.1', 61387)
+----------------------------------------
+----------------------------------------
+----------------------------------------
+Exception occurred during processing of request from ('127.0.0.1', 60719)
+Exception occurred during processing of request from ('127.0.0.1', 60691)
+Exception occurred during processing of request from ('127.0.0.1', 60879)
+Traceback (most recent call last):
+Traceback (most recent call last):
+Traceback (most recent call last):
+Traceback (most recent call last):
+  File "/opt/homebrew/Cellar/python@3.14/3.14.2/Frameworks/Python.framework/Versions/3.14/lib/python3.14/http/client.py", line 584, in _get_chunk_left
+    chunk_left = self._read_next_chunk_size()
+  File "/opt/homebrew/Cellar/python@3.14/3.14.2/Frameworks/Python.framework/Versions/3.14/lib/python3.14/http/client.py", line 584, in _get_chunk_left
+    chunk_left = self._read_next_chunk_size()
+  File "/opt/homebrew/Cellar/python@3.14/3.14.2/Frameworks/Python.framework/Versions/3.14/lib/python3.14/http/client.py", line 551, in _read_next_chunk_size
+    return int(line, 16)
+  File "/opt/homebrew/Cellar/python@3.14/3.14.2/Frameworks/Python.framework/Versions/3.14/lib/python3.14/http/client.py", line 584, in _get_chunk_left
+    chunk_left = self._read_next_chunk_size()
+  File "/opt/homebrew/Cellar/python@3.14/3.14.2/Frameworks/Python.framework/Versions/3.14/lib/python3.14/http/client.py", line 551, in _read_next_chunk_size
+    return int(line, 16)
+  File "/opt/homebrew/Cellar/python@3.14/3.14.2/Frameworks/Python.framework/Versions/3.14/lib/python3.14/http/client.py", line 584, in _get_chunk_left
+    chunk_left = self._read_next_chunk_size()
+  File "/opt/homebrew/Cellar/python@3.14/3.14.2/Frameworks/Python.framework/Versions/3.14/lib/python3.14/http/client.py", line 551, in _read_next_chunk_size
+    return int(line, 16)
+ValueError: invalid literal for int() with base 16: b''
+ValueError: invalid literal for int() with base 16: b''
+
+During handling of the above exception, another exception occurred:
+
+ValueError: invalid literal for int() with base 16: b''
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+Traceback (most recent call last):
+
+During handling of the above exception, another exception occurred:
+
+  File "/opt/homebrew/Cellar/python@3.14/3.14.2/Frameworks/Python.framework/Versions/3.14/lib/python3.14/socketserver.py", line 697, in process_request_thread
+    self.finish_request(request, client_address)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+Traceback (most recent call last):
+  File "/opt/homebrew/Cellar/python@3.14/3.14.2/Frameworks/Python.framework/Versions/3.14/lib/python3.14/socketserver.py", line 697, in process_request_thread
+    self.finish_request(request, client_address)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.2/Frameworks/Python.framework/Versions/3.14/lib/python3.14/http/client.py", line 551, in _read_next_chunk_size
+    return int(line, 16)
+  File "/opt/homebrew/Cellar/python@3.14/3.14.2/Frameworks/Python.framework/Versions/3.14/lib/python3.14/socketserver.py", line 362, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+    ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.2/Frameworks/Python.framework/Versions/3.14/lib/python3.14/socketserver.py", line 766, in __init__
+    self.handle()
+    ~~~~~~~~~~~^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.2/Frameworks/Python.framework/Versions/3.14/lib/python3.14/socketserver.py", line 697, in process_request_thread
+    self.finish_request(request, client_address)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.2/Frameworks/Python.framework/Versions/3.14/lib/python3.14/socketserver.py", line 362, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+    ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.2/Frameworks/Python.framework/Versions/3.14/lib/python3.14/socketserver.py", line 766, in __init__
+    self.handle()
+    ~~~~~~~~~~~^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.2/Frameworks/Python.framework/Versions/3.14/lib/python3.14/http/server.py", line 498, in handle
+    self.handle_one_request()
+    ~~~~~~~~~~~~~~~~~~~~~~~^^
+ValueError: invalid literal for int() with base 16: b''
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/opt/homebrew/Cellar/python@3.14/3.14.2/Frameworks/Python.framework/Versions/3.14/lib/python3.14/http/server.py", line 484, in handle_one_request
+    method()
+    ~~~~~~^^
+  File "/Users/arunmenon/projects/gisting/experiments/proxy/tap.py", line 133, in do_POST
+    self.forward()
+    ~~~~~~~~~~~~^^
+  File "/Users/arunmenon/projects/gisting/experiments/proxy/tap.py", line 213, in forward
+    chunk = upstream_response.read1(65536) if hasattr(upstream_response, "read1") else upstream_response.read(65536)
+            ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.2/Frameworks/Python.framework/Versions/3.14/lib/python3.14/http/client.py", line 682, in read1
+    return self._read1_chunked(n)
+           ~~~~~~~~~~~~~~~~~~~^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.2/Frameworks/Python.framework/Versions/3.14/lib/python3.14/http/client.py", line 723, in _read1_chunked
+    chunk_left = self._get_chunk_left()
+  File "/opt/homebrew/Cellar/python@3.14/3.14.2/Frameworks/Python.framework/Versions/3.14/lib/python3.14/http/client.py", line 586, in _get_chunk_left
+    raise IncompleteRead(b'')
+  File "/opt/homebrew/Cellar/python@3.14/3.14.2/Frameworks/Python.framework/Versions/3.14/lib/python3.14/socketserver.py", line 362, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+    ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.2/Frameworks/Python.framework/Versions/3.14/lib/python3.14/socketserver.py", line 766, in __init__
+    self.handle()
+    ~~~~~~~~~~~^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.2/Frameworks/Python.framework/Versions/3.14/lib/python3.14/http/server.py", line 498, in handle
+    self.handle_one_request()
+    ~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.2/Frameworks/Python.framework/Versions/3.14/lib/python3.14/http/server.py", line 484, in handle_one_request
+    method()
+    ~~~~~~^^
+http.client.IncompleteRead: IncompleteRead(0 bytes read)
+  File "/opt/homebrew/Cellar/python@3.14/3.14.2/Frameworks/Python.framework/Versions/3.14/lib/python3.14/http/server.py", line 496, in handle
+    self.handle_one_request()
+    ~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.2/Frameworks/Python.framework/Versions/3.14/lib/python3.14/http/server.py", line 484, in handle_one_request
+    method()
+    ~~~~~~^^
+  File "/Users/arunmenon/projects/gisting/experiments/proxy/tap.py", line 133, in do_POST
+    self.forward()
+    ~~~~~~~~~~~~^^
+  File "/Users/arunmenon/projects/gisting/experiments/proxy/tap.py", line 213, in forward
+    chunk = upstream_response.read1(65536) if hasattr(upstream_response, "read1") else upstream_response.read(65536)
+            ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^
+----------------------------------------
+  File "/Users/arunmenon/projects/gisting/experiments/proxy/tap.py", line 133, in do_POST
+    self.forward()
+    ~~~~~~~~~~~~^^
+  File "/Users/arunmenon/projects/gisting/experiments/proxy/tap.py", line 213, in forward
+    chunk = upstream_response.read1(65536) if hasattr(upstream_response, "read1") else upstream_response.read(65536)
+            ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.2/Frameworks/Python.framework/Versions/3.14/lib/python3.14/http/client.py", line 682, in read1
+    return self._read1_chunked(n)
+           ~~~~~~~~~~~~~~~~~~~^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.2/Frameworks/Python.framework/Versions/3.14/lib/python3.14/http/client.py", line 723, in _read1_chunked
+    chunk_left = self._get_chunk_left()
+  File "/opt/homebrew/Cellar/python@3.14/3.14.2/Frameworks/Python.framework/Versions/3.14/lib/python3.14/http/client.py", line 586, in _get_chunk_left
+    raise IncompleteRead(b'')
+http.client.IncompleteRead: IncompleteRead(0 bytes read)
+  File "/opt/homebrew/Cellar/python@3.14/3.14.2/Frameworks/Python.framework/Versions/3.14/lib/python3.14/socketserver.py", line 697, in process_request_thread
+    self.finish_request(request, client_address)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.2/Frameworks/Python.framework/Versions/3.14/lib/python3.14/socketserver.py", line 362, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+    ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.2/Frameworks/Python.framework/Versions/3.14/lib/python3.14/socketserver.py", line 766, in __init__
+    self.handle()
+    ~~~~~~~~~~~^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.2/Frameworks/Python.framework/Versions/3.14/lib/python3.14/http/server.py", line 498, in handle
+    self.handle_one_request()
+    ~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.2/Frameworks/Python.framework/Versions/3.14/lib/python3.14/http/server.py", line 484, in handle_one_request
+    method()
+    ~~~~~~^^
+  File "/Users/arunmenon/projects/gisting/experiments/proxy/tap.py", line 133, in do_POST
+    self.forward()
+    ~~~~~~~~~~~~^^
+  File "/Users/arunmenon/projects/gisting/experiments/proxy/tap.py", line 213, in forward
+    chunk = upstream_response.read1(65536) if hasattr(upstream_response, "read1") else upstream_response.read(65536)
+            ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.2/Frameworks/Python.framework/Versions/3.14/lib/python3.14/http/client.py", line 682, in read1
+    return self._read1_chunked(n)
+           ~~~~~~~~~~~~~~~~~~~^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.2/Frameworks/Python.framework/Versions/3.14/lib/python3.14/http/client.py", line 723, in _read1_chunked
+    chunk_left = self._get_chunk_left()
+  File "/opt/homebrew/Cellar/python@3.14/3.14.2/Frameworks/Python.framework/Versions/3.14/lib/python3.14/http/client.py", line 586, in _get_chunk_left
+    raise IncompleteRead(b'')
+http.client.IncompleteRead: IncompleteRead(0 bytes read)
+----------------------------------------
+  File "/opt/homebrew/Cellar/python@3.14/3.14.2/Frameworks/Python.framework/Versions/3.14/lib/python3.14/http/client.py", line 682, in read1
+    return self._read1_chunked(n)
+           ~~~~~~~~~~~~~~~~~~~^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.2/Frameworks/Python.framework/Versions/3.14/lib/python3.14/http/client.py", line 723, in _read1_chunked
+    chunk_left = self._get_chunk_left()
+  File "/opt/homebrew/Cellar/python@3.14/3.14.2/Frameworks/Python.framework/Versions/3.14/lib/python3.14/http/client.py", line 586, in _get_chunk_left
+    raise IncompleteRead(b'')
+----------------------------------------
+http.client.IncompleteRead: IncompleteRead(0 bytes read)
+----------------------------------------
+127.0.0.1 code 502, message upstream error: [Errno 61] Connection refused
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 502 -
+127.0.0.1 code 502, message upstream error: [Errno 61] Connection refused
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 502 -
+127.0.0.1 code 502, message upstream error: [Errno 61] Connection refused
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 502 -
+127.0.0.1 code 502, message upstream error: [Errno 61] Connection refused
+127.0.0.1 code 502, message upstream error: [Errno 61] Connection refused
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 502 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 502 -
+127.0.0.1 code 502, message upstream error: [Errno 61] Connection refused
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 502 -
+127.0.0.1 code 502, message upstream error: [Errno 61] Connection refused
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 502 -
+127.0.0.1 code 502, message upstream error: [Errno 61] Connection refused
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 502 -
+127.0.0.1 code 502, message upstream error: [Errno 61] Connection refused
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 502 -
+127.0.0.1 code 502, message upstream error: [Errno 61] Connection refused
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 502 -
+127.0.0.1 code 502, message upstream error: [Errno 61] Connection refused
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 502 -
+127.0.0.1 code 502, message upstream error: [Errno 61] Connection refused
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 502 -
+Traceback (most recent call last):
+  File "/Users/arunmenon/projects/gisting/experiments/proxy/tap.py", line 289, in <module>
+    main()
+    ~~~~^^
+  File "/Users/arunmenon/projects/gisting/experiments/proxy/tap.py", line 283, in main
+    server = ThreadingHTTPServer((host, int(port)), TapHandler)
+  File "/opt/homebrew/Cellar/python@3.14/3.14.2/Frameworks/Python.framework/Versions/3.14/lib/python3.14/socketserver.py", line 457, in __init__
+    self.server_bind()
+    ~~~~~~~~~~~~~~~~^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.2/Frameworks/Python.framework/Versions/3.14/lib/python3.14/http/server.py", line 148, in server_bind
+    socketserver.TCPServer.server_bind(self)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.2/Frameworks/Python.framework/Versions/3.14/lib/python3.14/socketserver.py", line 478, in server_bind
+    self.socket.bind(self.server_address)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+OSError: [Errno 48] Address already in use
+127.0.0.1 code 501, message Unsupported method ('HEAD')
+127.0.0.1 code 501, message Unsupported method ('HEAD')
+127.0.0.1 code 501, message Unsupported method ('HEAD')
+127.0.0.1 "HEAD /api/hello HTTP/1.1" 501 -
+127.0.0.1 "HEAD /api/hello HTTP/1.1" 501 -
+127.0.0.1 "HEAD /api/hello HTTP/1.1" 501 -
+127.0.0.1 code 501, message Unsupported method ('HEAD')
+127.0.0.1 "HEAD /api/hello HTTP/1.1" 501 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+----------------------------------------
+Exception occurred during processing of request from ('127.0.0.1', 61428)
+Traceback (most recent call last):
+  File "/opt/homebrew/Cellar/python@3.14/3.14.2/Frameworks/Python.framework/Versions/3.14/lib/python3.14/socketserver.py", line 697, in process_request_thread
+    self.finish_request(request, client_address)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.2/Frameworks/Python.framework/Versions/3.14/lib/python3.14/socketserver.py", line 362, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+    ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.2/Frameworks/Python.framework/Versions/3.14/lib/python3.14/socketserver.py", line 766, in __init__
+    self.handle()
+    ~~~~~~~~~~~^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.2/Frameworks/Python.framework/Versions/3.14/lib/python3.14/http/server.py", line 496, in handle
+    self.handle_one_request()
+    ~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.2/Frameworks/Python.framework/Versions/3.14/lib/python3.14/http/server.py", line 484, in handle_one_request
+    method()
+    ~~~~~~^^
+  File "/Users/arunmenon/projects/gisting/experiments/proxy/tap.py", line 133, in do_POST
+    self.forward()
+    ~~~~~~~~~~~~^^
+  File "/Users/arunmenon/projects/gisting/experiments/proxy/tap.py", line 222, in forward
+    self.wfile.write(b"%x\r\n%s\r\n" % (len(chunk), chunk))
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.2/Frameworks/Python.framework/Versions/3.14/lib/python3.14/socketserver.py", line 845, in write
+    self._sock.sendall(b)
+    ~~~~~~~~~~~~~~~~~~^^^
+BrokenPipeError: [Errno 32] Broken pipe
+----------------------------------------
+127.0.0.1 code 501, message Unsupported method ('HEAD')
+127.0.0.1 "HEAD /api/hello HTTP/1.1" 501 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 code 501, message Unsupported method ('HEAD')
+127.0.0.1 "HEAD /api/hello HTTP/1.1" 501 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+----------------------------------------
+Exception occurred during processing of request from ('127.0.0.1', 61430)
+Traceback (most recent call last):
+  File "/opt/homebrew/Cellar/python@3.14/3.14.2/Frameworks/Python.framework/Versions/3.14/lib/python3.14/socketserver.py", line 697, in process_request_thread
+    self.finish_request(request, client_address)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.2/Frameworks/Python.framework/Versions/3.14/lib/python3.14/socketserver.py", line 362, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+    ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.2/Frameworks/Python.framework/Versions/3.14/lib/python3.14/socketserver.py", line 766, in __init__
+    self.handle()
+    ~~~~~~~~~~~^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.2/Frameworks/Python.framework/Versions/3.14/lib/python3.14/http/server.py", line 498, in handle
+    self.handle_one_request()
+    ~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.2/Frameworks/Python.framework/Versions/3.14/lib/python3.14/http/server.py", line 484, in handle_one_request
+    method()
+    ~~~~~~^^
+  File "/Users/arunmenon/projects/gisting/experiments/proxy/tap.py", line 133, in do_POST
+    self.forward()
+    ~~~~~~~~~~~~^^
+  File "/Users/arunmenon/projects/gisting/experiments/proxy/tap.py", line 222, in forward
+    self.wfile.write(b"%x\r\n%s\r\n" % (len(chunk), chunk))
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.2/Frameworks/Python.framework/Versions/3.14/lib/python3.14/socketserver.py", line 845, in write
+    self._sock.sendall(b)
+    ~~~~~~~~~~~~~~~~~~^^^
+BrokenPipeError: [Errno 32] Broken pipe
+----------------------------------------
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 code 501, message Unsupported method ('HEAD')
+127.0.0.1 "HEAD /api/hello HTTP/1.1" 501 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 code 501, message Unsupported method ('HEAD')
+127.0.0.1 "HEAD /api/hello HTTP/1.1" 501 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 code 501, message Unsupported method ('HEAD')
+127.0.0.1 "HEAD /api/hello HTTP/1.1" 501 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 code 501, message Unsupported method ('HEAD')
+127.0.0.1 "HEAD /api/hello HTTP/1.1" 501 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 code 501, message Unsupported method ('HEAD')
+127.0.0.1 "HEAD /api/hello HTTP/1.1" 501 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 code 501, message Unsupported method ('HEAD')
+127.0.0.1 "HEAD /api/hello HTTP/1.1" 501 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 code 501, message Unsupported method ('HEAD')
+127.0.0.1 "HEAD /api/hello HTTP/1.1" 501 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 200 -
+----------------------------------------
+----------------------------------------
+Exception occurred during processing of request from ('127.0.0.1', 61623)
+127.0.0.1 code 502, message upstream error: Remote end closed connection without response
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 502 -
+Exception occurred during processing of request from ('127.0.0.1', 61432)
+----------------------------------------
+Exception occurred during processing of request from ('127.0.0.1', 61653)
+Traceback (most recent call last):
+----------------------------------------
+Traceback (most recent call last):
+  File "/opt/homebrew/Cellar/python@3.14/3.14.2/Frameworks/Python.framework/Versions/3.14/lib/python3.14/http/client.py", line 584, in _get_chunk_left
+    chunk_left = self._read_next_chunk_size()
+  File "/opt/homebrew/Cellar/python@3.14/3.14.2/Frameworks/Python.framework/Versions/3.14/lib/python3.14/http/client.py", line 551, in _read_next_chunk_size
+    return int(line, 16)
+Traceback (most recent call last):
+  File "/opt/homebrew/Cellar/python@3.14/3.14.2/Frameworks/Python.framework/Versions/3.14/lib/python3.14/http/client.py", line 584, in _get_chunk_left
+    chunk_left = self._read_next_chunk_size()
+  File "/opt/homebrew/Cellar/python@3.14/3.14.2/Frameworks/Python.framework/Versions/3.14/lib/python3.14/http/client.py", line 551, in _read_next_chunk_size
+    return int(line, 16)
+  File "/opt/homebrew/Cellar/python@3.14/3.14.2/Frameworks/Python.framework/Versions/3.14/lib/python3.14/http/client.py", line 584, in _get_chunk_left
+    chunk_left = self._read_next_chunk_size()
+ValueError: invalid literal for int() with base 16: b''
+Exception occurred during processing of request from ('127.0.0.1', 61632)
+  File "/opt/homebrew/Cellar/python@3.14/3.14.2/Frameworks/Python.framework/Versions/3.14/lib/python3.14/http/client.py", line 551, in _read_next_chunk_size
+    return int(line, 16)
+ValueError: invalid literal for int() with base 16: b''
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+Traceback (most recent call last):
+
+During handling of the above exception, another exception occurred:
+
+ValueError: invalid literal for int() with base 16: b''
+  File "/opt/homebrew/Cellar/python@3.14/3.14.2/Frameworks/Python.framework/Versions/3.14/lib/python3.14/socketserver.py", line 697, in process_request_thread
+    self.finish_request(request, client_address)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.2/Frameworks/Python.framework/Versions/3.14/lib/python3.14/socketserver.py", line 362, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+    ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.2/Frameworks/Python.framework/Versions/3.14/lib/python3.14/socketserver.py", line 766, in __init__
+    self.handle()
+    ~~~~~~~~~~~^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.2/Frameworks/Python.framework/Versions/3.14/lib/python3.14/http/server.py", line 498, in handle
+    self.handle_one_request()
+    ~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.2/Frameworks/Python.framework/Versions/3.14/lib/python3.14/http/server.py", line 484, in handle_one_request
+    method()
+    ~~~~~~^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.2/Frameworks/Python.framework/Versions/3.14/lib/python3.14/http/client.py", line 584, in _get_chunk_left
+    chunk_left = self._read_next_chunk_size()
+Traceback (most recent call last):
+
+During handling of the above exception, another exception occurred:
+
+  File "/Users/arunmenon/projects/gisting/experiments/proxy/tap.py", line 133, in do_POST
+    self.forward()
+    ~~~~~~~~~~~~^^
+  File "/Users/arunmenon/projects/gisting/experiments/proxy/tap.py", line 213, in forward
+    chunk = upstream_response.read1(65536) if hasattr(upstream_response, "read1") else upstream_response.read(65536)
+            ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.2/Frameworks/Python.framework/Versions/3.14/lib/python3.14/http/client.py", line 682, in read1
+    return self._read1_chunked(n)
+           ~~~~~~~~~~~~~~~~~~~^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.2/Frameworks/Python.framework/Versions/3.14/lib/python3.14/http/client.py", line 723, in _read1_chunked
+    chunk_left = self._get_chunk_left()
+  File "/opt/homebrew/Cellar/python@3.14/3.14.2/Frameworks/Python.framework/Versions/3.14/lib/python3.14/http/client.py", line 586, in _get_chunk_left
+    raise IncompleteRead(b'')
+  File "/opt/homebrew/Cellar/python@3.14/3.14.2/Frameworks/Python.framework/Versions/3.14/lib/python3.14/http/client.py", line 551, in _read_next_chunk_size
+    return int(line, 16)
+  File "/opt/homebrew/Cellar/python@3.14/3.14.2/Frameworks/Python.framework/Versions/3.14/lib/python3.14/socketserver.py", line 697, in process_request_thread
+    self.finish_request(request, client_address)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+Traceback (most recent call last):
+ValueError: invalid literal for int() with base 16: b''
+  File "/opt/homebrew/Cellar/python@3.14/3.14.2/Frameworks/Python.framework/Versions/3.14/lib/python3.14/socketserver.py", line 362, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+    ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+http.client.IncompleteRead: IncompleteRead(0 bytes read)
+  File "/opt/homebrew/Cellar/python@3.14/3.14.2/Frameworks/Python.framework/Versions/3.14/lib/python3.14/socketserver.py", line 766, in __init__
+    self.handle()
+    ~~~~~~~~~~~^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.2/Frameworks/Python.framework/Versions/3.14/lib/python3.14/http/server.py", line 498, in handle
+    self.handle_one_request()
+    ~~~~~~~~~~~~~~~~~~~~~~~^^
+----------------------------------------
+  File "/opt/homebrew/Cellar/python@3.14/3.14.2/Frameworks/Python.framework/Versions/3.14/lib/python3.14/http/server.py", line 484, in handle_one_request
+    method()
+    ~~~~~~^^
+  File "/Users/arunmenon/projects/gisting/experiments/proxy/tap.py", line 133, in do_POST
+    self.forward()
+    ~~~~~~~~~~~~^^
+  File "/Users/arunmenon/projects/gisting/experiments/proxy/tap.py", line 213, in forward
+    chunk = upstream_response.read1(65536) if hasattr(upstream_response, "read1") else upstream_response.read(65536)
+            ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.2/Frameworks/Python.framework/Versions/3.14/lib/python3.14/http/client.py", line 682, in read1
+    return self._read1_chunked(n)
+           ~~~~~~~~~~~~~~~~~~~^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.2/Frameworks/Python.framework/Versions/3.14/lib/python3.14/http/client.py", line 723, in _read1_chunked
+    chunk_left = self._get_chunk_left()
+  File "/opt/homebrew/Cellar/python@3.14/3.14.2/Frameworks/Python.framework/Versions/3.14/lib/python3.14/http/client.py", line 586, in _get_chunk_left
+    raise IncompleteRead(b'')
+  File "/opt/homebrew/Cellar/python@3.14/3.14.2/Frameworks/Python.framework/Versions/3.14/lib/python3.14/socketserver.py", line 697, in process_request_thread
+    self.finish_request(request, client_address)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.2/Frameworks/Python.framework/Versions/3.14/lib/python3.14/socketserver.py", line 362, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+    ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+http.client.IncompleteRead: IncompleteRead(0 bytes read)
+----------------------------------------
+  File "/opt/homebrew/Cellar/python@3.14/3.14.2/Frameworks/Python.framework/Versions/3.14/lib/python3.14/socketserver.py", line 766, in __init__
+    self.handle()
+    ~~~~~~~~~~~^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.2/Frameworks/Python.framework/Versions/3.14/lib/python3.14/http/server.py", line 496, in handle
+    self.handle_one_request()
+    ~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.2/Frameworks/Python.framework/Versions/3.14/lib/python3.14/http/server.py", line 484, in handle_one_request
+    method()
+    ~~~~~~^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.2/Frameworks/Python.framework/Versions/3.14/lib/python3.14/socketserver.py", line 697, in process_request_thread
+    self.finish_request(request, client_address)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/arunmenon/projects/gisting/experiments/proxy/tap.py", line 133, in do_POST
+    self.forward()
+    ~~~~~~~~~~~~^^
+  File "/Users/arunmenon/projects/gisting/experiments/proxy/tap.py", line 213, in forward
+    chunk = upstream_response.read1(65536) if hasattr(upstream_response, "read1") else upstream_response.read(65536)
+            ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.2/Frameworks/Python.framework/Versions/3.14/lib/python3.14/http/client.py", line 682, in read1
+    return self._read1_chunked(n)
+           ~~~~~~~~~~~~~~~~~~~^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.2/Frameworks/Python.framework/Versions/3.14/lib/python3.14/http/client.py", line 723, in _read1_chunked
+    chunk_left = self._get_chunk_left()
+  File "/opt/homebrew/Cellar/python@3.14/3.14.2/Frameworks/Python.framework/Versions/3.14/lib/python3.14/socketserver.py", line 362, in finish_request
+    self.RequestHandlerClass(request, client_address, self)
+    ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.2/Frameworks/Python.framework/Versions/3.14/lib/python3.14/socketserver.py", line 766, in __init__
+    self.handle()
+    ~~~~~~~~~~~^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.2/Frameworks/Python.framework/Versions/3.14/lib/python3.14/http/server.py", line 498, in handle
+    self.handle_one_request()
+    ~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.2/Frameworks/Python.framework/Versions/3.14/lib/python3.14/http/client.py", line 586, in _get_chunk_left
+    raise IncompleteRead(b'')
+  File "/opt/homebrew/Cellar/python@3.14/3.14.2/Frameworks/Python.framework/Versions/3.14/lib/python3.14/http/server.py", line 484, in handle_one_request
+    method()
+    ~~~~~~^^
+  File "/Users/arunmenon/projects/gisting/experiments/proxy/tap.py", line 133, in do_POST
+    self.forward()
+    ~~~~~~~~~~~~^^
+  File "/Users/arunmenon/projects/gisting/experiments/proxy/tap.py", line 213, in forward
+    chunk = upstream_response.read1(65536) if hasattr(upstream_response, "read1") else upstream_response.read(65536)
+            ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.2/Frameworks/Python.framework/Versions/3.14/lib/python3.14/http/client.py", line 682, in read1
+    return self._read1_chunked(n)
+           ~~~~~~~~~~~~~~~~~~~^^^
+  File "/opt/homebrew/Cellar/python@3.14/3.14.2/Frameworks/Python.framework/Versions/3.14/lib/python3.14/http/client.py", line 723, in _read1_chunked
+    chunk_left = self._get_chunk_left()
+  File "/opt/homebrew/Cellar/python@3.14/3.14.2/Frameworks/Python.framework/Versions/3.14/lib/python3.14/http/client.py", line 586, in _get_chunk_left
+    raise IncompleteRead(b'')
+http.client.IncompleteRead: IncompleteRead(0 bytes read)
+----------------------------------------
+http.client.IncompleteRead: IncompleteRead(0 bytes read)
+----------------------------------------
+127.0.0.1 code 502, message upstream error: [Errno 61] Connection refused
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 502 -
+127.0.0.1 code 502, message upstream error: [Errno 61] Connection refused
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 502 -
+127.0.0.1 code 502, message upstream error: [Errno 61] Connection refused
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 502 -
+127.0.0.1 code 502, message upstream error: [Errno 61] Connection refused
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 502 -
+127.0.0.1 code 502, message upstream error: [Errno 61] Connection refused
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 502 -
+127.0.0.1 code 502, message upstream error: [Errno 61] Connection refused
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 502 -
+127.0.0.1 code 502, message upstream error: [Errno 61] Connection refused
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 502 -
+127.0.0.1 code 502, message upstream error: [Errno 61] Connection refused
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 502 -
+127.0.0.1 code 502, message upstream error: [Errno 61] Connection refused
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 502 -
+127.0.0.1 code 502, message upstream error: [Errno 61] Connection refused
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 502 -
+127.0.0.1 code 502, message upstream error: [Errno 61] Connection refused
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 502 -
+127.0.0.1 code 502, message upstream error: [Errno 61] Connection refused
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 502 -
+127.0.0.1 code 502, message upstream error: [Errno 61] Connection refused
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 502 -
+127.0.0.1 code 502, message upstream error: [Errno 61] Connection refused
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 502 -
+127.0.0.1 code 502, message upstream error: [Errno 61] Connection refused
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 502 -
+127.0.0.1 code 502, message upstream error: [Errno 61] Connection refused
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 502 -
+127.0.0.1 code 502, message upstream error: [Errno 61] Connection refused
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 502 -
+127.0.0.1 code 502, message upstream error: [Errno 61] Connection refused
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 502 -
+127.0.0.1 code 502, message upstream error: [Errno 61] Connection refused
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 502 -
+127.0.0.1 code 502, message upstream error: [Errno 61] Connection refused
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 502 -
+127.0.0.1 code 502, message upstream error: [Errno 61] Connection refused
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 502 -
+127.0.0.1 code 502, message upstream error: [Errno 61] Connection refused
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 502 -
+127.0.0.1 code 502, message upstream error: [Errno 61] Connection refused
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 502 -
+127.0.0.1 code 502, message upstream error: [Errno 61] Connection refused
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 502 -
+127.0.0.1 code 502, message upstream error: [Errno 61] Connection refused
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 502 -
+127.0.0.1 code 502, message upstream error: [Errno 61] Connection refused
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 502 -
+127.0.0.1 code 502, message upstream error: [Errno 61] Connection refused
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 502 -
+127.0.0.1 code 502, message upstream error: [Errno 61] Connection refused
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 502 -
+127.0.0.1 code 502, message upstream error: [Errno 61] Connection refused
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 502 -
+127.0.0.1 code 502, message upstream error: [Errno 61] Connection refused
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 502 -
+127.0.0.1 code 502, message upstream error: [Errno 61] Connection refused
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 502 -
+127.0.0.1 code 502, message upstream error: [Errno 61] Connection refused
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 502 -
+127.0.0.1 code 502, message upstream error: [Errno 61] Connection refused
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 502 -
+127.0.0.1 code 502, message upstream error: [Errno 61] Connection refused
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 502 -
+127.0.0.1 code 502, message upstream error: [Errno 61] Connection refused
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 502 -
+127.0.0.1 code 502, message upstream error: [Errno 61] Connection refused
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 502 -
+127.0.0.1 code 502, message upstream error: [Errno 61] Connection refused
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 502 -
+127.0.0.1 code 502, message upstream error: [Errno 61] Connection refused
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 502 -
+127.0.0.1 code 502, message upstream error: [Errno 61] Connection refused
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 502 -
+127.0.0.1 code 502, message upstream error: [Errno 61] Connection refused
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 502 -
+127.0.0.1 code 502, message upstream error: [Errno 61] Connection refused
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 502 -
+127.0.0.1 code 502, message upstream error: [Errno 61] Connection refused
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 502 -
+127.0.0.1 code 502, message upstream error: [Errno 61] Connection refused
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 502 -
+127.0.0.1 code 502, message upstream error: [Errno 61] Connection refused
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 502 -
+127.0.0.1 code 502, message upstream error: [Errno 61] Connection refused
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 502 -
+127.0.0.1 code 502, message upstream error: [Errno 61] Connection refused
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 502 -
+127.0.0.1 code 502, message upstream error: [Errno 61] Connection refused
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 502 -
+127.0.0.1 code 502, message upstream error: [Errno 61] Connection refused
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 502 -
+127.0.0.1 code 502, message upstream error: [Errno 61] Connection refused
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 502 -
+127.0.0.1 code 502, message upstream error: [Errno 61] Connection refused
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 502 -
+127.0.0.1 code 501, message Unsupported method ('HEAD')
+127.0.0.1 "HEAD /api/hello HTTP/1.1" 501 -
+127.0.0.1 code 502, message upstream error: [Errno 61] Connection refused
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 502 -
+127.0.0.1 code 502, message upstream error: [Errno 61] Connection refused
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 502 -
+127.0.0.1 code 502, message upstream error: [Errno 61] Connection refused
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 502 -
+127.0.0.1 code 502, message upstream error: [Errno 61] Connection refused
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 502 -
+127.0.0.1 code 502, message upstream error: [Errno 61] Connection refused
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 502 -
+127.0.0.1 code 501, message Unsupported method ('HEAD')
+127.0.0.1 code 501, message Unsupported method ('HEAD')
+127.0.0.1 "HEAD /api/hello HTTP/1.1" 501 -
+127.0.0.1 "HEAD /api/hello HTTP/1.1" 501 -
+127.0.0.1 code 502, message upstream error: [Errno 61] Connection refused
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 502 -
+127.0.0.1 code 502, message upstream error: [Errno 61] Connection refused
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 502 -
+127.0.0.1 code 502, message upstream error: [Errno 61] Connection refused
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 502 -
+127.0.0.1 code 502, message upstream error: [Errno 61] Connection refused
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 502 -
+127.0.0.1 code 502, message upstream error: [Errno 61] Connection refused
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 502 -
+127.0.0.1 code 502, message upstream error: [Errno 61] Connection refused
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 502 -
+127.0.0.1 code 502, message upstream error: [Errno 61] Connection refused
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 502 -
+127.0.0.1 code 502, message upstream error: [Errno 61] Connection refused
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 502 -
+127.0.0.1 code 502, message upstream error: [Errno 61] Connection refused
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 502 -
+127.0.0.1 code 502, message upstream error: [Errno 61] Connection refused
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 502 -
+127.0.0.1 code 502, message upstream error: [Errno 61] Connection refused
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 502 -
+127.0.0.1 code 501, message Unsupported method ('HEAD')
+127.0.0.1 "HEAD /api/hello HTTP/1.1" 501 -
+127.0.0.1 code 502, message upstream error: [Errno 61] Connection refused
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 502 -
+127.0.0.1 code 502, message upstream error: [Errno 61] Connection refused
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 502 -
+127.0.0.1 code 502, message upstream error: [Errno 61] Connection refused
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 502 -
+127.0.0.1 code 502, message upstream error: [Errno 61] Connection refused
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 502 -
+127.0.0.1 code 502, message upstream error: [Errno 61] Connection refused
+127.0.0.1 "POST /v1/messages?beta=true HTTP/1.1" 502 -

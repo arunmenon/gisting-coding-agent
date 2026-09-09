@@ -1,0 +1,18 @@
+# J7 ops log: E5 loss-reduction ablation (per-response vs batch) at corrected 8:1
+- 2026-09-07T06:21:08Z offer 48778837 1.335 Hong_Kong,_HK -> instance 50130203
+- 2026-09-07T06:21:31Z box running at ssh7.vast.ai:10202
+- 2026-09-07T06:42:50Z provision: r8v2resp: ssh failed
+- 2026-09-07T06:42:50Z PROVISION_FAILED; destroying
+- 2026-09-07T06:43:24Z box 50130203 (offer 48778837, Hong Kong) never accepted SSH in 20 min; destroyed; offer excluded. Relaunching.
+- 2026-09-07T06:43:28Z offer 41245493 1.228 Texas,_US -> instance 50131587
+- 2026-09-07T06:47:07Z box running at ssh7.vast.ai:11586
+- 2026-09-07T06:49:49Z provision: r8v2resp: 1494 gist_count 2171 150G NVIDIA RTX PRO 6000 Blackwell Workstation Edition 2026-09-07T06:49:48Z download_attempt_1 watchdog 478 
+- 2026-09-07T11:27:41Z r8v2resp: worker chain -> 2026-09-07T11:25:48Z READY_FOR_EVAL
+- 2026-09-07T11:27:50Z r8v2resp: building and serving
+- 2026-09-07T11:29:32Z r8v2resp: running exam
+- 2026-09-07T11:46:51Z r8v2resp: {"run": "r8v2resp", "exam": "tasks_hard.txt", "passed": 14, "total": 16, "finished": "2026-09-07T11:46:51Z"}
+- 2026-09-07T11:47:03Z teacher: running exam
+- 2026-09-07T11:47:29Z E5 result: per-response reduction at corrected 8:1: hard exam 14/16 (fails 7 = delete probe, 13 = Agent researched but wrote no file); held-out KL 0.0218 -> 0.0107 (batch reduction on the same span: 0.0219 -> 0.0088, 16/16). Direction matches Shopify (batch better); magnitude mild on this sample. Paths correct.
+- 2026-09-07T12:04:13Z teacher: {"run": "teacher", "exam": "tasks_hard.txt", "passed": 15, "total": 16, "finished": "2026-09-07T12:04:13Z"}
+- 2026-09-07T12:04:13Z EVAL_SWEEP_DONE
+- 2026-09-07T12:04:59Z r8v2resp: hard exam done, instance 50131587 destroyed

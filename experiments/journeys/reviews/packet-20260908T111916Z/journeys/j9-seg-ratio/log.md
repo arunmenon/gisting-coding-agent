@@ -1,0 +1,18 @@
+# J9 ops log: per-segment ratio sweep (rules 8:1, tools 4:1 and 2:1) on base + coverage data, scored on the coverage exam
+- 2026-09-08T04:59:27Z r8t4: offer 46908080 1.323 Colorado,_US -> instance 50233255
+- 2026-09-08T04:59:35Z r8t2: offer 36074645 1.335 Bulgaria,_BG -> instance 50233264
+- 2026-09-08T04:59:51Z r8t4: box running at ssh7.vast.ai:33254
+- 2026-09-08T05:00:20Z r8t2: box running at ssh5.vast.ai:33264
+- 2026-09-08T05:02:43Z r8t4: provision: r8t4: 1793 gist_count 4170 334G NVIDIA RTX PRO 6000 Blackwell Workstation Edition 2026-09-08T05:02:41Z download_attempt_1 watchdog 1378 
+- 2026-09-08T05:22:45Z r8t2: provision: r8t2: ssh failed
+- 2026-09-08T05:22:45Z r8t2: PROVISION_FAILED; destroying
+- 2026-09-08T05:23:37Z r8t2: offer 36074647 1.335 Bulgaria,_BG -> instance 50234827
+- 2026-09-08T05:24:22Z r8t2: box running at ssh6.vast.ai:34826
+- 2026-09-08T05:46:45Z r8t2: provision: r8t2: ssh failed
+- 2026-09-08T05:46:45Z r8t2: PROVISION_FAILED; destroying
+- 2026-09-08T05:47:38Z r8t2: offer 41245495 1.228 Texas,_US -> instance 50236244
+- 2026-09-08T05:48:25Z r8t2: box running at ssh7.vast.ai:36244
+- 2026-09-08T05:51:15Z r8t2: provision: r8t2: 1793 gist_count 8168 150G NVIDIA RTX PRO 6000 Blackwell Workstation Edition 2026-09-08T05:51:14Z download_attempt_1 watchdog 503 
+- 2026-09-08T11:15:17Z r8t4: worker chain -> 2026-09-08T11:14:18Z READY_FOR_EVAL
+- 2026-09-08T11:15:27Z r8t4: building and serving
+- 2026-09-08T11:16:44Z r8t4: running exam

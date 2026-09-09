@@ -1,0 +1,11 @@
+# repo|max_turns|task  -- long exploratory sessions on real repos (E1 long-context share)
+requests|40|Trace how a request's timeout is applied end to end, from the public requests.get API down to the adapter and urllib3, reading every function along the way. Then write docs/TIMEOUTS.md explaining it with file references.
+requests|40|Find every place where redirects are handled. Add a unit test in tests/test_requests.py that asserts the maximum redirect count is enforced, run the test file, and fix anything that fails.
+requests|40|Audit the cookie handling code for edge cases with domain matching. Read all relevant modules and tests, list three concrete edge cases with file references, and add one test covering one of them.
+click|40|Read how option parsing and type conversion works across the core modules. Add a new parameter type PercentType that accepts values like "50%" and returns a float 0.5, with tests in tests/, and run those tests.
+click|40|Investigate how click renders help text for commands and groups. Explain the full call chain with file and line references, then add a test that checks help output for a group with two subcommands.
+click|40|Find how exceptions are turned into exit codes. Document every exception class and its exit code in a table in a new file docs/EXIT_CODES.md, citing the source lines.
+typer|40|Understand how typer converts a function signature into a click command. Read the relevant modules fully, then add support for a docstring-derived epilog and a test for it under tests/.
+typer|40|Search the test suite for tests covering completion. Summarize what is covered and what is not, then write one new test for an uncovered case and run it.
+typer|40|Trace how the rich-based help rendering is chosen versus plain rendering. Write a short design note in docs/HELP_RENDERING.md with file references, then run the existing help-related tests.
+requests|40|Read the session adapter mounting code and the tests around it. Add a test that mounts a custom adapter for a prefix and asserts it is selected for matching URLs, run it, and fix any failures.

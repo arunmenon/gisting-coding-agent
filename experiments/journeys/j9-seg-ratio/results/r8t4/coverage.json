@@ -1,0 +1,87 @@
+{
+ "passed": 0,
+ "total": 16,
+ "tasks": [
+  {
+   "task": 1,
+   "pass": false,
+   "reason": "no session"
+  },
+  {
+   "task": 2,
+   "pass": false,
+   "reason": "no session"
+  },
+  {
+   "task": 3,
+   "pass": false,
+   "reason": "no session"
+  },
+  {
+   "task": 4,
+   "pass": false,
+   "reason": "no session"
+  },
+  {
+   "task": 5,
+   "pass": false,
+   "reason": "no session"
+  },
+  {
+   "task": 6,
+   "pass": false,
+   "reason": "no session"
+  },
+  {
+   "task": 7,
+   "pass": false,
+   "reason": "no session"
+  },
+  {
+   "task": 8,
+   "pass": false,
+   "reason": "no session"
+  },
+  {
+   "task": 9,
+   "pass": false,
+   "reason": "no session"
+  },
+  {
+   "task": 10,
+   "pass": false,
+   "reason": "no session"
+  },
+  {
+   "task": 11,
+   "pass": false,
+   "reason": "no session"
+  },
+  {
+   "task": 12,
+   "pass": false,
+   "reason": "no session"
+  },
+  {
+   "task": 13,
+   "pass": false,
+   "reason": "no session"
+  },
+  {
+   "task": 14,
+   "pass": false,
+   "reason": "no session"
+  },
+  {
+   "task": 15,
+   "pass": false,
+   "reason": "no session"
+  },
+  {
+   "task": 16,
+   "pass": false,
+   "reason": "no session"
+  }
+ ],
+ "tools_used": []
+}

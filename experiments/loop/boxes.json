@@ -1,0 +1,35 @@
+[
+ {
+  "run": "r8",
+  "ratio": 8,
+  "instance": 49824696,
+  "host": "ssh3.vast.ai",
+  "port": 24696,
+  "status": "running",
+  "segments": "gist/out_r8/segments.json",
+  "data": "journeys/j4-ratio-sweep/results/train_r8.jsonl.gz",
+  "port_index": 0
+ },
+ {
+  "run": "r16",
+  "ratio": 16,
+  "instance": 49826071,
+  "host": "ssh6.vast.ai",
+  "port": 26070,
+  "status": "running",
+  "segments": "gist/out_r16/segments.json",
+  "data": "journeys/j4-ratio-sweep/results/train_r16.jsonl.gz",
+  "port_index": 1
+ },
+ {
+  "run": "r2",
+  "ratio": 2,
+  "instance": 49836774,
+  "host": "ssh4.vast.ai",
+  "port": 36774,
+  "status": "running",
+  "segments": "gist/out_r2/segments.json",
+  "data": "journeys/j4-ratio-sweep/results/train_r2.jsonl.gz",
+  "port_index": 2
+ }
+]

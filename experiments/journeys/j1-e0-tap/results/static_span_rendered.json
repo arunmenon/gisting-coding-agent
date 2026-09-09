@@ -1,0 +1,11 @@
+{
+ "bare_user_turn": 53,
+ "system_rendered": 1588,
+ "tools_rendered_all": 20506,
+ "tools_rendered_core": 15994,
+ "mcp_tools_rendered": 4512,
+ "static_span_all": 22094,
+ "static_span_core": 17582,
+ "n_tools": 51,
+ "n_core_tools": 27
+}

@@ -1,0 +1,57 @@
+# J9 ops log: per-segment ratio sweep (rules 8:1, tools 4:1 and 2:1) on base + coverage data, scored on the coverage exam
+- 2026-09-08T04:59:27Z r8t4: offer 46908080 1.323 Colorado,_US -> instance 50233255
+- 2026-09-08T04:59:35Z r8t2: offer 36074645 1.335 Bulgaria,_BG -> instance 50233264
+- 2026-09-08T04:59:51Z r8t4: box running at ssh7.vast.ai:33254
+- 2026-09-08T05:00:20Z r8t2: box running at ssh5.vast.ai:33264
+- 2026-09-08T05:02:43Z r8t4: provision: r8t4: 1793 gist_count 4170 334G NVIDIA RTX PRO 6000 Blackwell Workstation Edition 2026-09-08T05:02:41Z download_attempt_1 watchdog 1378 
+- 2026-09-08T05:22:45Z r8t2: provision: r8t2: ssh failed
+- 2026-09-08T05:22:45Z r8t2: PROVISION_FAILED; destroying
+- 2026-09-08T05:23:37Z r8t2: offer 36074647 1.335 Bulgaria,_BG -> instance 50234827
+- 2026-09-08T05:24:22Z r8t2: box running at ssh6.vast.ai:34826
+- 2026-09-08T05:46:45Z r8t2: provision: r8t2: ssh failed
+- 2026-09-08T05:46:45Z r8t2: PROVISION_FAILED; destroying
+- 2026-09-08T05:47:38Z r8t2: offer 41245495 1.228 Texas,_US -> instance 50236244
+- 2026-09-08T05:48:25Z r8t2: box running at ssh7.vast.ai:36244
+- 2026-09-08T05:51:15Z r8t2: provision: r8t2: 1793 gist_count 8168 150G NVIDIA RTX PRO 6000 Blackwell Workstation Edition 2026-09-08T05:51:14Z download_attempt_1 watchdog 503 
+- 2026-09-08T11:15:17Z r8t4: worker chain -> 2026-09-08T11:14:18Z READY_FOR_EVAL
+- 2026-09-08T11:15:27Z r8t4: building and serving
+- 2026-09-08T11:16:44Z r8t4: running exam
+- 2026-09-08T11:39:10Z r8t2: worker chain -> 2026-09-08T11:37:55Z READY_FOR_EVAL
+- 2026-09-08T11:39:19Z r8t2: building and serving
+- 2026-09-08T11:41:10Z r8t2: running exam
+- 2026-09-08T11:50:06Z r8t4: {"run": "r8t4", "exam": "tasks_hard.txt", "passed": 11, "total": 16, "finished": "2026-09-08T11:50:06Z"}
+- 2026-09-08T11:50:17Z teacher: running exam
+- 2026-09-08T12:22:48Z r8t2: {"run": "r8t2", "exam": "tasks_hard.txt", "passed": null, "total": null, "finished": "2026-09-08T12:22:48Z"}
+- 2026-09-08T12:23:00Z teacher: running exam
+- 2026-09-08T12:24:07Z J9 port collision: both concurrent runs' eval steps used tap port 8501; the r8t2 tap failed to bind (Address already in use), so its hard exam ran unlogged and scored null. The 2:1 sessions cannot be confirmed swapped, so 2:1 must be re-evaluated on a fresh box. Fixed: eval_sweep derives a per-run tap/tunnel port from instance+run hash. r8t4 unaffected (ran its eval when r8t2 had not yet started).
+- 2026-09-08T12:26:37Z r8t2 trained rows (8168x5120) saved to results/r8t2/gist_rows.pt; box destroyed to stop the meter. Its exam was lost to the tap-port collision, not a model fault; re-evaluation deferred to a clean funded run (rows intact, so ~1 eval box, ~$3).
+- 2026-09-08T12:29:54Z teacher: {"run": "teacher", "exam": "tasks_hard.txt", "passed": 7, "total": 16, "finished": "2026-09-08T12:29:54Z"}
+- 2026-09-08T12:29:54Z EVAL_SWEEP_DONE
+- 2026-09-08T12:30:43Z r8t4: coverage exam in gist mode
+- 2026-09-08T12:32:45Z teacher: {"run": "teacher", "exam": "tasks_hard.txt", "passed": 7, "total": 16, "finished": "2026-09-08T12:32:45Z"}
+- 2026-09-08T12:32:45Z EVAL_SWEEP_DONE
+- 2026-09-08T12:32:46Z r8t2: coverage exam in gist mode
+- 2026-09-08T12:33Z CORRECTED RCA: the 4:1 teacher exam logged 84 tap-side 502s but the engine log shows only 200s. The failures are in the client path, not the GPU host: four concurrent Claude Code sessions streaming through one multiplexed SSH tunnel drop requests under load. This is very likely the same mechanism behind J8's "coverage outage", which was attributed to a server outage with unknown cause; revise that to a client-path/tunnel saturation hypothesis.
+- 2026-09-08T12:33Z J9 verdict this pass: no trustworthy per-segment score. r8t2 lost to a tap-port collision (fixed), r8t4 lost to tunnel request drops. Both ratios' trained rows are saved (results/r8t2, results/r8t4). Clean re-eval needs: per-run ports (done), and either eval concurrency 1-2 or a direct box connection instead of one shared tunnel. Cost of clean re-eval with rows in hand: ~2 eval boxes, ~$6.
+- 2026-09-08T12:43:10Z r8t4: coverage exam: SUMMARY passed 0/16 | distinct tools used 0: []
+- 2026-09-08T12:43:12Z r8t4: exams done, instance 50233255 destroyed
+- 2026-09-08T12:44:58Z r8t2: coverage exam: 
+- 2026-09-08T12:44:59Z r8t2: exams done, instance 50236244 destroyed
+- 2026-09-08T18:18:39Z reeval: offer 37051757 1.44 Poland,_PL -> instance 50298372
+- 2026-09-08T18:19:46Z box running at ssh2.vast.ai:18372
+- 2026-09-08T18:41:09Z SSH_FAILED
+- 2026-09-08T18:41:11Z instance 50298372 destroyed
+- 2026-09-08T18:41:42Z reeval: offer 41245495 1.228 Texas,_US -> instance 50300821
+- 2026-09-08T18:42:27Z box running at ssh5.vast.ai:20820
+- 2026-09-08T20:00:54Z teacher_hard: SUMMARY passed 0/16 | unswapped turns 0 | 245 unswapped of 245 | 502s 0
+- 2026-09-08T20:01:52Z re-eval bug: run_exam unset KEEP, so work dirs were deleted before the file-based hard-exam scorer ran (teacher_hard 0/16, 0 errors, all turns complete = scorer found no files). Coverage exam is unaffected (scores from tool calls in the request log, not files), so the r8t4_cov and r8t2_cov numbers this pass are valid. Hard-exam scores this pass discarded; KEEP=1 fixed in the runner for future.
+- 2026-09-08T20:52:11Z r8t4_hard: SUMMARY passed 0/16 | unswapped turns 0 | 204 unswapped of 204 | 502s 0
+- 2026-09-08T20:55:15Z tap swap made tolerant (swap found anchors, leave a drifted one raw; abort only if none match). Verified on the captured r8t4 prompt: 3 of 4 system anchors plus the full tool block gist, 4,123 gist tokens. Relaunching clean re-eval with all three fixes (per-run ports, KEEP=1, tolerant tap).
+- 2026-09-08T20:55:19Z reeval: offer 41245495 1.228 Texas,_US -> instance 50312356
+- 2026-09-08T20:55:42Z box running at ssh6.vast.ai:32356
+- 2026-09-08T21:16:59Z SSH_FAILED
+- 2026-09-08T21:17:01Z instance 50312356 destroyed
+- 2026-09-08T21:17:36Z reeval: offer 41245495 1.228 Texas,_US -> instance 50314264
+- 2026-09-08T21:18:22Z box running at ssh5.vast.ai:34264
+- 2026-09-08T22:30:14Z teacher_hard: SUMMARY passed 7/16 | unswapped turns 202 | 447 unswapped of 447 | 502s 0
+- 2026-09-08T22:32:36Z J9 closed inconclusive after four re-eval attempts and six distinct harness faults; teacher reference invalid on the final local run. Trained rows for both ratios saved. Program closed.

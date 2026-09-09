@@ -1,0 +1,301 @@
+# repo|max_turns|task  -- stratified E2 training sessions (300)
+click|30|Run the test file most related to option parsing and report the results. If any test fails, investigate and fix.
+seed|20|Run the tests and, without editing any file, report which tests fail and the exact assertion messages.
+click|30|Run the whole test suite with python -m pytest -q -x and report the first failure or that it passed. Do not edit files.
+requests|30|Explain how streaming responses works in this repo, with file references. Read the relevant modules first.
+typer|30|Explain how rich help works in this repo, with file references. Read the relevant modules first.
+typer|30|Describe the test coverage for rich help: which test files and functions cover it.
+requests|30|Run the whole test suite with python -m pytest -q -x and report the first failure or that it passed. Do not edit files.
+typer|30|Explain how signature introspection works in this repo, with file references. Read the relevant modules first.
+requests|30|Extend the handling of cookies with input validation and a test for the invalid case; run the test.
+seed|20|Try to delete test_calc.py using rm. If you are not permitted, explain what you would need and stop.
+requests|30|Describe the test coverage for hooks: which test files and functions cover it.
+requests|30|Add a small helper related to SSL verification, with a docstring and a unit test under tests/, and run that test.
+seed|20|Run the tests and, without editing any file, report which tests fail and the exact assertion messages.
+requests|30|Add type hints to the two most important functions for authentication and run the related tests.
+typer|30|Attempt to read a file named SECRETS.md in the repo root. It does not exist; report that and list what config files do exist.
+click|30|Search the code for command groups. Pick one edge case that looks unhandled, write a failing test for it under tests/, then fix the code so it passes.
+seed|20|Try to delete test_calc.py using rm. If you are not permitted, explain what you would need and stop.
+typer|30|Extend the handling of enum parameters with input validation and a test for the invalid case; run the test.
+seed|20|List the files in this repo and describe the project in a paragraph.
+typer|30|Run the test file most related to completion and report the results. If any test fails, investigate and fix.
+typer|30|Find the longest function involved in rich help and split it into two well-named functions without changing behavior; run the related tests.
+click|30|Extend the handling of echo and styling with input validation and a test for the invalid case; run the test.
+typer|30|Attempt to read a file named SECRETS.md in the repo root. It does not exist; report that and list what config files do exist.
+seed|20|Add a clamp(value, low, high) function to calc.py with tests; run them.
+seed|20|List the files in this repo and describe the project in a paragraph.
+click|30|Attempt to read a file named SECRETS.md in the repo root. It does not exist; report that and list what config files do exist.
+typer|30|Add a small helper related to testing utilities, with a docstring and a unit test under tests/, and run that test.
+click|30|Search the code for shell completion. Pick one edge case that looks unhandled, write a failing test for it under tests/, then fix the code so it passes.
+seed|20|There is a bug in divide when b is zero. Add a clear error message and a test that expects it.
+requests|30|Run the test file most related to streaming responses and report the results. If any test fails, investigate and fix.
+typer|30|Explain how testing utilities works in this repo, with file references. Read the relevant modules first.
+typer|30|Attempt to read a file named SECRETS.md in the repo root. It does not exist; report that and list what config files do exist.
+typer|30|Attempt to read a file named SECRETS.md in the repo root. It does not exist; report that and list what config files do exist.
+click|30|Find the longest function involved in help formatting and split it into two well-named functions without changing behavior; run the related tests.
+seed|20|Run the tests with python -m pytest -q and fix whatever fails without changing the tests.
+requests|30|Search the code for proxies. Pick one edge case that looks unhandled, write a failing test for it under tests/, then fix the code so it passes.
+requests|30|Extend the handling of timeouts with input validation and a test for the invalid case; run the test.
+requests|30|Add type hints to the two most important functions for hooks and run the related tests.
+click|30|Search the code for shell completion. Pick one edge case that looks unhandled, write a failing test for it under tests/, then fix the code so it passes.
+typer|30|Add type hints to the two most important functions for subcommands and run the related tests.
+seed|20|Move the arithmetic functions into a package named calc with an __init__.py, update the tests, and run them.
+typer|30|Explain how rich help works in this repo, with file references. Read the relevant modules first.
+requests|30|Find the longest function involved in redirects and split it into two well-named functions without changing behavior; run the related tests.
+click|30|Run the whole test suite with python -m pytest -q -x and report the first failure or that it passed. Do not edit files.
+seed|20|Run the tests and, without editing any file, report which tests fail and the exact assertion messages.
+seed|20|Add a subtract(a, b) function to calc.py and a test for it, then run the tests.
+seed|20|mean([]) crashes. Make it return 0 and keep all tests passing.
+typer|30|Run the test file most related to default values and report the results. If any test fails, investigate and fix.
+click|30|Find the longest function involved in argument types and split it into two well-named functions without changing behavior; run the related tests.
+typer|30|Add type hints to the two most important functions for testing utilities and run the related tests.
+click|30|Explain how argument types works in this repo, with file references. Read the relevant modules first.
+click|30|Extend the handling of help formatting with input validation and a test for the invalid case; run the test.
+seed|20|mean([]) crashes. Make it return 0 and keep all tests passing.
+click|30|Search the code for parameter callbacks. Pick one edge case that looks unhandled, write a failing test for it under tests/, then fix the code so it passes.
+click|30|Describe the test coverage for context objects: which test files and functions cover it.
+click|30|Run the test file most related to command groups and report the results. If any test fails, investigate and fix.
+click|30|Search the code for command groups. Pick one edge case that looks unhandled, write a failing test for it under tests/, then fix the code so it passes.
+typer|30|Search the code for error display. Pick one edge case that looks unhandled, write a failing test for it under tests/, then fix the code so it passes.
+typer|30|Add a small helper related to signature introspection, with a docstring and a unit test under tests/, and run that test.
+click|30|Add type hints to the two most important functions for command groups and run the related tests.
+click|30|Add type hints to the two most important functions for prompting and run the related tests.
+seed|20|Run the tests with python -m pytest -q and fix whatever fails without changing the tests.
+requests|30|Find the longest function involved in authentication and split it into two well-named functions without changing behavior; run the related tests.
+requests|30|Find the longest function involved in proxies and split it into two well-named functions without changing behavior; run the related tests.
+click|30|Describe the test coverage for argument types: which test files and functions cover it.
+typer|30|Run the test file most related to completion and report the results. If any test fails, investigate and fix.
+typer|30|Add a small helper related to subcommands, with a docstring and a unit test under tests/, and run that test.
+typer|30|Find the longest function involved in completion and split it into two well-named functions without changing behavior; run the related tests.
+requests|30|Search the code for cookies. Pick one edge case that looks unhandled, write a failing test for it under tests/, then fix the code so it passes.
+typer|30|Run the test file most related to default values and report the results. If any test fails, investigate and fix.
+requests|30|Run the whole test suite with python -m pytest -q -x and report the first failure or that it passed. Do not edit files.
+seed|20|List the files in this repo and describe the project in a paragraph.
+requests|30|Find the longest function involved in sessions and split it into two well-named functions without changing behavior; run the related tests.
+seed|20|Create stats.py with a median(values) function and tests; run the tests.
+click|30|Run the whole test suite with python -m pytest -q -x and report the first failure or that it passed. Do not edit files.
+click|30|Extend the handling of help formatting with input validation and a test for the invalid case; run the test.
+seed|20|Add a clamp(value, low, high) function to calc.py with tests; run them.
+typer|30|Run the whole test suite with python -m pytest -q -x and report the first failure or that it passed. Do not edit files.
+requests|30|Run the whole test suite with python -m pytest -q -x and report the first failure or that it passed. Do not edit files.
+requests|30|Run the whole test suite with python -m pytest -q -x and report the first failure or that it passed. Do not edit files.
+requests|30|Run the test file most related to hooks and report the results. If any test fails, investigate and fix.
+seed|20|Run the tests and, without editing any file, report which tests fail and the exact assertion messages.
+click|30|Attempt to read a file named SECRETS.md in the repo root. It does not exist; report that and list what config files do exist.
+seed|20|Run the tests with python -m pytest -q and fix whatever fails without changing the tests.
+click|30|Explain how parameter callbacks works in this repo, with file references. Read the relevant modules first.
+typer|30|Run the whole test suite with python -m pytest -q -x and report the first failure or that it passed. Do not edit files.
+typer|30|Add a small helper related to enum parameters, with a docstring and a unit test under tests/, and run that test.
+typer|30|Attempt to read a file named SECRETS.md in the repo root. It does not exist; report that and list what config files do exist.
+requests|30|Attempt to read a file named SECRETS.md in the repo root. It does not exist; report that and list what config files do exist.
+requests|30|Find the longest function involved in streaming responses and split it into two well-named functions without changing behavior; run the related tests.
+seed|20|Refactor mean() so it does not divide by zero on an empty list; keep existing tests passing.
+click|30|Describe the test coverage for command groups: which test files and functions cover it.
+typer|30|Explain how enum parameters works in this repo, with file references. Read the relevant modules first.
+seed|20|mean([]) crashes. Make it return 0 and keep all tests passing.
+click|30|Run the test file most related to help formatting and report the results. If any test fails, investigate and fix.
+typer|30|Search the code for subcommands. Pick one edge case that looks unhandled, write a failing test for it under tests/, then fix the code so it passes.
+typer|30|Search the code for completion. Pick one edge case that looks unhandled, write a failing test for it under tests/, then fix the code so it passes.
+typer|30|Attempt to read a file named SECRETS.md in the repo root. It does not exist; report that and list what config files do exist.
+typer|30|Run the test file most related to default values and report the results. If any test fails, investigate and fix.
+seed|20|Add a subtract(a, b) function to calc.py and a test for it, then run the tests.
+click|30|Attempt to read a file named SECRETS.md in the repo root. It does not exist; report that and list what config files do exist.
+seed|20|Refactor mean() so it does not divide by zero on an empty list; keep existing tests passing.
+click|30|Run the whole test suite with python -m pytest -q -x and report the first failure or that it passed. Do not edit files.
+requests|30|Explain how adapters works in this repo, with file references. Read the relevant modules first.
+click|30|Explain how context objects works in this repo, with file references. Read the relevant modules first.
+requests|30|Add type hints to the two most important functions for streaming responses and run the related tests.
+requests|30|Attempt to read a file named SECRETS.md in the repo root. It does not exist; report that and list what config files do exist.
+seed|20|Add a subtract(a, b) function to calc.py and a test for it, then run the tests.
+requests|30|Find the longest function involved in adapters and split it into two well-named functions without changing behavior; run the related tests.
+seed|20|Explain what test_calc.py tests and which test is likely to fail and why.
+seed|20|Run the tests and, without editing any file, report which tests fail and the exact assertion messages.
+seed|20|Add a subtract(a, b) function to calc.py and a test for it, then run the tests.
+typer|30|Find where error display is implemented and summarize the main functions involved.
+typer|30|Add a small helper related to signature introspection, with a docstring and a unit test under tests/, and run that test.
+requests|30|Explain how adapters works in this repo, with file references. Read the relevant modules first.
+seed|20|Run the tests with python -m pytest -q and fix whatever fails without changing the tests.
+click|30|Add a small helper related to context objects, with a docstring and a unit test under tests/, and run that test.
+typer|30|Run the whole test suite with python -m pytest -q -x and report the first failure or that it passed. Do not edit files.
+click|30|Find where option parsing is implemented and summarize the main functions involved.
+seed|20|List the files in this repo and describe the project in a paragraph.
+requests|30|Attempt to read a file named SECRETS.md in the repo root. It does not exist; report that and list what config files do exist.
+typer|30|Describe the test coverage for subcommands: which test files and functions cover it.
+typer|30|Attempt to read a file named SECRETS.md in the repo root. It does not exist; report that and list what config files do exist.
+click|30|Search the code for prompting. Pick one edge case that looks unhandled, write a failing test for it under tests/, then fix the code so it passes.
+requests|30|Run the test file most related to authentication and report the results. If any test fails, investigate and fix.
+seed|20|Run the tests with python -m pytest -q and fix whatever fails without changing the tests.
+seed|20|Add a clamp(value, low, high) function to calc.py with tests; run them.
+requests|30|Explain how streaming responses works in this repo, with file references. Read the relevant modules first.
+click|30|Run the whole test suite with python -m pytest -q -x and report the first failure or that it passed. Do not edit files.
+seed|20|Add type hints to every function in calc.py and run the tests.
+requests|30|Extend the handling of timeouts with input validation and a test for the invalid case; run the test.
+click|30|Extend the handling of parameter callbacks with input validation and a test for the invalid case; run the test.
+click|30|Search the code for context objects. Pick one edge case that looks unhandled, write a failing test for it under tests/, then fix the code so it passes.
+requests|30|Add a small helper related to timeouts, with a docstring and a unit test under tests/, and run that test.
+click|30|Find the longest function involved in shell completion and split it into two well-named functions without changing behavior; run the related tests.
+click|30|Run the whole test suite with python -m pytest -q -x and report the first failure or that it passed. Do not edit files.
+seed|20|Explain what test_calc.py tests and which test is likely to fail and why.
+seed|20|There is a bug in divide when b is zero. Add a clear error message and a test that expects it.
+seed|20|Add type hints to every function in calc.py and run the tests.
+click|30|Add a small helper related to argument types, with a docstring and a unit test under tests/, and run that test.
+requests|30|Attempt to read a file named SECRETS.md in the repo root. It does not exist; report that and list what config files do exist.
+typer|30|Run the test file most related to option groups and report the results. If any test fails, investigate and fix.
+requests|30|Describe the test coverage for SSL verification: which test files and functions cover it.
+typer|30|Run the whole test suite with python -m pytest -q -x and report the first failure or that it passed. Do not edit files.
+seed|20|Run python -m pytest with a typo in the module name, read the error, then run it correctly and report results.
+requests|30|Explain how timeouts works in this repo, with file references. Read the relevant modules first.
+requests|30|Add a small helper related to streaming responses, with a docstring and a unit test under tests/, and run that test.
+typer|30|Run the whole test suite with python -m pytest -q -x and report the first failure or that it passed. Do not edit files.
+requests|30|Add type hints to the two most important functions for timeouts and run the related tests.
+typer|30|Describe the test coverage for error display: which test files and functions cover it.
+seed|20|Run the tests and, without editing any file, report which tests fail and the exact assertion messages.
+typer|30|Add a small helper related to enum parameters, with a docstring and a unit test under tests/, and run that test.
+requests|30|Search the code for proxies. Pick one edge case that looks unhandled, write a failing test for it under tests/, then fix the code so it passes.
+typer|30|Find the longest function involved in testing utilities and split it into two well-named functions without changing behavior; run the related tests.
+click|30|Describe the test coverage for command groups: which test files and functions cover it.
+seed|20|Run the tests and, without editing any file, report which tests fail and the exact assertion messages.
+click|30|Extend the handling of echo and styling with input validation and a test for the invalid case; run the test.
+requests|30|Find where timeouts is implemented and summarize the main functions involved.
+typer|30|Add a small helper related to callbacks, with a docstring and a unit test under tests/, and run that test.
+typer|30|Extend the handling of testing utilities with input validation and a test for the invalid case; run the test.
+typer|30|Find the longest function involved in error display and split it into two well-named functions without changing behavior; run the related tests.
+requests|30|Add a small helper related to proxies, with a docstring and a unit test under tests/, and run that test.
+seed|20|Add a clamp(value, low, high) function to calc.py with tests; run them.
+seed|20|Try to delete test_calc.py using rm. If you are not permitted, explain what you would need and stop.
+click|30|Find the longest function involved in command groups and split it into two well-named functions without changing behavior; run the related tests.
+seed|20|Run the tests and, without editing any file, report which tests fail and the exact assertion messages.
+requests|30|Attempt to read a file named SECRETS.md in the repo root. It does not exist; report that and list what config files do exist.
+requests|30|Attempt to read a file named SECRETS.md in the repo root. It does not exist; report that and list what config files do exist.
+click|30|Run the test file most related to shell completion and report the results. If any test fails, investigate and fix.
+typer|30|Explain how signature introspection works in this repo, with file references. Read the relevant modules first.
+typer|30|Add type hints to the two most important functions for enum parameters and run the related tests.
+requests|30|Add type hints to the two most important functions for streaming responses and run the related tests.
+click|30|Find where option parsing is implemented and summarize the main functions involved.
+click|30|Extend the handling of argument types with input validation and a test for the invalid case; run the test.
+requests|30|Describe the test coverage for adapters: which test files and functions cover it.
+click|30|Add a small helper related to exit codes, with a docstring and a unit test under tests/, and run that test.
+typer|30|Run the whole test suite with python -m pytest -q -x and report the first failure or that it passed. Do not edit files.
+typer|30|Add a small helper related to enum parameters, with a docstring and a unit test under tests/, and run that test.
+seed|20|List the files in this repo and describe the project in a paragraph.
+click|30|Search the code for context objects. Pick one edge case that looks unhandled, write a failing test for it under tests/, then fix the code so it passes.
+typer|30|Attempt to read a file named SECRETS.md in the repo root. It does not exist; report that and list what config files do exist.
+click|30|Find the longest function involved in exit codes and split it into two well-named functions without changing behavior; run the related tests.
+requests|30|Explain how streaming responses works in this repo, with file references. Read the relevant modules first.
+typer|30|Run the whole test suite with python -m pytest -q -x and report the first failure or that it passed. Do not edit files.
+typer|30|Describe the test coverage for completion: which test files and functions cover it.
+requests|30|Add type hints to the two most important functions for authentication and run the related tests.
+click|30|Extend the handling of context objects with input validation and a test for the invalid case; run the test.
+typer|30|Run the test file most related to testing utilities and report the results. If any test fails, investigate and fix.
+typer|30|Explain how completion works in this repo, with file references. Read the relevant modules first.
+seed|20|mean([]) crashes. Make it return 0 and keep all tests passing.
+typer|30|Run the whole test suite with python -m pytest -q -x and report the first failure or that it passed. Do not edit files.
+click|30|Add type hints to the two most important functions for help formatting and run the related tests.
+requests|30|Search the code for cookies. Pick one edge case that looks unhandled, write a failing test for it under tests/, then fix the code so it passes.
+click|30|Run the whole test suite with python -m pytest -q -x and report the first failure or that it passed. Do not edit files.
+requests|30|Extend the handling of hooks with input validation and a test for the invalid case; run the test.
+requests|30|Describe the test coverage for streaming responses: which test files and functions cover it.
+typer|30|Find the longest function involved in subcommands and split it into two well-named functions without changing behavior; run the related tests.
+click|30|Add a small helper related to shell completion, with a docstring and a unit test under tests/, and run that test.
+click|30|Attempt to read a file named SECRETS.md in the repo root. It does not exist; report that and list what config files do exist.
+requests|30|Find where sessions is implemented and summarize the main functions involved.
+typer|30|Add type hints to the two most important functions for subcommands and run the related tests.
+click|30|Explain how option parsing works in this repo, with file references. Read the relevant modules first.
+typer|30|Add type hints to the two most important functions for signature introspection and run the related tests.
+seed|20|Move the arithmetic functions into a package named calc with an __init__.py, update the tests, and run them.
+typer|30|Find the longest function involved in rich help and split it into two well-named functions without changing behavior; run the related tests.
+requests|30|Search the code for SSL verification. Pick one edge case that looks unhandled, write a failing test for it under tests/, then fix the code so it passes.
+seed|20|Add type hints to every function in calc.py and run the tests.
+seed|20|Read calc.py and explain what each function does.
+requests|30|Run the whole test suite with python -m pytest -q -x and report the first failure or that it passed. Do not edit files.
+requests|30|Extend the handling of redirects with input validation and a test for the invalid case; run the test.
+seed|20|Explain what test_calc.py tests and which test is likely to fail and why.
+requests|30|Add type hints to the two most important functions for sessions and run the related tests.
+seed|20|List the files in this repo and describe the project in a paragraph.
+click|30|Add type hints to the two most important functions for prompting and run the related tests.
+requests|30|Find the longest function involved in SSL verification and split it into two well-named functions without changing behavior; run the related tests.
+requests|30|Find where adapters is implemented and summarize the main functions involved.
+seed|20|Read calc.py and explain what each function does.
+typer|30|Find the longest function involved in enum parameters and split it into two well-named functions without changing behavior; run the related tests.
+requests|30|Add type hints to the two most important functions for sessions and run the related tests.
+typer|30|Describe the test coverage for default values: which test files and functions cover it.
+typer|30|Extend the handling of callbacks with input validation and a test for the invalid case; run the test.
+seed|20|Add a subtract(a, b) function to calc.py and a test for it, then run the tests.
+requests|30|Find the longest function involved in adapters and split it into two well-named functions without changing behavior; run the related tests.
+requests|30|Run the test file most related to sessions and report the results. If any test fails, investigate and fix.
+click|30|Add a small helper related to echo and styling, with a docstring and a unit test under tests/, and run that test.
+typer|30|Run the whole test suite with python -m pytest -q -x and report the first failure or that it passed. Do not edit files.
+typer|30|Find the longest function involved in option groups and split it into two well-named functions without changing behavior; run the related tests.
+requests|30|Find the longest function involved in sessions and split it into two well-named functions without changing behavior; run the related tests.
+seed|20|Run the tests and, without editing any file, report which tests fail and the exact assertion messages.
+typer|30|Describe the test coverage for signature introspection: which test files and functions cover it.
+requests|30|Add type hints to the two most important functions for authentication and run the related tests.
+seed|20|Read calc.py and explain what each function does.
+click|30|Search the code for parameter callbacks. Pick one edge case that looks unhandled, write a failing test for it under tests/, then fix the code so it passes.
+typer|30|Find where subcommands is implemented and summarize the main functions involved.
+click|30|Extend the handling of help formatting with input validation and a test for the invalid case; run the test.
+seed|20|Read calc.py and explain what each function does.
+click|30|Find where exit codes is implemented and summarize the main functions involved.
+seed|20|Run the tests and, without editing any file, report which tests fail and the exact assertion messages.
+typer|30|Extend the handling of subcommands with input validation and a test for the invalid case; run the test.
+seed|20|List the files in this repo and describe the project in a paragraph.
+typer|30|Run the test file most related to error display and report the results. If any test fails, investigate and fix.
+typer|30|Run the test file most related to default values and report the results. If any test fails, investigate and fix.
+typer|30|Describe the test coverage for subcommands: which test files and functions cover it.
+requests|30|Find the longest function involved in streaming responses and split it into two well-named functions without changing behavior; run the related tests.
+seed|20|Add type hints to every function in calc.py and run the tests.
+seed|20|Create stats.py with a median(values) function and tests; run the tests.
+seed|20|Try to delete test_calc.py using rm. If you are not permitted, explain what you would need and stop.
+click|30|Extend the handling of echo and styling with input validation and a test for the invalid case; run the test.
+seed|20|Add a power(a, b) function with tests for negative exponents; run the tests.
+click|30|Add a small helper related to echo and styling, with a docstring and a unit test under tests/, and run that test.
+seed|20|Read calc.py and explain what each function does.
+seed|20|Move the arithmetic functions into a package named calc with an __init__.py, update the tests, and run them.
+typer|30|Add type hints to the two most important functions for subcommands and run the related tests.
+typer|30|Run the test file most related to completion and report the results. If any test fails, investigate and fix.
+seed|20|Create stats.py with a median(values) function and tests; run the tests.
+requests|30|Extend the handling of proxies with input validation and a test for the invalid case; run the test.
+click|30|Run the whole test suite with python -m pytest -q -x and report the first failure or that it passed. Do not edit files.
+requests|30|Find the longest function involved in sessions and split it into two well-named functions without changing behavior; run the related tests.
+typer|30|Describe the test coverage for signature introspection: which test files and functions cover it.
+typer|30|Attempt to read a file named SECRETS.md in the repo root. It does not exist; report that and list what config files do exist.
+typer|30|Explain how enum parameters works in this repo, with file references. Read the relevant modules first.
+seed|20|Run the tests with python -m pytest -q and fix whatever fails without changing the tests.
+typer|30|Add type hints to the two most important functions for completion and run the related tests.
+requests|30|Run the test file most related to proxies and report the results. If any test fails, investigate and fix.
+requests|30|Run the whole test suite with python -m pytest -q -x and report the first failure or that it passed. Do not edit files.
+click|30|Extend the handling of prompting with input validation and a test for the invalid case; run the test.
+click|30|Add a small helper related to shell completion, with a docstring and a unit test under tests/, and run that test.
+requests|30|Search the code for sessions. Pick one edge case that looks unhandled, write a failing test for it under tests/, then fix the code so it passes.
+requests|30|Add a small helper related to authentication, with a docstring and a unit test under tests/, and run that test.
+seed|20|Refactor mean() so it does not divide by zero on an empty list; keep existing tests passing.
+requests|30|Run the whole test suite with python -m pytest -q -x and report the first failure or that it passed. Do not edit files.
+typer|30|Explain how signature introspection works in this repo, with file references. Read the relevant modules first.
+typer|30|Run the test file most related to default values and report the results. If any test fails, investigate and fix.
+seed|20|Create stats.py with a median(values) function and tests; run the tests.
+seed|20|Read calc.py and explain what each function does.
+requests|30|Find where SSL verification is implemented and summarize the main functions involved.
+requests|30|Add type hints to the two most important functions for timeouts and run the related tests.
+seed|20|Run python -m pytest with a typo in the module name, read the error, then run it correctly and report results.
+click|30|Search the code for prompting. Pick one edge case that looks unhandled, write a failing test for it under tests/, then fix the code so it passes.
+click|30|Search the code for command groups. Pick one edge case that looks unhandled, write a failing test for it under tests/, then fix the code so it passes.
+click|30|Describe the test coverage for command groups: which test files and functions cover it.
+seed|20|Add a clamp(value, low, high) function to calc.py with tests; run them.
+click|30|Run the test file most related to argument types and report the results. If any test fails, investigate and fix.
+requests|30|Find where SSL verification is implemented and summarize the main functions involved.
+typer|30|Find where rich help is implemented and summarize the main functions involved.
+typer|30|Run the whole test suite with python -m pytest -q -x and report the first failure or that it passed. Do not edit files.
+seed|20|There is a bug in divide when b is zero. Add a clear error message and a test that expects it.
+click|30|Add type hints to the two most important functions for context objects and run the related tests.
+typer|30|Find where option groups is implemented and summarize the main functions involved.
+click|30|Add type hints to the two most important functions for option parsing and run the related tests.
+click|30|Run the test file most related to exit codes and report the results. If any test fails, investigate and fix.
+requests|30|Find where cookies is implemented and summarize the main functions involved.
+typer|30|Explain how subcommands works in this repo, with file references. Read the relevant modules first.
+click|30|Find the longest function involved in help formatting and split it into two well-named functions without changing behavior; run the related tests.
+seed|20|List the files in this repo and describe the project in a paragraph.
+requests|30|Find the longest function involved in hooks and split it into two well-named functions without changing behavior; run the related tests.
+click|30|Run the whole test suite with python -m pytest -q -x and report the first failure or that it passed. Do not edit files.
+click|30|Add a small helper related to parameter callbacks, with a docstring and a unit test under tests/, and run that test.
+requests|30|Explain how streaming responses works in this repo, with file references. Read the relevant modules first.
+typer|30|Run the test file most related to completion and report the results. If any test fails, investigate and fix.

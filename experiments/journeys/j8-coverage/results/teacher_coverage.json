@@ -1,0 +1,198 @@
+{
+ "passed": 16,
+ "total": 16,
+ "tasks": [
+  {
+   "task": 1,
+   "pass": true,
+   "required": [
+    "NotebookEdit"
+   ],
+   "missing": [],
+   "turns": 6,
+   "unswapped": 6
+  },
+  {
+   "task": 2,
+   "pass": true,
+   "required": [
+    "TaskCreate",
+    "TaskList",
+    "TaskUpdate"
+   ],
+   "missing": [],
+   "turns": 15,
+   "unswapped": 15
+  },
+  {
+   "task": 3,
+   "pass": true,
+   "required": [
+    "TaskOutput"
+   ],
+   "missing": [],
+   "turns": 4,
+   "unswapped": 4
+  },
+  {
+   "task": 4,
+   "pass": true,
+   "required": [
+    "ListAgents"
+   ],
+   "missing": [],
+   "turns": 3,
+   "unswapped": 3
+  },
+  {
+   "task": 5,
+   "pass": true,
+   "required": [
+    "EnterWorktree",
+    "ExitWorktree"
+   ],
+   "missing": [],
+   "turns": 7,
+   "unswapped": 7
+  },
+  {
+   "task": 6,
+   "pass": true,
+   "required": [
+    "CronList"
+   ],
+   "missing": [],
+   "turns": 5,
+   "unswapped": 5
+  },
+  {
+   "task": 7,
+   "pass": true,
+   "required": [
+    "WebSearch"
+   ],
+   "missing": [],
+   "turns": 4,
+   "unswapped": 4
+  },
+  {
+   "task": 8,
+   "pass": true,
+   "required": [
+    "Agent"
+   ],
+   "missing": [],
+   "turns": 8,
+   "unswapped": 8
+  },
+  {
+   "task": 9,
+   "pass": true,
+   "required": [
+    "Skill"
+   ],
+   "missing": [],
+   "turns": 9,
+   "unswapped": 9
+  },
+  {
+   "task": 10,
+   "pass": true,
+   "required": [
+    "TaskCreate",
+    "TaskGet"
+   ],
+   "missing": [],
+   "turns": 5,
+   "unswapped": 5
+  },
+  {
+   "task": 11,
+   "pass": true,
+   "required": [
+    "ReportFindings"
+   ],
+   "missing": [],
+   "turns": 4,
+   "unswapped": 4
+  },
+  {
+   "task": 12,
+   "pass": true,
+   "required": [
+    "SendMessage"
+   ],
+   "missing": [],
+   "turns": 6,
+   "unswapped": 6
+  },
+  {
+   "task": 13,
+   "pass": true,
+   "required": [
+    "Agent",
+    "NotebookEdit"
+   ],
+   "missing": [],
+   "turns": 13,
+   "unswapped": 13
+  },
+  {
+   "task": 14,
+   "pass": true,
+   "required": [
+    "TaskCreate",
+    "TaskUpdate"
+   ],
+   "missing": [],
+   "turns": 10,
+   "unswapped": 10
+  },
+  {
+   "task": 15,
+   "pass": true,
+   "required": [
+    "EnterWorktree",
+    "ExitWorktree"
+   ],
+   "missing": [],
+   "turns": 5,
+   "unswapped": 5
+  },
+  {
+   "task": 16,
+   "pass": true,
+   "required": [
+    "Glob",
+    "TaskCreate",
+    "TaskList"
+   ],
+   "missing": [],
+   "turns": 4,
+   "unswapped": 4
+  }
+ ],
+ "tools_used": [
+  "Agent",
+  "Bash",
+  "CronList",
+  "Edit",
+  "EnterWorktree",
+  "ExitWorktree",
+  "Glob",
+  "Grep",
+  "ListAgents",
+  "NotebookEdit",
+  "Read",
+  "ReportFindings",
+  "SendMessage",
+  "Skill",
+  "TaskCreate",
+  "TaskGet",
+  "TaskList",
+  "TaskOutput",
+  "TaskUpdate",
+  "WebSearch",
+  "Write"
+ ]
+}

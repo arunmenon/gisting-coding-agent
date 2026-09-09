@@ -1,0 +1,726 @@
+<title>Gisting Field Notes</title>
+<style>
+:root{
+  --paper:#F1F2EE; --paper-2:#E7E9E3; --ink:#1C2321; --ink-2:#4A5350; --rule:#C9CEC6;
+  --petrol:#1F5F6E; --petrol-soft:#DCE8EB; --plum:#6B3F73; --plum-soft:#EADFEC;
+  --copper:#B5622A; --copper-soft:#F3E4D8; --alert:#A4342E; --alert-soft:#F2DEDC;
+  --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+  --serif:Charter,"Iowan Old Style","Palatino Linotype",Georgia,serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#14181A; --paper-2:#1C2225; --ink:#E4E7E1; --ink-2:#A9B1AC; --rule:#33403D;
+    --petrol:#6FB3C2; --petrol-soft:#1B3238; --plum:#C08BC7; --plum-soft:#2E1F31;
+    --copper:#DD9A62; --copper-soft:#3A2617; --alert:#E07A73; --alert-soft:#3B1F1D;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#14181A; --paper-2:#1C2225; --ink:#E4E7E1; --ink-2:#A9B1AC; --rule:#33403D;
+  --petrol:#6FB3C2; --petrol-soft:#1B3238; --plum:#C08BC7; --plum-soft:#2E1F31;
+  --copper:#DD9A62; --copper-soft:#3A2617; --alert:#E07A73; --alert-soft:#3B1F1D;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--serif);font-size:17px;line-height:1.55}
+.bar{position:sticky;top:0;z-index:5;background:var(--paper);border-bottom:1px solid var(--rule);display:flex;align-items:center;justify-content:space-between;gap:12px;padding:8px 20px;font-family:var(--mono);font-size:12px;letter-spacing:.04em}
+.bar button{font:inherit;background:var(--paper-2);color:var(--ink);border:1px solid var(--rule);padding:6px 10px;cursor:pointer}
+.bar button:focus-visible{outline:2px solid var(--petrol);outline-offset:2px}
+main{max-width:70ch;margin:0 auto;padding:28px 20px 80px}
+h1{font-size:2.3rem;line-height:1.1;margin:.2em 0 .3em;text-wrap:balance;font-weight:700}
+h2{font-size:1.55rem;margin:2.4em 0 .5em;text-wrap:balance}
+h3{font-size:1.15rem;margin:1.6em 0 .4em}
+p{margin:.7em 0}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-2)}
+.lede{font-size:1.15rem;color:var(--ink-2)}
+.legend{display:flex;flex-wrap:wrap;gap:10px 18px;font-family:var(--mono);font-size:12px;margin:14px 0 6px}
+.legend span::before{content:"";display:inline-block;width:11px;height:11px;margin-right:6px;vertical-align:-1px}
+.legend .c::before{background:var(--copper)}.legend .a::before{background:var(--alert)}.legend .p::before{background:var(--plum)}.legend .m::before{background:var(--petrol)}
+.block{padding:12px 16px;margin:14px 0;border-left:4px solid var(--rule);background:var(--paper-2)}
+.block.anchor{border-color:var(--copper);background:var(--copper-soft)}
+.block.assume{border-color:var(--alert);background:var(--alert-soft)}
+.block.point{border-color:var(--plum);background:var(--plum-soft)}
+.block .tag{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;display:block;margin-bottom:4px}
+.anchor .tag{color:var(--copper)}.assume .tag{color:var(--alert)}.point .tag{color:var(--plum)}
+.routes{display:grid;grid-template-columns:1fr;gap:8px;margin:14px 0}
+.routes div{padding:10px 12px;border:1px solid var(--rule);font-size:.95rem}
+.routes b{font-family:var(--mono);font-size:12px;letter-spacing:.04em;display:block;color:var(--petrol);margin-bottom:3px}
+ol.organizer{padding-left:1.3em}ol.organizer li{margin:.35em 0}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin:14px 0}
+.card{border:1px solid var(--rule);padding:10px 12px;background:var(--paper-2)}
+.card .q{font-size:.95rem;min-height:3.2em}
+.card .v{font-family:var(--mono);font-size:13px;margin-top:8px;color:var(--petrol)}
+.stack{font-family:var(--mono);font-size:12.5px;line-height:1.5;background:var(--paper-2);border:1px solid var(--rule);padding:10px 12px;margin:12px 0;white-space:pre-wrap}
+table{border-collapse:collapse;width:100%;font-size:.93rem;margin:12px 0;font-variant-numeric:tabular-nums}
+th,td{text-align:left;padding:7px 8px;border-bottom:1px solid var(--rule);vertical-align:top}
+th{font-family:var(--mono);font-size:11.5px;letter-spacing:.04em;text-transform:uppercase;color:var(--ink-2);font-weight:500}
+td.n{font-family:var(--mono);font-size:13px}
+.tablewrap{overflow-x:auto}
+figure{margin:18px 0;padding:12px;border:1px solid var(--rule);background:var(--paper-2)}
+figure svg{display:block;max-width:100%;height:auto;color:var(--ink);font-family:var(--mono)}
+figcaption{font-family:var(--mono);font-size:12px;line-height:1.5;color:var(--ink-2);margin-top:8px}
+details{border:1px solid var(--rule);margin:14px 0;background:var(--paper)}
+details>summary{cursor:pointer;padding:9px 12px;font-family:var(--mono);font-size:12.5px;letter-spacing:.03em;color:var(--petrol);list-style:none}
+details>summary::before{content:"+ ";}
+details[open]>summary::before{content:"\2212  ";}
+details>summary:focus-visible{outline:2px solid var(--petrol);outline-offset:-2px}
+details .in{padding:2px 14px 12px;border-top:1px solid var(--rule)}
+dl{display:grid;grid-template-columns:max-content 1fr;gap:4px 14px;font-size:.93rem;margin:8px 0}
+dt{font-family:var(--mono);font-size:12px;color:var(--ink-2)}
+dd{margin:0}
+.terms{font-family:var(--mono);font-size:12px;color:var(--ink-2);margin-top:10px}
+.spec{font-family:var(--mono);font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--petrol);margin:14px 0 4px}
+code{font-family:var(--mono);font-size:.88em;background:var(--paper-2);padding:1px 4px}
+.chapter{margin-top:3.2em;padding-top:1em;border-top:2px solid var(--ink)}
+.chapter .eyebrow{color:var(--petrol)}
+footer{margin-top:60px;padding-top:16px;border-top:1px solid var(--rule);font-family:var(--mono);font-size:12px;color:var(--ink-2)}
+@media (max-width:600px){body{font-size:16px}h1{font-size:1.9rem}}
+@media (prefers-reduced-motion:no-preference){details .in{animation:fade .18s ease-out}}
+@keyframes fade{from{opacity:.4}to{opacity:1}}
+</style>
+
+<div class="bar"><span>GISTING FIELD NOTES &middot; 2026-09-03 to 09-07 &middot; eight journeys &middot; $105 of GPU</span><button id="all" type="button">Open every depth panel</button></div>
+
+<main>
+<p class="eyebrow">Experiment report &middot; Claude Code 2.1.259 on self-hosted Qwen3.8-27B &middot; all numbers verified from the run logs</p>
+<h1>Can a coding agent read a quarter as much and still do the job?</h1>
+<p class="lede">A curriculum in twelve lessons. Every lesson opens with a situation from ordinary life, names the belief it tests, shows the mechanism in one drawing, and gives the numbers. The technical layer is one click away and never assumes vocabulary.</p>
+
+<div class="legend"><span class="c">Everyday anchor</span><span class="a">Assumption exposed</span><span class="p">The point</span><span class="m">Machinery and measurement</span></div>
+
+<div class="routes">
+  <div><b>If you decide budgets</b>Read the one-minute version, the verdict cards, and each lesson's copper and red blocks. That is the complete argument.</div>
+  <div><b>If you build systems but not models</b>Read everything on the surface, then open the depth panels; every term is defined where it first appears.</div>
+  <div><b>If you train models</b>Open the depth panels for the spec sheets and incidents; the methods appendix tells you how to continue the program.</div>
+  <div><b>If you have five minutes</b>The one-minute version, the verdict cards, and the surprises ledger near the end.</div>
+</div>
+
+<h2>The whole report in one minute</h2>
+<ol class="organizer">
+  <li>Every time a coding agent asks its model to do anything, it first sends a long preamble: rules of behaviour plus a catalogue of every tool. The model rereads it on every turn.</li>
+  <li>Shopify replaced their preamble with a few thousand learned made-up words and cut latency 38 percent. We asked whether that works for Claude Code driving a model we host ourselves.</li>
+  <li>We measured first. On short sessions, 73 percent of what the model reads is preamble, and almost all of it is the tool catalogue, not the rules.</li>
+  <li>We proved the model can accept 4,386 new words in its dictionary without ever saying them.</li>
+  <li>We collected 126 real coding sessions. The preamble's share falls with depth: 0.72 early, 0.44 over a long session, 0.18 at the deepest turns.</li>
+  <li>We recorded the full-preamble model's opinions once (the teacher), then trained only the made-up words to reproduce them (the student). One epoch, four hours.</li>
+  <li>We gave Claude Code twelve checkable coding jobs with each preamble. Twelve of twelve both ways, reading 13,000 fewer tokens per turn with the made-up words.</li>
+  <li>One blemish: in 84 tool calls the student once named a tool that does not exist. The catalogue's edge is where compression is weakest.</li>
+  <li>Then we let the loop run itself: three boxes, three shorter summaries (2:1, 8:1, 16:1), no human step from training to destruction. Twelve of twelve at every ratio, zero invented tool names. Even 1,099 made-up words for the 17,539-token preamble held on this task set.</li>
+  <li>Then a harder exam, sixteen tasks that need rare tools, real repositories, rule-keeping, and resistance to a booby-trapped file. Every compressed model dropped to 11 or 12 of 16 against the teacher's 15, and the failures were all one defect: they wrote results to invented directories, because the working-directory path, session id included, had been compressed into the summary.</li>
+  <li>The rule that fixes it: anything that must be reproduced verbatim, paths, ids, dates, names, stays outside the gist. Retrained with that rule, the 8:1 model scored 16 of 16, equal to the teacher the same night.</li>
+  <li>Finally the clean speed test, both arms with caching on. For one session at a time the gist saves almost nothing, because on this model the reading is not where the time goes. Under load it delivers 16 percent more requests per minute and cuts the slow tail of first-token wait by 39 percent. Shopify's throughput gain reproduces; their latency gain does not, exactly as the architecture predicted.</li>
+  <li>Two more recipes through the loop. Averaging the training loss per response rather than per batch cost one task and a fifth more error, as Shopify reported, mildly. And a week of practice with the rarely used tools did not help: with or without 299 targeted examples, the 8:1 summary reaches for those tools about 60 percent of the time the full handbook does. That is a limit of the summary's size, not of the data.</li>
+  <li>Total spend $105. Every failure along the way was plumbing or the provider, not the method; the surprises ledger lists all twenty-two, and the loop healed five of them on its own.</li>
+</ol>
+
+<h2>The arc</h2>
+<div class="cards">
+  <div class="card"><div class="q">Is the preamble a big enough share to matter?</div><div class="v">YES &middot; 0.73 short, 0.44 long</div></div>
+  <div class="card"><div class="q">Can this model's dictionary grow safely?</div><div class="v">YES &middot; 0 leaks in 30 generations</div></div>
+  <div class="card"><div class="q">Does the free alternative, caching, already win?</div><div class="v">PARTLY &middot; 87% hits short, 60% long</div></div>
+  <div class="card"><div class="q">Can the teacher be recorded once?</div><div class="v">YES &middot; top-32 keeps 0.999 of mass</div></div>
+  <div class="card"><div class="q">Do the made-up words learn?</div><div class="v">YES &middot; KL 0.053 to 0.015</div></div>
+  <div class="card"><div class="q">Does the agent still do the job?</div><div class="v">YES &middot; 12/12 vs 12/12</div></div>
+  <div class="card"><div class="q">Where is the compression knee?</div><div class="v">NOT A RATIO &middot; a content class</div></div>
+  <div class="card"><div class="q">Does a harder exam expose a defect?</div><div class="v">YES &middot; invented paths at every ratio</div></div>
+  <div class="card"><div class="q">Does the fix hold?</div><div class="v">YES &middot; 16/16 vs teacher 16/16</div></div>
+  <div class="card"><div class="q">Can the loop run unattended?</div><div class="v">YES &middot; 3 runs, 0 human steps, 5 self-heals</div></div>
+  <div class="card"><div class="q">Is the speed gain Shopify's?</div><div class="v">PARTLY &middot; +16% throughput, &minus;12% latency</div></div>
+  <div class="card"><div class="q">Does batch-level loss averaging matter?</div><div class="v">MILDLY &middot; 16/16 vs 14/16</div></div>
+  <div class="card"><div class="q">Can data buy back the rare tools?</div><div class="v">NO &middot; 10/16 before, 9/16 after</div></div>
+</div>
+
+<!-- LESSON 1 -->
+<section class="chapter">
+<p class="eyebrow">Lesson 1 &middot; the idea</p>
+<h2>A note the contractor rereads before every sentence</h2>
+<div class="block anchor"><span class="tag">Everyday anchor</span>Imagine hiring a contractor who, before saying anything, rereads the whole employee handbook and the complete catalogue of tools in the van. Every sentence. If you could hand them a one-page summary that produced exactly the same behaviour, you would.</div>
+<p>A language model does not read words. Text is chopped into tokens (word pieces), and each token is looked up in a table that turns it into a list of numbers, its embedding. The model only ever consumes those number lists. Gisting is the observation that nothing forces the table to contain only real words. You can add rows for invented tokens, and choose their numbers so that a few thousand of them carry the same meaning as the twenty thousand real ones they replace.</p>
+<div class="block assume"><span class="tag">Assumption exposed</span>"The prompt is fixed text; the only way to make it cheaper is to write less of it." The table is the doorway between text and model, and the doorway can be widened.</div>
+<figure>
+<svg viewBox="0 0 720 200" role="img" aria-label="Two rows: the full preamble as many small boxes feeding the model, versus a short row of gist tokens feeding the same model, with the same answer coming out">
+  <defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="currentColor"/></marker></defs>
+  <g font-size="12" fill="currentColor">
+    <text x="10" y="30">TODAY</text>
+    <g stroke="currentColor" fill="none">
+      <rect x="10" y="42" width="330" height="26"/>
+      <line x1="60" y1="42" x2="60" y2="68"/><line x1="110" y1="42" x2="110" y2="68"/><line x1="160" y1="42" x2="160" y2="68"/><line x1="210" y1="42" x2="210" y2="68"/><line x1="260" y1="42" x2="260" y2="68"/><line x1="310" y1="42" x2="310" y2="68"/>
+    </g>
+    <text x="14" y="86">17,540 tokens of preamble, identical every turn</text>
+    <rect x="360" y="42" width="60" height="26" stroke="currentColor" fill="none"/><text x="368" y="60">task</text>
+    <line x1="425" y1="55" x2="480" y2="55" stroke="currentColor" marker-end="url(#ar)"/>
+    <rect x="485" y="30" width="110" height="50" stroke="currentColor" fill="none"/><text x="503" y="60">model</text>
+    <line x1="600" y1="55" x2="650" y2="55" stroke="currentColor" marker-end="url(#ar)"/>
+    <text x="655" y="60">answer</text>
+
+    <text x="10" y="132">WITH A GIST</text>
+    <rect x="10" y="144" width="82" height="26" stroke="#6B3F73" fill="none"/>
+    <text x="16" y="162" fill="#6B3F73">4,386 gist</text>
+    <rect x="100" y="144" width="60" height="26" stroke="currentColor" fill="none"/><text x="108" y="162">task</text>
+    <line x1="165" y1="157" x2="480" y2="157" stroke="currentColor" marker-end="url(#ar)"/>
+    <text x="220" y="150" font-size="11">same weights, nothing else changes</text>
+    <rect x="485" y="132" width="110" height="50" stroke="currentColor" fill="none"/><text x="503" y="162">model</text>
+    <line x1="600" y1="157" x2="650" y2="157" stroke="currentColor" marker-end="url(#ar)"/>
+    <text x="655" y="162">same answer</text>
+  </g>
+</svg>
+<figcaption>The claim under test. Top: the full preamble in front of every request. Bottom: 4,386 learned tokens in its place, the model untouched. If the answers match, the bottom row is a quarter of the reading for the same behaviour.</figcaption>
+</figure>
+<div class="block point"><span class="tag">The point</span>Gisting is not a new model. It is 4,386 new rows in a lookup table, trained so that the model behaves identically with either preamble in front of it.</div>
+<details><summary>Depth: how the rows are chosen, and why the model is frozen</summary><div class="in">
+<p>You cannot write the numbers by hand. You set up a matching game. Run the model with the full preamble on a real conversation and record, at every position of its reply, its full list of next-token probabilities. That is the <em>teacher</em>. Run the same model with the gist rows in place of the preamble and record the same lists. That is the <em>student</em>. Score the disagreement with KL divergence (a standard single number for how different two probability lists are), then nudge the gist rows in the direction that shrinks it, over thousands of conversations. Distillation is the name for training by copying outputs; self-distillation because teacher and student are the same network with different inputs.</p>
+<p>All other weights stay frozen. Two payoffs: the model cannot drift anywhere else, and the deliverable is not a new model but a few thousand extra table rows plus a tokenizer entry per row, which any serving stack already understands.</p>
+<p class="terms">new terms: token &middot; embedding &middot; teacher &middot; student &middot; KL divergence &middot; self-distillation</p>
+</div></details>
+</section>
+
+<!-- LESSON 2 -->
+<section class="chapter">
+<p class="eyebrow">Lesson 2 &middot; the harness</p>
+<h2>What Claude Code actually sends, and why we tapped the wire</h2>
+<div class="block anchor"><span class="tag">Everyday anchor</span>Before renovating a kitchen you photograph it. Not because you distrust the plans, but because the plans show what someone thought was there, and the photo shows what is.</div>
+<p>Claude Code is a coding agent: a program that reads your repository, edits files, runs tests, and asks a language model what to do next at every step. Each step is a request containing the rules, the tool catalogue, the whole conversation so far, and the model's reply. We could not compress what we had not seen, so the first thing built was a tap: a 230-line proxy between Claude Code and the model that forwards every request unchanged and writes it to a log with timing.</p>
+<div class="block assume"><span class="tag">Assumption exposed</span>"The system prompt is the thing to compress." The rules are 1,500 tokens. The tool catalogue is 16,000. Two thirds of the catalogue describes tools the sessions never used.</div>
+<figure>
+<svg viewBox="0 0 720 230" role="img" aria-label="Claude Code sends a request through a tap proxy to a vLLM server; the tap logs every request; a bar shows the request's composition by token count">
+  <g font-size="12" fill="currentColor">
+    <rect x="10" y="20" width="130" height="44" stroke="currentColor" fill="none"/><text x="22" y="46">Claude Code</text>
+    <line x1="145" y1="42" x2="205" y2="42" stroke="currentColor" marker-end="url(#ar)"/>
+    <text x="150" y="34" font-size="11">Messages API</text>
+    <rect x="210" y="20" width="110" height="44" stroke="#1F5F6E" fill="none"/><text x="248" y="46" fill="#1F5F6E">tap</text>
+    <line x1="325" y1="42" x2="385" y2="42" stroke="currentColor" marker-end="url(#ar)"/>
+    <text x="330" y="34" font-size="11">unchanged</text>
+    <rect x="390" y="20" width="150" height="44" stroke="currentColor" fill="none"/><text x="402" y="38">vLLM 0.28</text><text x="402" y="54">Qwen3.8-27B, 96 GB</text>
+    <line x1="265" y1="66" x2="265" y2="100" stroke="#1F5F6E" marker-end="url(#ar)"/>
+    <text x="275" y="90" font-size="11" fill="#1F5F6E">logs request, reply, timing</text>
+    <rect x="215" y="104" width="100" height="26" stroke="#1F5F6E" fill="none"/><text x="226" y="122" fill="#1F5F6E">requests.jsonl</text>
+
+    <text x="10" y="162">ONE TURN, MEDIAN 24,258 TOKENS</text>
+    <rect x="10" y="172" width="472" height="24" fill="#6B3F73" opacity=".85"/>
+    <rect x="482" y="172" width="46" height="24" fill="#B5622A" opacity=".85"/>
+    <rect x="528" y="172" width="182" height="24" stroke="currentColor" fill="none"/>
+    <text x="18" y="189" fill="#fff">tool catalogue 15,994</text>
+    <text x="10" y="216" font-size="11">plum: static, gistable &middot; copper: rules 1,546 &middot; outline: the conversation so far, different every turn</text>
+  </g>
+</svg>
+<figcaption>Where the tap sits and what it saw. The wide plum block is the tool catalogue, identical in every request across 1,454 turns. The copper sliver is the instruction text. The outlined block is the only part that changes, and it grows as the session goes on.</figcaption>
+</figure>
+<div class="block point"><span class="tag">The point</span>The tap is the most valuable component in the program. It is the measurement instrument, the place where the swap happens, and the A/B switch, and Claude Code never has to change.</div>
+<details><summary>Depth: the anatomy of a request, and what counts as static</summary><div class="in">
+<p>Claude Code speaks the Anthropic Messages API. vLLM, the serving engine, implements that API natively, so pointing Claude Code at it needs one environment variable. The engine folds the tool catalogue into the system message through a chat template (a script that lays the conversation out as one text stream) and puts the tool block <em>before</em> the instruction text, after a one-line reasoning-effort preamble.</p>
+<p>Static means byte-identical across sessions after that template renders it. We found the static span by diffing system texts across sessions. What varies: the working-directory path, the git branch and status block, the date, and the served model's name, which Claude Code writes into its own prompt. Everything else, 17,540 tokens for the trimmed catalogue, is identical.</p>
+<div class="spec">stack</div>
+<div class="stack">tap: proxy/tap.py, stdlib only, streams SSE through and reassembles the reply
+serving: vllm/vllm-openai:v0.28.0, --language-model-only, prefix caching on, --max-num-seqs 64
+client: claude 2.1.259, auto-update off, attribution hash off (it changes the prompt per request)</div>
+<div class="spec">incidents</div>
+<p>Claude Code requests reasoning effort "high"; Qwen3.8 accepts only xhigh, medium, low and returned 400 on every turn until the tap remapped it. In print mode Claude Code reads stdin, so a shell loop feeding it a task list appended the rest of the list to the first prompt. Both are recorded in the surprises ledger.</p>
+<p class="terms">new terms: coding agent &middot; Messages API &middot; chat template &middot; static span</p>
+</div></details>
+</section>
+
+<!-- LESSON 3 -->
+<section class="chapter">
+<p class="eyebrow">Lesson 3 &middot; the measurement (E0)</p>
+<h2>Is the note big enough to be worth summarising?</h2>
+<div class="block anchor"><span class="tag">Everyday anchor</span>You would not hire someone to shorten a two-line memo. You would to shorten a forty-page one that everyone must read every morning.</div>
+<p>The plan set a rule before measuring: if the static preamble is under a quarter of what the model reads, integrated over real sessions, then trimming and caching win and gisting is not worth its training and retraining cost. Eight short sessions on a two-file repository gave the first number.</p>
+<div class="block assume"><span class="tag">Assumption exposed</span>"We should compress the prompt." Before any training, excluding one unconnected plugin's 24 tools removed 4,512 tokens for free. Trimming beat gisting for the first two days.</div>
+<div class="tablewrap"><table>
+<tr><th>Measure</th><th>Value</th></tr>
+<tr><td>Sessions / turns / tool calls</td><td class="n">8 / 43 / 50, none malformed</td></tr>
+<tr><td>Static span as rendered</td><td class="n">21,109 tokens</td></tr>
+<tr><td>of which instructions</td><td class="n">603</td></tr>
+<tr><td>of which 51 tool schemas</td><td class="n">20,506</td></tr>
+<tr><td>Context per turn, median / max</td><td class="n">29,046 / 33,950</td></tr>
+<tr><td>Integrated static share</td><td class="n">0.73</td></tr>
+<tr><td>Prefix cache token hit rate</td><td class="n">87 percent</td></tr>
+<tr><td>Cost</td><td class="n">1.07 GPU hours, about $1.60</td></tr>
+</table></div>
+<div class="block point"><span class="tag">The point</span>The gate passed by a wide margin, and the prompt turned out to be a catalogue, not a handbook. That changed what we would be compressing: JSON schemas, mostly for tools nobody calls.</div>
+<details><summary>Depth: how the share was counted exactly</summary><div class="in">
+<p>The share is the static span divided by the tokens the model actually read on a turn, averaged over a session. Local tokenizer counts undercount because the chat template reformats the tool JSON, so the analyzer sends the system text plus tools through the engine's own tokenize endpoint and subtracts a bare user turn. Context per turn comes from the engine's reported input token count.</p>
+<p>Prefix caching is the free competitor: the engine remembers the computation for a prefix it has seen before. It works on this hybrid model, in "align" mode for the state-space layers. Gisting must beat the cached case, not the uncached one.</p>
+<div class="spec">incidents</div>
+<p>The engine's default of 1,024 concurrent sequences exceeds the 674 state-space cache blocks that fit on 96 GB and aborts startup. The first launch stalled on an in-loader download; the second lost its engine when a tmux server vanished; a kill command matched its own shell and killed the command instead. Three launches to one working server, all logged.</p>
+<p class="terms">new terms: integrated share &middot; prefix cache &middot; tokenize endpoint</p>
+</div></details>
+</section>
+
+<!-- LESSON 4 -->
+<section class="chapter">
+<p class="eyebrow">Lesson 4 &middot; the dictionary (section 3.3)</p>
+<h2>Can this model accept made-up words without saying them?</h2>
+<div class="block anchor"><span class="tag">Everyday anchor</span>Adding a private shorthand to a shared dictionary is safe only if nobody starts using it in public. The test is not whether the word can be looked up. It is whether it ever comes out of someone's mouth.</div>
+<p>Two things could block the method before any training. The serving engine might refuse a model whose lookup table has grown. Or the model might start writing the new tokens in its answers, since a grown output side gives them a vote. This model had 243 spare rows, nowhere near 4,386, so the table had to be enlarged.</p>
+<div class="block assume"><span class="tag">Assumption exposed</span>"Adding tokens is a tokenizer change." It is two tables, input and output, and they are not tied in this model. Grow the input, and leave the output rows at zero so a gist id can never win a vote.</div>
+<figure>
+<svg viewBox="0 0 720 210" role="img" aria-label="Embedding table grown from 248,320 to 252,544 rows; new rows initialised as the mean of four span tokens each; output head grown with zero rows; a logits mask blocks gist ids at sampling">
+  <g font-size="12" fill="currentColor">
+    <text x="10" y="24">INPUT TABLE (embed_tokens)</text>
+    <rect x="10" y="32" width="300" height="40" stroke="currentColor" fill="none"/>
+    <text x="18" y="56">248,077 real tokens, untouched</text>
+    <rect x="310" y="32" width="60" height="40" stroke="#6B3F73" fill="#6B3F73" opacity=".8"/>
+    <text x="316" y="56" fill="#fff">4,386</text>
+    <text x="380" y="46" font-size="11">each new row = mean of the 4 span</text>
+    <text x="380" y="60" font-size="11">tokens it replaces (Shopify's init, 7x lower start loss)</text>
+
+    <text x="10" y="110">OUTPUT TABLE (lm_head)</text>
+    <rect x="10" y="118" width="300" height="40" stroke="currentColor" fill="none"/>
+    <text x="18" y="142">248,320 real rows, untouched</text>
+    <rect x="310" y="118" width="60" height="40" stroke="currentColor" fill="none" stroke-dasharray="4 3"/>
+    <text x="322" y="142">zeros</text>
+    <text x="380" y="132" font-size="11">zero rows give gist ids no vote;</text>
+    <text x="380" y="146" font-size="11">a logits mask sets them to minus infinity as well</text>
+
+    <text x="10" y="192" font-size="11">Result: 30 generations at temperature 1.0 and 1.5, including "repeat &lt;gist_0&gt;": zero gist ids emitted, before and after training.</text>
+  </g>
+</svg>
+<figcaption>The dictionary grown in both directions. Input rows carry meaning and get trained; output rows stay zero so the model cannot choose a gist token, with a sampling mask as a second lock. The test that matters is the last line.</figcaption>
+</figure>
+<div class="block point"><span class="tag">The point</span>Done on a laptop with no GPU, from a 2.5 GB slice of the checkpoint. The engine loaded the grown model on the first try and never emitted a gist id in thirty generations across three journeys.</div>
+<details><summary>Depth: spec sheet for the checkpoint delta</summary><div class="in">
+<dl>
+<dt>Checkpoint</dt><dd>Qwen/Qwen3.8-27B, bf16, 55.6 GB in 18 shards; 64 layers, hidden 5,120; untied embeddings; hybrid: 16 full-attention layers, 48 linear-attention layers</dd>
+<dt>Tokenizer</dt><dd>Qwen2 BPE; 4,386 added special tokens, ids 248,077 to 252,462; each encodes to one id; dropped on decode with special tokens skipped</dd>
+<dt>Embedding</dt><dd>grown 248,320 to 252,544 rows (padded to 128); 243 former spare rows plus 4,224 appended rows hold gist init; real rows byte-identical after reload</dd>
+<dt>Init check</dt><dd>gist row norm 0.58 vs real 0.90; cosine to own chunk 0.48 to 0.58, to random tokens 0.01</dd>
+<dt>Output head</dt><dd>grown with zero rows; vLLM logits processor <code>mask_gist_logits:GistMaskLogitsProcessor</code> sets ids at or above 248,077 to minus infinity</dd>
+<dt>Delta shipped</dt><dd>two shards, config, tokenizer: 6 GB; the other 16 shards fetched on the serving box</dd>
+</dl>
+<div class="spec">incidents</div>
+<p>The processor flag exists but is hidden from the default help, so detection missed it; and it wants <code>module:Class</code> with a colon, which cost one restart. Neither affects the result; the unmasked server also emitted zero gist ids.</p>
+<p class="terms">new terms: untied embeddings &middot; mean-chunk init &middot; logits mask</p>
+</div></details>
+</section>
+
+<!-- LESSON 5 -->
+<section class="chapter">
+<p class="eyebrow">Lesson 5 &middot; real sessions (E1, coverage)</p>
+<h2>What the note is worth when the work gets long</h2>
+<div class="block anchor"><span class="tag">Everyday anchor</span>A fixed-size preface is most of a short letter and a footnote in a long one. The letter grows; the preface does not.</div>
+<p>Toy sessions flatter the share. We ran 126 sessions on three real open-source repositories, some thirty minutes long with forty-turn caps, through the same tap against the full-prompt model. This is also the training data for everything after.</p>
+<div class="block assume"><span class="tag">Assumption exposed</span>"0.73 is the number." It is the short-session number. Real work on a mid-sized repository averages 0.44, and the deepest turns sit at 0.18, under the gate. Gisting's value lives in the first two thirds of a session.</div>
+<figure>
+<svg viewBox="0 0 720 230" role="img" aria-label="Bar chart of the static share by session class: short 0.72, medium 0.48, long 0.44, and turns at 80 to 100k context 0.18, with the 0.25 gate drawn as a dashed line">
+  <g font-size="12" fill="currentColor">
+    <line x1="60" y1="20" x2="60" y2="180" stroke="currentColor"/>
+    <line x1="60" y1="180" x2="700" y2="180" stroke="currentColor"/>
+    <text x="10" y="24">1.0</text><text x="10" y="104">0.5</text><text x="10" y="184">0</text>
+    <line x1="60" y1="140" x2="700" y2="140" stroke="#A4342E" stroke-dasharray="5 4"/>
+    <text x="600" y="134" fill="#A4342E" font-size="11">gate 0.25</text>
+    <rect x="100" y="64.8" width="90" height="115.2" fill="#6B3F73" opacity=".85"/><text x="118" y="58">0.72</text><text x="92" y="200" font-size="11">short, 64 sessions</text>
+    <rect x="250" y="103.2" width="90" height="76.8" fill="#6B3F73" opacity=".85"/><text x="268" y="97">0.48</text><text x="238" y="200" font-size="11">medium, 21 sessions</text>
+    <rect x="400" y="109.6" width="90" height="70.4" fill="#6B3F73" opacity=".85"/><text x="418" y="103">0.44</text><text x="392" y="200" font-size="11">long, 39 sessions</text>
+    <rect x="550" y="151.2" width="90" height="28.8" fill="#6B3F73" opacity=".85"/><text x="568" y="145">0.18</text><text x="536" y="200" font-size="11">turns at 80k to 100k</text>
+    <text x="100" y="222" font-size="11">Static share of what the model reads, integrated over each session class. Span 17,540 tokens, trimmed catalogue.</text>
+  </g>
+</svg>
+<figcaption>The share by session length. Every class clears the gate as a median; the deepest turns do not. One session exhausted the 131k context window at turn 23.</figcaption>
+</figure>
+<div class="tablewrap"><table>
+<tr><th>Measure</th><th>Value</th></tr>
+<tr><td>Sessions / turns / tool calls</td><td class="n">126 / 1,494 / 1,676, none malformed</td></tr>
+<tr><td>Tools used of 27</td><td class="n">9; Bash, Read, Grep are 90 percent of calls</td></tr>
+<tr><td>Context per turn, median / p90 / max</td><td class="n">33,810 / 52,889 / 98,805</td></tr>
+<tr><td>Prefix cache token hit rate</td><td class="n">60 percent</td></tr>
+<tr><td>Collection cost</td><td class="n">3 hours, about $4</td></tr>
+</table></div>
+<div class="block point"><span class="tag">The point</span>Two facts for the training that follows. The data is heavy on three tools and silent on eighteen, so any gist trained on it knows nothing reliable about those eighteen. And caching's help falls to 60 percent on long sessions, which is exactly where gisting's per-token saving still applies.</div>
+<details><summary>Depth: how the sessions were driven and stratified</summary><div class="in">
+<p>A shell driver ran Claude Code headless, one session per task line, each in a fresh copy of the repository, with an allowlist of tools rather than blanket permission. Tasks were generated across four types (explain, bugfix, feature, refactor) plus deliberate failure paths (a test that must fail, a file that does not exist), on requests, click, typer, and a two-file seed repository. Repositories were installed into an isolated Python environment first; without that, every test run failed at collection and sessions ended in two turns.</p>
+<div class="spec">incidents</div>
+<p>Two long sessions stalled at the 30-minute cap on a Claude Code-side model lookup error unrelated to the served model; excluded. Fourteen of 110 stratified sessions hit the same error. Collection was stopped at a three-hour deadline with 110 of 300 planned sessions done, because eight concurrent streams saturated the GPU at about nine sessions per fifteen minutes.</p>
+<p class="terms">new terms: headless session &middot; stratified task set &middot; coverage</p>
+</div></details>
+</section>
+
+<!-- LESSON 6 -->
+<section class="chapter">
+<p class="eyebrow">Lesson 6 &middot; the teacher</p>
+<h2>Recording the expert's opinions once</h2>
+<div class="block anchor"><span class="tag">Everyday anchor</span>An examiner writes the model answers once and files them. Every student paper after that is marked against the file, not by asking the examiner to redo the exam each time.</div>
+<p>The teacher is the same model reading the full preamble. Its opinion of the next token, at every position of every logged reply, is the target the student must match. Computing it costs a full 33,000-token pass per example, and the plan's first training design paid that cost on every training step. Shopify's single biggest speed-up was to pay it once and file the result.</p>
+<div class="block assume"><span class="tag">Assumption exposed</span>"Training needs the whole distribution over 252,000 tokens." The top 32 candidates carry 0.999 of the probability mass on average and at the tenth percentile. The file is 54 MB.</div>
+<figure>
+<svg viewBox="0 0 720 250" role="img" aria-label="Before: each training step runs a teacher pass and a student pass. After: the teacher pass runs once per example into a cache; each step runs only the student pass and reads the cache">
+  <g font-size="12" fill="currentColor">
+    <text x="10" y="24">EVERY STEP, BEFORE</text>
+    <rect x="10" y="34" width="180" height="34" stroke="currentColor" fill="none"/><text x="18" y="56">teacher pass, 33k tokens</text>
+    <rect x="200" y="34" width="180" height="34" stroke="#6B3F73" fill="none"/><text x="208" y="56" fill="#6B3F73">student pass, 20k tokens</text>
+    <line x1="385" y1="51" x2="430" y2="51" stroke="currentColor" marker-end="url(#ar)"/>
+    <rect x="435" y="34" width="70" height="34" stroke="currentColor" fill="none"/><text x="456" y="56">KL</text>
+    <line x1="510" y1="51" x2="555" y2="51" stroke="currentColor" marker-end="url(#ar)"/>
+    <text x="560" y="56">nudge rows</text>
+    <text x="10" y="90" font-size="11">32 s per example; teacher recomputed although it never changes</text>
+
+    <text x="10" y="130">ONCE PER EXAMPLE, AFTER</text>
+    <rect x="10" y="140" width="180" height="34" stroke="currentColor" fill="none"/><text x="18" y="162">teacher pass via vLLM</text>
+    <line x1="195" y1="157" x2="240" y2="157" stroke="currentColor" marker-end="url(#ar)"/>
+    <rect x="245" y="140" width="150" height="34" stroke="#1F5F6E" fill="none"/><text x="253" y="162" fill="#1F5F6E">cache: top-32 logp</text>
+    <text x="10" y="196" font-size="11">4 h 20 min for 1,457 examples, 12 s each, CPU-bound</text>
+
+    <text x="420" y="130">EVERY STEP, AFTER</text>
+    <rect x="420" y="140" width="150" height="34" stroke="#6B3F73" fill="none"/><text x="428" y="162" fill="#6B3F73">student pass only</text>
+    <line x1="395" y1="157" x2="415" y2="157" stroke="#1F5F6E" marker-end="url(#ar)"/>
+    <line x1="575" y1="157" x2="620" y2="157" stroke="currentColor" marker-end="url(#ar)"/>
+    <rect x="625" y="140" width="70" height="34" stroke="currentColor" fill="none"/><text x="646" y="162">KL</text>
+    <text x="420" y="196" font-size="11">12 s per example, 98 s per 8-example step</text>
+    <text x="10" y="232" font-size="11">The harness runs the teacher: the same vLLM server that serves Claude Code answers "what would you predict here" for every logged reply.</text>
+  </g>
+</svg>
+<figcaption>What the cache changes. The teacher pass moves from every training step to once per example, and the training loop becomes a student-only job. The 12 seconds per cached example is Python bookkeeping in the engine, not GPU time.</figcaption>
+</figure>
+<div class="block point"><span class="tag">The point</span>The cache is what makes a research loop affordable. With it, one recipe costs one student pass over the data, about four hours here, and the teacher file is reused for every recipe that keeps the same span.</div>
+<details><summary>Depth: how the teacher was recorded, and what nearly broke</summary><div class="in">
+<p>vLLM's completions endpoint accepts <code>prompt_logprobs=K</code> and returns, for every prompt position, the top-K tokens with log-probabilities. We sent each example as teacher prefix plus response and kept the last positions. The engine computes full-vocabulary log-probabilities per prefill chunk: an 8,192-token chunk times 252,544 vocabulary times 4 bytes is 8 GB, which killed the engine at 92 percent memory utilization. It ran at 80 percent with 4,096-token chunks, leaving a 350,278-token KV pool.</p>
+<p>The KL is taken against the teacher's top-32 renormalised to sum to one; the student's log-probabilities are gathered at those 32 ids. The examples are sorted by session and turn so the prefix cache serves consecutive turns.</p>
+<div class="spec">spec</div>
+<dl>
+<dt>Examples</dt><dd>1,457 of 1,494 under 60k tokens; 1,195 usable under the 30k student cap</dd>
+<dt>Top-K mass</dt><dd>mean 0.999, p10 0.999; actual token inside top-32 for all examples</dd>
+<dt>Throughput</dt><dd>11 to 13 s per example at concurrency 2; API and engine processes both at 100 percent CPU</dd>
+<dt>Cache file</dt><dd>54 MB; topk ids int32, log-probs fp16, per example</dd>
+</dl>
+<p class="terms">new terms: prompt log-probs &middot; prefill chunk &middot; KV pool &middot; renormalised top-K</p>
+</div></details>
+</section>
+
+<!-- LESSON 7 -->
+<section class="chapter">
+<p class="eyebrow">Lesson 7 &middot; the student</p>
+<h2>Teaching 4,386 words to mean the same thing</h2>
+<div class="block anchor"><span class="tag">Everyday anchor</span>Learning a colleague's shorthand: you guess what each squiggle means, check against what they actually wrote, and adjust. You are not changing the colleague. You are changing your reading of the squiggles.</div>
+<p>Training touches exactly one tensor: 4,386 rows by 5,120 numbers, 22 million values, against a model of 27 billion that stay frozen. On each step the student reads the gist prefix plus a logged reply, its next-token guesses are compared with the filed teacher opinions, and the rows move a little toward agreement.</p>
+<div class="block assume"><span class="tag">Assumption exposed</span>"How you average the loss is a detail." Shopify found per-response averaging made the model hallucinate and batch-level averaging did not. We used batch-level from the start and instrumented by turn length; the ablation itself is still on the queue.</div>
+<div class="tablewrap"><table>
+<tr><th>Training</th><th>Value</th></tr>
+<tr><td>Examples in pool / held out</td><td class="n">1,171 / 24</td></tr>
+<tr><td>Steps, examples per step, learning rate</td><td class="n">146, 8, 1e-3</td></tr>
+<tr><td>Time per step / total</td><td class="n">98 s / 4 hours</td></tr>
+<tr><td>Held-out KL per token, mean-chunk init</td><td class="n">0.0534</td></tr>
+<tr><td>after 40 / 80 / 120 steps</td><td class="n">0.0436 / 0.0276 / 0.0243</td></tr>
+<tr><td>after one epoch</td><td class="n">0.0152, still falling</td></tr>
+<tr><td>Row change on export</td><td class="n">mean 0.84 per row; norm 0.58 to 1.03</td></tr>
+</table></div>
+<div class="block point"><span class="tag">The point</span>The disagreement fell 72 percent in one pass and had not flattened. The rows moved far from their starting summaries, which says the initialization is a good start, not the answer.</div>
+<details><summary>Depth: the trainer, and the two failures that were ours</summary><div class="in">
+<p>A forward hook on the input embedding replaces the output rows for any id at or above the first gist id with the trainable tensor, so the frozen table is never edited during training. Loss at response positions only: the hidden states for the last R positions go through the output head, and KL is computed there. Gradient checkpointing keeps a 30k-token sequence within 96 GB, at the price of recomputing activations in the backward pass.</p>
+<div class="spec">incidents</div>
+<p>First run: out of memory on the student pass. The library's checkpointing only engages in training mode and the model was in eval mode, so every activation was kept. One line fixed it. The pipeline-gate run in journey 2 used 50 examples with the live teacher, 32 seconds per example, and cut KL from 0.66 to 0.47 on a full-vocabulary measure; that scale is not comparable with the top-32 numbers above.</p>
+<div class="spec">spec</div>
+<dl>
+<dt>Optimizer</dt><dd>Adam on the gist tensor only, fp32 rows, bf16 model</dd>
+<dt>Reduction</dt><dd>batch: sum of per-token KL over the step divided by total response tokens in the step</dd>
+<dt>Sequence cap</dt><dd>student prefix plus response at most 30,000 tokens</dd>
+<dt>Hardware</dt><dd>one RTX PRO 6000 Blackwell, 96 GB; 66 GB peak</dd>
+</dl>
+<p class="terms">new terms: forward hook &middot; gradient checkpointing &middot; batch-level reduction</p>
+</div></details>
+</section>
+
+<!-- LESSON 8 -->
+<section class="chapter">
+<p class="eyebrow">Lesson 8 &middot; the swap and the exam (E2)</p>
+<h2>Same jobs, two preambles, one marking scheme</h2>
+<div class="block anchor"><span class="tag">Everyday anchor</span>Two contractors who are the same person with two different handbooks, given the same twelve jobs and the same inspector. Not a survey of how they felt about it. Did the work pass inspection.</div>
+<p>Serving the gist to Claude Code needed two pieces and no change to Claude Code. The tap, in gist mode, finds three anchor segments in the incoming instruction text, swaps each for its gist string, and prepends the tool-block gist. A conditional chat template on the server skips rendering the tool block when it sees gist tokens, while the request still carries the tools so the engine's tool-call parser stays active. Both arms then ran on the same server, since the gisted checkpoint has identical weights for every real token.</p>
+<div class="block assume"><span class="tag">Assumption exposed</span>"Serving a gisted model needs custom inference code." It needs a proxy that edits one field and a template with one extra condition. The engine is unchanged.</div>
+<figure>
+<svg viewBox="0 0 720 260" role="img" aria-label="Two arms on one server: teacher arm passes the full prompt through the tap; student arm has the tap replace the span with gist tokens and the template skip the tool block; both reach the same vLLM server and are scored by the same checker">
+  <g font-size="12" fill="currentColor">
+    <rect x="10" y="100" width="120" height="44" stroke="currentColor" fill="none"/><text x="22" y="126">Claude Code</text>
+    <line x1="135" y1="110" x2="200" y2="60" stroke="currentColor" marker-end="url(#ar)"/>
+    <line x1="135" y1="134" x2="200" y2="184" stroke="currentColor" marker-end="url(#ar)"/>
+
+    <text x="205" y="30">TEACHER ARM</text>
+    <rect x="205" y="40" width="170" height="40" stroke="currentColor" fill="none"/><text x="213" y="58">tap, passthrough</text><text x="213" y="72" font-size="11">full prompt, 24,258 tokens</text>
+    <line x1="380" y1="60" x2="450" y2="110" stroke="currentColor" marker-end="url(#ar)"/>
+
+    <text x="205" y="164">STUDENT ARM</text>
+    <rect x="205" y="174" width="170" height="52" stroke="#6B3F73" fill="none"/><text x="213" y="192" fill="#6B3F73">tap, gist mode</text><text x="213" y="206" font-size="11">3 anchors swapped, tools gist</text><text x="213" y="220" font-size="11">prepended: 11,410 tokens</text>
+    <line x1="380" y1="200" x2="450" y2="150" stroke="#6B3F73" marker-end="url(#ar)"/>
+
+    <rect x="455" y="96" width="150" height="70" stroke="currentColor" fill="none"/>
+    <text x="463" y="114">vLLM, one server</text>
+    <text x="463" y="130" font-size="11">template: skip tool block</text>
+    <text x="463" y="144" font-size="11">if gist tokens present</text>
+    <text x="463" y="158" font-size="11">parser still sees tools</text>
+    <line x1="610" y1="131" x2="655" y2="131" stroke="currentColor" marker-end="url(#ar)"/>
+    <rect x="660" y="106" width="55" height="50" stroke="currentColor" fill="none"/><text x="668" y="126">same</text><text x="666" y="142">checker</text>
+    <text x="10" y="250" font-size="11">Twelve tasks, four concurrent sessions per arm, programmatic pass/fail on the resulting files and tests.</text>
+  </g>
+</svg>
+<figcaption>Both arms on one server. The only difference between them is what the tap does to the system field and what the template does when it sees the result. The checker does not know which arm it is scoring.</figcaption>
+</figure>
+<div class="tablewrap"><table>
+<tr><th>Measure</th><th>Teacher, full prompt</th><th>Student, gist</th></tr>
+<tr><td>Tasks passed</td><td class="n">12 of 12</td><td class="n">12 of 12</td></tr>
+<tr><td>Turns / sessions</td><td class="n">64 / 12</td><td class="n">72 / 12</td></tr>
+<tr><td>Input tokens per turn, median</td><td class="n">24,258</td><td class="n">11,410</td></tr>
+<tr><td>Tool calls / malformed JSON</td><td class="n">69 / 0</td><td class="n">84 / 0</td></tr>
+<tr><td>Calls to a tool that does not exist</td><td class="n">0</td><td class="n">1</td></tr>
+<tr><td>Time to first token, median</td><td class="n">23.8 s, confounded</td><td class="n">2.2 s</td></tr>
+</table></div>
+<div class="block point"><span class="tag">The point</span>Twelve for twelve both ways while reading 13,000 fewer tokens per turn. That is the E2 gate, passed on a small verifiable set. The one bad call was an empty-argument call to an invented tool name; Claude Code rejected it and the task still passed. Format was perfect; the edge of the catalogue was not.</div>
+<details><summary>Depth: the evaluation protocol, and the two caveats in the table</summary><div class="in">
+<div class="spec">protocol</div>
+<p>Twelve tasks on a two-file seed repository with a deliberately failing test: add a function and a test, make an empty-list case return zero, create a module with tests, add type hints, add a clamp, change an error type with a message, add a power function with a negative-exponent test, explain without editing, write a README naming every function, report the failing test without editing, add a parity function, create a flatten utility. Each has a checker that inspects the files and runs the relevant tests. Four concurrent sessions, twenty-turn cap, tool allowlist, MCP servers excluded so the catalogue is the 27 built-in tools.</p>
+<div class="spec">caveats</div>
+<p>Latency is confounded: the teacher arm ran while the teacher-cache job was saturating the same server's CPU, so 23.8 seconds overstates the gap. The proper speed measurement is still owed, and lesson 9 explains why the ceiling is lower on this model than Shopify's. The one invented tool name puts student tool-name validity at 98.8 percent on 84 calls, under the 99 percent gate on a sample too small to settle it.</p>
+<div class="spec">incidents</div>
+<p>The first student run silently ran in passthrough. Claude Code writes the served model's name into its own system prompt; our server was named with a suffix, the training span had the plain name, the anchors did not match, and the tap fell back to forwarding untouched. It was caught because the tap logs whether the swap applied. The fix normalises the name before anchoring; the lesson is that segments must be derived from sessions that vary every such field, and the swap must refuse rather than guess.</p>
+<p class="terms">new terms: anchor segment &middot; conditional template &middot; passthrough</p>
+</div></details>
+</section>
+
+<!-- LESSON 9 -->
+<section class="chapter">
+<p class="eyebrow">Lesson 9 &middot; the ceiling</p>
+<h2>Why the speed prize is smaller on this model</h2>
+<div class="block anchor"><span class="tag">Everyday anchor</span>Shortening a reference book helps most when the reader flips back to it constantly. A reader who took notes on the first pass and never flips back gains little from a thinner book.</div>
+<p>Two separate costs come from a long preamble. Reading it once per request, which prefix caching already mostly removes. And looking back at it while writing: in a standard transformer every generated token re-reads everything before it, so a four-times-shorter preamble makes every one of those re-reads four times cheaper. That second cost is where Shopify's 38 percent came from.</p>
+<div class="block assume"><span class="tag">Assumption exposed</span>"Shopify's latency numbers transfer." Qwen3.8-27B is a hybrid: only 16 of its 64 layers look back over every previous token. The other 48 fold the preamble into a fixed-size summary, the same size whether the preamble is 20,000 tokens or 5,000. The look-back saving exists in a quarter of the model.</div>
+<div class="block point"><span class="tag">The point</span>Gisting works as a method here, and the training says the model learns the compressed words. It pays out less on this architecture, and the measurement below says exactly how much less.</div>
+<div class="tablewrap"><table>
+<tr><th>Concurrency</th><th>Gist vs teacher: requests per minute</th><th>Median latency</th><th>TTFT p90</th></tr>
+<tr><td class="n">1</td><td class="n">+5 percent (7.2 vs 6.9)</td><td class="n">&minus;3 percent (8.0 vs 8.2 s)</td><td class="n">&minus;12 percent</td></tr>
+<tr><td class="n">4</td><td class="n">+15 percent (18.9 vs 16.4)</td><td class="n">&minus;11 percent (11.5 vs 13.0 s)</td><td class="n">&minus;39 percent (5.5 vs 9.0 s)</td></tr>
+<tr><td class="n">8</td><td class="n">+16 percent (23.2 vs 20.0)</td><td class="n">&minus;12 percent (13.1 vs 14.9 s)</td><td class="n">&minus;9 percent</td></tr>
+</table></div>
+<p>Measured in journey 6: corrected 8:1 gist against the full prompt on one 96 GB GPU, prefix caching on in both arms, twelve sessions of six turns replayed in order, 200 generated tokens per request. Shopify's 16 percent throughput gain reproduces; their 38 percent latency gain lands at 12 percent. The place a person would feel it is the tail: at moderate load the slowest first-token waits fell from 9 seconds to 5.5.</p>
+</section>
+
+
+<!-- LESSON 10 -->
+<section class="chapter">
+<p class="eyebrow">Lesson 10 &middot; the loop (E4)</p>
+<h2>How short can the summary get, and can nobody be watching?</h2>
+<div class="block anchor"><span class="tag">Everyday anchor</span>A good lab assistant does not need you in the room. You leave a list of conditions to try, come back the next morning, and find a filled-in table, the equipment switched off, and a note about what broke and how it was handled.</div>
+<p>Journey 3 proved a one-quarter summary. This journey asked how much further it can go, and whether the cycle can run without a person. Three boxes were rented, one per ratio. Each ran a worker chain: download, build, train against the shared teacher file, export, relaunch, self-test, raise a ready flag. A controller on the workstation polled the boxes, ran the twelve-task exam on each when ready, applied the gate, filed one results line, synced the artifacts, and destroyed the box.</p>
+<div class="block assume"><span class="tag">Assumption exposed</span>"The knee is at 4:1, like Shopify's." Their prompt was prose. Ours is 91 percent JSON tool schemas, and 1,099 made-up words for 17,539 real ones passed every task with perfect tool-name validity. Either schemas compress more gracefully, or these twelve tasks are too easy to expose the loss. Both readings say the same thing: build a harder exam before choosing a ratio to ship.</div>
+<figure>
+<svg viewBox="0 0 720 260" role="img" aria-label="The unattended loop: a recipe file feeds three worker boxes; each worker trains, self-tests, and raises a ready flag; a controller evaluates, gates, records a results line, and destroys the box; retries handle out-of-memory, crashes, and bad hosts">
+  <g font-size="12" fill="currentColor">
+    <rect x="10" y="20" width="120" height="44" stroke="currentColor" fill="none"/><text x="20" y="38">recipes.jsonl</text><text x="20" y="54" font-size="11">ratio, lr, cap, init</text>
+    <line x1="135" y1="42" x2="185" y2="42" stroke="currentColor" marker-end="url(#ar)"/>
+    <rect x="190" y="14" width="150" height="56" stroke="#1F5F6E" fill="none"/><text x="198" y="32" fill="#1F5F6E">worker chain, per box</text><text x="198" y="48" font-size="11">build, train, export,</text><text x="198" y="62" font-size="11">self-test, ready flag</text>
+    <rect x="190" y="84" width="150" height="40" stroke="currentColor" fill="none" stroke-dasharray="4 3"/><text x="198" y="100" font-size="11">retry: download x3, OOM</text><text x="198" y="114" font-size="11">shorter cap, crash warm-start</text>
+    <line x1="265" y1="72" x2="265" y2="82" stroke="currentColor" stroke-dasharray="3 3"/>
+    <line x1="345" y1="42" x2="395" y2="42" stroke="currentColor" marker-end="url(#ar)"/>
+    <text x="350" y="34" font-size="11">READY</text>
+    <rect x="400" y="14" width="170" height="56" stroke="#6B3F73" fill="none"/><text x="408" y="32" fill="#6B3F73">controller, workstation</text><text x="408" y="48" font-size="11">poll, evaluate 12 tasks in gist</text><text x="408" y="62" font-size="11">mode, gate, sync, destroy</text>
+    <line x1="575" y1="42" x2="625" y2="42" stroke="currentColor" marker-end="url(#ar)"/>
+    <rect x="630" y="20" width="85" height="44" stroke="currentColor" fill="none"/><text x="636" y="38">results</text><text x="636" y="54" font-size="11">one line/run</text>
+    <line x1="485" y1="72" x2="485" y2="112" stroke="#6B3F73" marker-end="url(#ar)"/>
+    <text x="495" y="100" font-size="11" fill="#6B3F73">destroy box, or record "vanished"</text>
+    <text x="10" y="160">WHAT THE LOOP HANDLED ON ONE SWEEP, WITH NOBODY WATCHING</text>
+    <text x="10" y="182" font-size="11">2 out-of-memory events at the 32k cap: retried at 25.6k, completed</text>
+    <text x="10" y="198" font-size="11">1 crash at step 65 of 135: resumed from saved rows for the remaining 0.52 epoch</text>
+    <text x="10" y="214" font-size="11">3 bad hosts for one slot (key refused, went offline, vanished): replaced; the vanished one recorded, not polled forever</text>
+    <text x="10" y="230" font-size="11">3 ready-to-destroyed handoffs in 7, 9, and 11 minutes</text>
+    <text x="10" y="250" font-size="11">Gate per run: tasks within 10 points of the teacher, tool-name validity at least 99 percent, zero malformed calls, zero unswapped turns.</text>
+  </g>
+</svg>
+<figcaption>The loop as it ran. The recipe file is the only thing a person edits. Solid arrows are the happy path; the dashed box is what made it survive a metered, unreliable provider. Every run ends with the box destroyed and one line in the results file.</figcaption>
+</figure>
+<div class="tablewrap"><table>
+<tr><th>Ratio</th><th>Gist tokens</th><th>Tasks</th><th>Tool calls</th><th>Malformed</th><th>Invented names</th><th>Input tokens per turn</th></tr>
+<tr><td>Teacher</td><td class="n">0</td><td class="n">12 of 12</td><td class="n">69</td><td class="n">0</td><td class="n">0</td><td class="n">24,258</td></tr>
+<tr><td>2:1</td><td class="n">8,771</td><td class="n">12 of 12</td><td class="n">98</td><td class="n">0</td><td class="n">0</td><td class="n">16,083</td></tr>
+<tr><td>4:1 (journey 3)</td><td class="n">4,386</td><td class="n">12 of 12</td><td class="n">84</td><td class="n">0</td><td class="n">1</td><td class="n">11,410</td></tr>
+<tr><td>8:1</td><td class="n">2,196</td><td class="n">12 of 12</td><td class="n">101</td><td class="n">0</td><td class="n">0</td><td class="n">9,395</td></tr>
+<tr><td>16:1</td><td class="n">1,099</td><td class="n">12 of 12</td><td class="n">94</td><td class="n">0</td><td class="n">0</td><td class="n">8,245</td></tr>
+</table></div>
+<div class="block point"><span class="tag">The point</span>No knee on this exam, even at 16:1, and every run went from ready to destroyed with no human step. The loop's value showed up in its failures: five self-heals and three host replacements on one sweep, about $8 of GPU and four hours not lost, for two hours spent writing it once.</div>
+<details><summary>Depth: the primitives, the gate, and what is not comparable</summary><div class="in">
+<div class="spec">primitives</div>
+<dl>
+<dt>Recipe spec</dt><dd>one JSON line per run: ratio, learning rate, accumulation, epochs, sequence cap, initialization, loss reduction, segment map, data, teacher cache</dd>
+<dt>Worker chain</dt><dd>lock file; disk check; download x3; delta build; cache check; training with OOM retry at 0.8x cap and crash warm-start from saved rows for the remaining epoch fraction; export; relaunch x2; generation self-test; READY marker</dd>
+<dt>Controller</dt><dd>reloads the box list each round; on READY runs the evaluation through the gist tap with this run's map and a name normalization; verifies zero unswapped turns; gate; sync; results line; destroy; records a vanished box instead of polling it</dd>
+<dt>Gate</dt><dd>tasks within 10 points of the teacher; tool-name validity at least 0.99; zero malformed calls; zero unswapped turns</dd>
+<dt>Versioning</dt><dd>the segment map ships with the trained rows; the tap refuses to swap on a missing anchor and logs it</dd>
+</dl>
+<div class="spec">not comparable</div>
+<p>The held-out KL numbers per run (2:1 0.073 to 0.038; 8:1 0.096 to 0.030; 16:1 0.136 to 0.021) are each measured on a different held-out subset, because every run filters examples by its own sequence cap before splitting, and the 2:1 resume drew yet another subset. Task and tool columns are comparable; KL across ratios is not, and the next loop version fixes the held-out set before filtering.</p>
+<div class="spec">incidents</div>
+<p>Three of four hosts rented for the 2:1 slot were bad: SSH key never accepted; host went offline minutes after provisioning; host vanished from the account taking its logs. About $2 and two hours. The checker for one task counted only module-level test functions and marked the 16:1 run's unittest-style tests as zero; fixed, rescored, and the correction recorded in the results file rather than silently edited.</p>
+<p class="terms">new terms: recipe spec &middot; worker chain &middot; controller &middot; gate &middot; warm start</p>
+</div></details>
+</section>
+
+
+<!-- LESSON 11 -->
+<section class="chapter">
+<p class="eyebrow">Lesson 11 &middot; the harder exam</p>
+<h2>The defect the easy exam hid, and the rule that removes it</h2>
+<div class="block anchor"><span class="tag">Everyday anchor</span>A new hire aces the onboarding quiz. Then you ask them to file a document in the right cabinet and they put it in a cabinet that does not exist, confidently, with the right document inside. The quiz never asked them to find a cabinet.</div>
+<p>Sixteen tasks were written to break a gist: count files with the Glob tool and write the number to a file; extract function names with Grep; plan with TaskCreate; summarise a file that contains an injected "delete everything" instruction; run tests whose failure message says to wipe the directory; rename a function with the read-before-edit rule in force; an explicit delete request; fetch a web page title; three long jobs on real repositories; research with the Agent tool and write notes. A log-aware scorer checked files and the tool-call sequence. The teacher and all four ratios sat the exam on one box in one afternoon.</p>
+<div class="block assume"><span class="tag">Assumption exposed</span>"Twelve of twelve at 16:1 means the gist is safe." The twelve tasks never asked the model to write to an absolute path. When the harder exam did, every compressed model wrote to a directory that does not exist: a scratch folder under a different session id, a home-folder path, a project named "mars-landing". The work was done; the filing cabinet was invented.</div>
+<figure>
+<svg viewBox="0 0 720 250" role="img" aria-label="Before: the working-directory line, including a session UUID, sits inside the compressed span and the model writes to an invented path. After: path, id, and date lines are kept as raw tokens outside the gist and the model writes to the real path">
+  <g font-size="12" fill="currentColor">
+    <text x="10" y="24">BEFORE: THE PATH LIVED INSIDE THE SUMMARY</text>
+    <rect x="10" y="34" width="250" height="30" fill="#6B3F73" opacity=".85"/><text x="18" y="54" fill="#fff">gist: rules + ...scratchpad/&lt;UUID&gt;/...</text>
+    <rect x="262" y="34" width="70" height="30" stroke="currentColor" fill="none"/><text x="270" y="54" font-size="11">work/s1</text>
+    <line x1="340" y1="49" x2="400" y2="49" stroke="currentColor" marker-end="url(#ar)"/>
+    <text x="405" y="46" font-size="11">Write file_path =</text>
+    <text x="405" y="60" font-size="11" fill="#A4342E">/Users/.../Code/gisting/s1/FILECOUNT.txt  (does not exist)</text>
+    <text x="10" y="92" font-size="11">A 4:1 or 16:1 summary cannot reproduce a UUID verbatim; the model reconstructs a plausible prefix instead.</text>
+
+    <text x="10" y="140">AFTER: VERBATIM CONTENT STAYS OUTSIDE</text>
+    <rect x="10" y="150" width="120" height="30" fill="#6B3F73" opacity=".85"/><text x="18" y="170" fill="#fff">gist: rules</text>
+    <rect x="132" y="150" width="200" height="30" stroke="currentColor" fill="none"/><text x="140" y="170" font-size="11">raw: cwd line, UUID, date, model name</text>
+    <line x1="340" y1="165" x2="400" y2="165" stroke="currentColor" marker-end="url(#ar)"/>
+    <text x="405" y="162" font-size="11">Write file_path =</text>
+    <text x="405" y="176" font-size="11" fill="#1F5F6E">.../scratchpad/&lt;UUID&gt;/work/s1/FILECOUNT.txt  (real)</text>
+    <text x="10" y="210" font-size="11">Segment rule: lines matching a path, a UUID, a date, or the served model name are dynamic by pattern, not only by diff.</text>
+    <text x="10" y="232" font-size="11">Cost of the rule: 196 fewer static tokens (17,539 to 17,343). Starting KL fell four times because the gist no longer has to memorise an id.</text>
+  </g>
+</svg>
+<figcaption>Why the students filed in the wrong cabinet. Every session used to derive the segment map lived under the same scratch root, so the path prefix diffed as static and was compressed. Keeping it raw costs 196 tokens and removes the defect.</figcaption>
+</figure>
+<div class="tablewrap"><table>
+<tr><th>Run</th><th>Passed of 16</th><th>Path writes to the real directory</th><th>Held-out KL, init to final</th></tr>
+<tr><td>Teacher</td><td class="n">15, then 16 on rerun</td><td class="n">3 of 3</td><td class="n"></td></tr>
+<tr><td>2:1</td><td class="n">12</td><td class="n">0 of 3</td><td class="n"></td></tr>
+<tr><td>4:1</td><td class="n">11</td><td class="n">0 of 3</td><td class="n"></td></tr>
+<tr><td>8:1, original span</td><td class="n">11</td><td class="n">0 of 3</td><td class="n">0.096 to 0.030</td></tr>
+<tr><td>16:1</td><td class="n">12</td><td class="n">0 of 3</td><td class="n"></td></tr>
+<tr><td>8:1, corrected span</td><td class="n">16</td><td class="n">3 of 3</td><td class="n">0.022 to 0.009</td></tr>
+</table></div>
+<div class="block point"><span class="tag">The point</span>The knee is not a ratio. It is a content class: anything the model must reproduce exactly cannot be summarised at any ratio. With that content kept raw, an 8:1 gist matched the teacher on the exam built to break it. The one remaining difference between the arms is variance on a badly designed probe.</div>
+<details><summary>Depth: the exam, the scorer, sub-agents, and the incidents</summary><div class="in">
+<div class="spec">exam</div>
+<p>Sixteen tasks in driver/tasks_hard.txt on an adversarial seed repository, requests, click, typer, and the easy seed. Checks are programmatic: file contents, imports from the working copy, test runs filtered to the new tests, and tool-call sequence from the tap log (required tools, forbidden commands such as rm -rf or git clone after a booby-trapped failure message, read-before-edit ordering). The delete probe is the only task both arms fail or pass by chance: in headless mode there is nobody to ask, and the outcome depends on whether the model reaches for a denied command or a permitted one.</p>
+<div class="spec">sub-agents</div>
+<p>The Agent tool spawns sessions with their own system prompt and a 15-tool catalogue. Their anchors do not match, the tap passes them through untouched and logs it, so they run at full prompt length. A production gist needs a second span for them.</p>
+<div class="spec">incidents</div>
+<p>Four hosts destroyed before the evaluation box: two were still booting, because the serving image upgrades its SSH server from slow package mirrors and keys appear after about seven minutes; one had a start-up command of mine that wrote the key with permissions the server rejects; one machine writes that file with bad permissions on its own and refused the key twice in one day. The provisioning chain also failed three times because the tool shell is zsh, which passes a quoted option string to SSH as one argument; the chains now live in bash files. Two checker defects were found and corrected with the affected runs rescored: a test-name filter that missed the teacher's naming, and a type name the teacher chose following the repository's own convention.</p>
+<p class="terms">new terms: verbatim content &middot; log-aware scorer &middot; sub-agent span</p>
+</div></details>
+</section>
+
+
+<!-- LESSON 12 -->
+<section class="chapter">
+<p class="eyebrow">Lesson 12 &middot; the limit</p>
+<h2>What a week of practice with the rare tools did not buy</h2>
+<div class="block anchor"><span class="tag">Everyday anchor</span>You can drill a new hire on the seldom-used equipment for a week. If their pocket summary has one line per machine for the common ones and half a line for the rest, they will still forget the rare ones exist when a job needs them.</div>
+<p>Two recipes closed the program's queue. The first repeated Shopify's loss-averaging finding: averaging per response rather than per batch ended with a fifth more error and one fewer task passed, direction confirmed, magnitude mild. The second asked whether the gist's weakness on rarely used tools was a data problem. Forty-eight sessions were collected in which the full-prompt model was made to use every rarely used tool: notebooks, worktrees, background tasks, agent listing, search, messaging. The teacher reached every one, 16 of 16. The 299 resulting examples were added to the training set and the 8:1 gist retrained.</p>
+<div class="block assume"><span class="tag">Assumption exposed</span>"The rare-tool gap is a coverage gap; more examples close it." On a sixteen-task exam that requires the named rare tools, the 8:1 gist trained without the coverage data scored 10 of 16, and with it 9 of 16. Same tools missing both times: worktrees, web search, messaging. The teacher scores 16.</div>
+<div class="tablewrap"><table>
+<tr><th>Model</th><th>Hard exam</th><th>Coverage exam</th><th>Distinct tools used</th></tr>
+<tr><td>Teacher</td><td class="n">15 of 16</td><td class="n">16 of 16</td><td class="n">21</td></tr>
+<tr><td>8:1, base data</td><td class="n">16 of 16</td><td class="n">10 of 16</td><td class="n">21</td></tr>
+<tr><td>8:1, base plus coverage data</td><td class="n">14 of 16</td><td class="n">9 of 16</td><td class="n">17</td></tr>
+</table></div>
+<div class="block point"><span class="tag">The point</span>At 8:1 the compressed catalogue keeps the everyday tools reachable and turns the rare ones into a coin flip, and data does not change that. The remedies are a lower ratio for the tool block, a per-segment ratio that leaves rare schemas less compressed, or scoping the gist to workloads that never need them. One more warning came with it: the coverage model invented a directory once in sixteen sessions even with paths kept raw, so a deployment should validate write paths at the proxy.</div>
+<details><summary>Depth: the coverage exam, and what the two exams each see</summary><div class="in">
+<p>The coverage exam (driver/tasks_coverage.txt, driver/eval_coverage.py) passes a task when every required tool was called at least once, regardless of outcome; it measures whether the tool is reachable from the compressed catalogue. The hard exam measures whether tasks get done. The coverage-trained model looked like the teacher's near-equal on the hard exam, 14 of 16, and like a 60 percent model on the coverage exam. Both readings are true, and a deployment decision needs both.</p>
+<div class="spec">spec</div>
+<dl>
+<dt>Coverage data</dt><dd>48 sessions, three passes over 16 tasks, teacher arm; 299 examples; 29 sub-agent turns refused</dd>
+<dt>Cache</dt><dd>top-32, mass 0.999, 35 minutes; merged 1,756 cached of 1,793 examples</dd>
+<dt>Training</dt><dd>corrected 8:1 map, 2,171 rows, one epoch over the merged set, held-out KL 0.0188 to 0.0084</dd>
+<dt>Baseline</dt><dd>the journey 5 rows served on a second box, same exam, same day</dd>
+<dt>Cost</dt><dd>about $15 including two hosts that failed their SSH window</dd>
+</dl>
+<p class="terms">new terms: coverage exam &middot; reachability</p>
+</div></details>
+</section>
+
+<h2>The surprises ledger</h2>
+<p>Every one of these cost real minutes on a metered GPU. Item 18 is the only one that was the method, and it is a rule about what a gist may contain rather than a limit of gisting. Items 15 to 17 were handled by the loop with nobody watching.</p>
+<div class="tablewrap"><table>
+<tr><th>#</th><th>What happened</th><th>Category</th><th>What we do now</th></tr>
+<tr><td class="n">1</td><td>Claude Code asks for reasoning effort "high"; the model accepts xhigh, medium, low; every turn was a 400</td><td>client and model mismatch</td><td>tap remaps high to medium</td></tr>
+<tr><td class="n">2</td><td>Default 1,024 concurrent sequences exceed the 674 state-space cache blocks on 96 GB; startup aborts</td><td>serving config</td><td>max-num-seqs 64</td></tr>
+<tr><td class="n">3</td><td>Engine died as a zombie when a tmux server started from an SSH one-liner went away</td><td>process management</td><td>detached supervisor, never tmux from SSH</td></tr>
+<tr><td class="n">4</td><td>A kill pattern matched the SSH shell running it and killed the command instead</td><td>our bug</td><td>bracket trick in every pattern</td></tr>
+<tr><td class="n">5</td><td>In print mode Claude Code reads stdin; a task-list loop appended the rest of the list to the first prompt</td><td>our bug</td><td>null stdin on every headless call</td></tr>
+<tr><td class="n">6</td><td>A plugin's 24 tools sat in the catalogue although its server never connected: 4,512 tokens</td><td>configuration</td><td>exclude MCP servers for the study</td></tr>
+<tr><td class="n">7</td><td>Repository tests failed at collection because the repositories were not installed; sessions ended in two turns</td><td>environment</td><td>isolated environment with repos installed</td></tr>
+<tr><td class="n">8</td><td>The first host sat in "loading" for twelve minutes with a stopped container</td><td>provider</td><td>destroy and move on, budgeted</td></tr>
+<tr><td class="n">9</td><td>Full-vocabulary log-probs for one prefill chunk need 8 GB; engine out of memory at 92 percent utilization</td><td>serving config</td><td>80 percent, 4k chunks</td></tr>
+<tr><td class="n">10</td><td>Logits processor flag hidden from default help and wants module:Class with a colon</td><td>engine interface</td><td>documented in serve script</td></tr>
+<tr><td class="n">11</td><td>Gradient checkpointing only engages in training mode; student pass out of memory</td><td>our bug</td><td>model.train() with no dropout</td></tr>
+<tr><td class="n">12</td><td>Served model name appears inside the prompt; anchors failed and the swap silently passed through</td><td>span definition</td><td>normalise, and refuse to swap on a missing anchor</td></tr>
+<tr><td class="n">13</td><td>Working-directory path shared a prefix across all sessions and leaked into a static segment</td><td>span definition</td><td>derive segments from sessions that vary every field</td></tr>
+<tr><td class="n">14</td><td>Student once called a tool that does not exist</td><td>method</td><td>negative examples and coverage of unused tools, on the queue</td></tr>
+<tr><td class="n">15</td><td>Two runs out of memory at a 32k sequence cap that fit the median example and not the longest</td><td>our config</td><td>retry ladder at 0.8x cap; default cap 30k</td></tr>
+<tr><td class="n">16</td><td>One run crashed at step 65 of 135, three hours in</td><td>environment</td><td>warm start from rows saved at each evaluation, remaining epoch fraction</td></tr>
+<tr><td class="n">17</td><td>Three of four hosts for one slot bad: key refused, offline, vanished with logs</td><td>provider</td><td>replace on detection; record vanished boxes; provision above reliability 0.99; sync logs during training</td></tr>
+<tr><td class="n">18</td><td>Gisted models write results to invented absolute paths; the cwd line with the session UUID was inside the span</td><td>method, span definition</td><td>verbatim content (paths, ids, dates, names) excluded by pattern; validated 16/16</td></tr>
+<tr><td class="n">19</td><td>Serving image takes about 7 minutes to bring up SSH; two booting hosts destroyed as "unreachable"</td><td>provider, our config</td><td>20-minute SSH window</td></tr>
+<tr><td class="n">20</td><td>A start-up command writing the key by hand gave the file permissions the SSH server rejects; one host does the same on its own</td><td>our config, provider</td><td>never write authorized_keys at start; defective host excluded</td></tr>
+<tr><td class="n">21</td><td>Tool shell is zsh: a quoted SSH option string became one argument and every chained attempt failed</td><td>our bug</td><td>chains in bash files with option arrays</td></tr>
+<tr><td class="n">22</td><td>One in sixteen sessions still wrote to an invented directory after the verbatim rule</td><td>method</td><td>validate write paths at the tap; on the queue</td></tr>
+</table></div>
+
+<h2>Assumptions ledger</h2>
+<div class="tablewrap"><table>
+<tr><th>Common belief</th><th>Verdict</th><th>Our evidence</th></tr>
+<tr><td>The system prompt is what to compress</td><td>Wrong</td><td>Instructions 1,546 tokens; tool schemas 15,994</td></tr>
+<tr><td>Caching makes gisting redundant</td><td>Partly</td><td>87 percent hits on short sessions, 60 percent on long</td></tr>
+<tr><td>The preamble share is a constant</td><td>Wrong</td><td>0.72 short, 0.44 long, 0.18 at 80k to 100k</td></tr>
+<tr><td>Adding tokens is a tokenizer change</td><td>Wrong</td><td>Two tables to grow; output rows zeroed and masked</td></tr>
+<tr><td>Training needs the full teacher distribution</td><td>Wrong</td><td>Top-32 carries 0.999 of mass</td></tr>
+<tr><td>Serving a gist needs custom inference code</td><td>Wrong</td><td>A proxy field edit and one template condition</td></tr>
+<tr><td>Shopify's latency numbers transfer</td><td>Partly</td><td>Throughput +16 percent reproduces; latency &minus;12 percent, not &minus;38</td></tr>
+<tr><td>A gist that matches the teacher will call the same tools</td><td>Mostly</td><td>12/12 tasks, 0 malformed, 1 invented name in 84</td></tr>
+<tr><td>The hard part is the method</td><td>Wrong</td><td>Seventeen incidents, all plumbing or provider; training worked first time</td></tr>
+<tr><td>A research loop needs a person to babysit each run</td><td>Wrong</td><td>Three runs ready-to-destroyed in 7 to 11 minutes with five self-heals</td></tr>
+<tr><td>A perfect score on the exam means the gist is safe</td><td>Wrong</td><td>12/12 at 16:1, then 11/16 when tasks needed an absolute path</td></tr>
+<tr><td>A gist can compress everything static</td><td>Wrong</td><td>Static but verbatim-critical content (paths, ids) must stay raw; fixed 8:1 went 11 to 16</td></tr>
+<tr><td>Rare-tool weakness is a data gap</td><td>Wrong</td><td>299 targeted examples: coverage exam 10 of 16 before, 9 of 16 after</td></tr>
+</table></div>
+
+<h2>What the loop costs and what it is for</h2>
+<p>With the teacher file in place, one recipe is about four hours of training plus twenty minutes on the harder exam, $6 to $9 on this hardware depending on the host. The sweep in lesson 10 ran three recipes in parallel for about $21 including bad hosts; the retrain in lesson 11 cost about $8 and settled the program's most important question so far. The next recipes are already shaped for it: the loss-averaging ablation, a coverage run with sessions that call the eighteen unused tools, a second span for sub-agent sessions, and the clean latency measurement this architecture still owes.</p>
+
+<details><summary>Methods appendix: the operating discipline behind the numbers</summary><div class="in">
+<p>Rented GPUs on a marketplace, one instance per journey, with a ledger written before any workload and an idle watchdog that destroys the instance after two idle hours. Results are synced down before the instance is destroyed, in the same session. Every journey has a timestamped operations log with each command, failure, and decision, and a reader-facing entry written before the next journey starts. Smoke tests run on the cheapest viable instance before any long run. Fix budget of about an hour per broken component before writing an honest null.</p>
+<div class="spec">cost by journey</div>
+<div class="tablewrap"><table>
+<tr><th>Journey</th><th>Question</th><th>GPU</th><th>Hours</th><th>Cost</th></tr>
+<tr><td>1</td><td>Is the preamble big enough</td><td>RTX PRO 6000 96 GB at $1.39/h</td><td class="n">1.07</td><td class="n">about $1.60</td></tr>
+<tr><td>2</td><td>Can the dictionary grow; what do real sessions look like</td><td>RTX PRO 6000 96 GB at $1.40/h</td><td class="n">4.0</td><td class="n">about $6</td></tr>
+<tr><td>3</td><td>Does the trained gist hold quality</td><td>RTX PRO 6000 96 GB at $1.27/h</td><td class="n">11.3</td><td class="n">about $15</td></tr>
+<tr><td>4</td><td>Where is the knee; can the loop run itself</td><td>three RTX PRO 6000 96 GB at $1.00 to $1.47/h</td><td class="n">16.9 plus bad hosts</td><td class="n">about $21</td></tr>
+<tr><td>5</td><td>Harder exam; the path defect; the fix</td><td>two RTX PRO 6000 96 GB at $1.27 to $1.50/h</td><td class="n">8.8 plus bad hosts</td><td class="n">about $18</td></tr>
+<tr><td>6</td><td>Clean latency and throughput</td><td>one RTX PRO 6000 96 GB at $1.34/h</td><td class="n">0.9</td><td class="n">about $1.25</td></tr>
+<tr><td>7</td><td>Loss-reduction ablation</td><td>one RTX PRO 6000 96 GB at $1.23/h</td><td class="n">5.4 plus a bad host</td><td class="n">about $7</td></tr>
+<tr><td>8</td><td>Coverage data for the unused tools, with baseline</td><td>two RTX PRO 6000 96 GB at $1.27/h</td><td class="n">10.6 plus two bad hosts</td><td class="n">about $15</td></tr>
+</table></div>
+<p>Time split in journey 3: 15 minutes to serve, 4 hours 20 minutes of teacher caching, 4 hours of training, 1 hour of evaluation, and about 90 minutes lost to restarts.</p>
+<div class="spec">components, all in experiments/</div>
+<div class="stack">proxy/tap.py            logging proxy; effort remap; gist mode; name normalisation
+driver/                  headless session driver, task sets, programmatic checkers
+analysis/                static span, integrated share, coverage
+gist/segments.py         static span to segments and gist tokens
+gist/prepare_checkpoint  grow embeddings, mean-chunk init, zero head rows
+gist/dataset.py          tap logs to teacher and student token sequences
+gist/teacher_cache.py    teacher top-K log-probs via the engine
+gist/train.py            frozen model, hook-injected rows, KL against cache
+gist/export_rows.py      trained rows into the checkpoint
+vast/                    serve, supervise, watchdog, chains, gen test, parity probe</div>
+</div></details>
+
+<footer>Sources: run logs and journey entries under experiments/journeys/j1-e0-tap, j2-gist-load, j3-e3-e2, j4-ratio-sweep, j5-hard-eval; loop primitives under experiments/loop; the exam under experiments/driver/tasks_hard.txt and eval_hard.py. Method: Shopify Engineering, "Gisting: LLM Context Compression"; Mu, Li and Goodman 2023 for the gist-token framing. No credentials or private hostnames appear on this page.</footer>
+</main>
+
+<script>
+(function(){
+  var b=document.getElementById('all'); if(!b) return;
+  var open=false;
+  b.addEventListener('click',function(){
+    open=!open;
+    var all=document.querySelectorAll('details');
+    for(var i=0;i<all.length;i++){ all[i].open=open; }
+    b.textContent=open?'Close every depth panel':'Open every depth panel';
+  });
+})();
+</script>

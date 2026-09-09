@@ -1,0 +1,23 @@
+vLLM-rendered: system 603, tools 20506, STATIC SPAN 21109 (local tokenizer estimate was 18743)
+requests: 43
+distinct system texts: 8 | distinct tools arrays: 1
+static system prefix tokens: 602 | tools JSON tokens (dominant variant): 18141
+STATIC SPAN TOKENS (system prefix + tools): 21109
+full system tokens per request: min 1587 median 1587 max 1587
+dynamic system tail tokens (median): 985
+
+sessions: 8
+session  turns  ctx_med    ctx_max    int_share  ttft_med lat_med 
+0        3      28237      28430      0.75       5.34     9.56    
+1        6      28809      29393      0.73       5.44     9.15    
+2        4      28841      29726      0.73       5.48     12.13   
+3        6      29214      29914      0.72       5.76     11.44   
+4        6      29718      33950      0.69       6.55     17.66   
+5        6      28959      30138      0.73       5.68     11.98   
+6        6      29608      31211      0.71       6.18     17.30   
+7        6      29154      30484      0.72       5.74     13.88   
+
+INTEGRATED STATIC SHARE across sessions: mean 0.72 median 0.73
+E0 gate (>= 0.25): PASS
+
+tool calls: 50 | invalid JSON: 0 | top tools: [('Bash', 18), ('Read', 17), ('Edit', 7), ('Write', 4), ('Glob', 2), ('Grep', 2)]

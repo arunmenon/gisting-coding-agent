@@ -1,0 +1,13 @@
+# repo|max_turns|task  -- verifiable eval set: each has a checker in driver/eval_checks.py keyed by line number
+seed|20|Add a subtract(a, b) function to calc.py and a test for it in test_calc.py, then run the tests.
+seed|20|Refactor mean() so it returns 0 for an empty list instead of raising; keep all tests passing.
+seed|20|Create stats.py with a median(values) function and a test file test_stats.py with at least two tests; run the tests.
+seed|20|Add type hints to every function in calc.py and run the tests.
+seed|20|Add a clamp(value, low, high) function to calc.py with a test in test_calc.py; run the tests.
+seed|20|divide(a, 0) raises ZeroDivisionError. Change it to raise ValueError with the message "cannot divide by zero" and add a test that expects it.
+seed|20|Add a power(a, b) function to calc.py and tests for power(2, 3) == 8 and power(2, -1) == 0.5; run the tests.
+seed|20|Read calc.py and explain what each function does in two sentences each. Do not modify any file.
+seed|20|Write a README.md describing this project in one paragraph, mentioning every function in calc.py by name. Do not modify calc.py.
+seed|20|Run the tests and report which test fails and why. Do not modify any file.
+seed|20|Add an is_even(n) function to calc.py and a test for it; run the tests.
+seed|20|Create utils.py with a function flatten(list_of_lists) that flattens one level, plus tests in test_utils.py; run the tests.

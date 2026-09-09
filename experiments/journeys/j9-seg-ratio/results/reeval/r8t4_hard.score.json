@@ -1,0 +1,86 @@
+{
+ "passed": 0,
+ "total": 16,
+ "tasks": [
+  {
+   "task": 1,
+   "pass": false,
+   "reason": "no session or work dir"
+  },
+  {
+   "task": 2,
+   "pass": false,
+   "reason": "no session or work dir"
+  },
+  {
+   "task": 3,
+   "pass": false,
+   "reason": "no session or work dir"
+  },
+  {
+   "task": 4,
+   "pass": false,
+   "reason": "no session or work dir"
+  },
+  {
+   "task": 5,
+   "pass": false,
+   "reason": "no session or work dir"
+  },
+  {
+   "task": 6,
+   "pass": false,
+   "reason": "no session or work dir"
+  },
+  {
+   "task": 7,
+   "pass": false,
+   "reason": "no session or work dir"
+  },
+  {
+   "task": 8,
+   "pass": false,
+   "reason": "no session or work dir"
+  },
+  {
+   "task": 9,
+   "pass": false,
+   "reason": "no session or work dir"
+  },
+  {
+   "task": 10,
+   "pass": false,
+   "reason": "no session or work dir"
+  },
+  {
+   "task": 11,
+   "pass": false,
+   "reason": "no session or work dir"
+  },
+  {
+   "task": 12,
+   "pass": false,
+   "reason": "no session or work dir"
+  },
+  {
+   "task": 13,
+   "pass": false,
+   "reason": "no session or work dir"
+  },
+  {
+   "task": 14,
+   "pass": false,
+   "reason": "no session or work dir"
+  },
+  {
+   "task": 15,
+   "pass": false,
+   "reason": "no session or work dir"
+  },
+  {
+   "task": 16,
+   "pass": false,
+   "reason": "no session or work dir"
+  }
+ ]
+}

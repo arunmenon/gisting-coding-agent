@@ -1,0 +1,638 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Gist Trainer</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Source+Sans+3:wght@400;600&family=JetBrains+Mono:wght@400;600&display=swap">
+</head><body>
+<style>
+:root{
+  --bg:#F6F7F9; --surface:#FFFFFF; --surface2:#EEF1F5; --ink:#1C2130; --muted:#5B6475; --line:#D9DEE7;
+  --teacher:#1C6E9C; --teacher-soft:#E1EEF6; --student:#C77D1F; --student-soft:#FBEEDC; --good:#2E7D5B;
+  --code-bg:#EEF1F5;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#11141A; --surface:#191E27; --surface2:#222835; --ink:#E7EAF0; --muted:#9AA3B2; --line:#2B3240;
+    --teacher:#6CB9E0; --teacher-soft:#1B2E3B; --student:#E9A651; --student-soft:#3A2B17; --good:#5FBF93;
+    --code-bg:#222835;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#11141A; --surface:#191E27; --surface2:#222835; --ink:#E7EAF0; --muted:#9AA3B2; --line:#2B3240;
+  --teacher:#6CB9E0; --teacher-soft:#1B2E3B; --student:#E9A651; --student-soft:#3A2B17; --good:#5FBF93;
+  --code-bg:#222835;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Source Sans 3",system-ui,-apple-system,"Segoe UI",sans-serif;font-size:17px;line-height:1.55}
+h1,h2,h3{font-family:"Fraunces","Iowan Old Style",Georgia,serif;font-weight:600;text-wrap:balance;margin:0}
+h1{font-size:2.6rem;line-height:1.1;font-variation-settings:"opsz" 144}
+h2{font-size:1.7rem;line-height:1.2}
+h3{font-size:1.15rem}
+p{margin:0 0 1em}
+.mono,.num,code,kbd{font-family:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;font-variant-numeric:tabular-nums}
+code{background:var(--code-bg);padding:.1em .35em;border-radius:4px;font-size:.88em}
+a{color:var(--teacher)}
+.wrap{display:grid;grid-template-columns:230px minmax(0,1fr);gap:0;max-width:1180px;margin:0 auto}
+nav{position:sticky;top:0;align-self:start;height:100vh;overflow:auto;padding:36px 20px 36px 24px;border-right:1px solid var(--line)}
+nav .eyebrow{font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:14px}
+nav ol{list-style:none;margin:0;padding:0;counter-reset:step}
+nav li{counter-increment:step;margin:0 0 4px}
+nav a{display:flex;gap:10px;align-items:baseline;color:var(--muted);text-decoration:none;padding:6px 8px;border-radius:6px;font-size:.93rem;line-height:1.3}
+nav a::before{content:counter(step);font-family:"JetBrains Mono",monospace;font-size:.75rem;color:var(--muted);min-width:1.4em}
+nav a:hover,nav a:focus-visible{background:var(--surface2);color:var(--ink);outline:none}
+nav a.active{color:var(--ink);background:var(--surface2)}
+main{padding:36px 40px 80px;min-width:0}
+header.hero{margin-bottom:48px;max-width:70ch}
+header.hero p.lede{font-size:1.2rem;color:var(--muted);margin-top:14px}
+section{padding:40px 0;border-top:1px solid var(--line)}
+section .step{font-family:"JetBrains Mono",monospace;font-size:.75rem;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;margin-bottom:8px}
+section .prose{max-width:66ch}
+section .prose p{margin-bottom:.9em}
+.term{border-bottom:1px dotted var(--muted);cursor:help;text-decoration:none;color:inherit}
+figure{margin:24px 0}
+figure svg{max-width:100%;height:auto;display:block}
+figcaption{font-size:.9rem;color:var(--muted);margin-top:8px;max-width:70ch}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:20px 22px;margin:20px 0}
+.panel h3{margin-bottom:10px}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:stretch}
+.tile{display:flex;flex-direction:column;align-items:center;gap:6px;min-width:76px}
+.tile .sw{width:44px;height:44px;border-radius:8px;border:1px solid var(--line)}
+.tile .lbl{font-size:.85rem}
+.tile .vals{font-family:"JetBrains Mono",monospace;font-size:.7rem;color:var(--muted);text-align:center;line-height:1.25}
+.tile.gist .sw{outline:2px solid var(--student);outline-offset:2px}
+.tile.empty .sw{background:repeating-linear-gradient(45deg,transparent 0 6px,var(--line) 6px 8px)}
+.tile .wbar{width:44px;height:6px;background:var(--surface2);border-radius:3px;overflow:hidden}
+.tile .wbar i{display:block;height:100%;background:var(--teacher)}
+.tile.gist .wbar i{background:var(--student)}
+table{border-collapse:collapse;width:100%;font-size:.93rem}
+th,td{text-align:left;padding:6px 10px;border-bottom:1px solid var(--line);vertical-align:middle}
+th{font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600}
+td.num,th.num{text-align:right}
+.swatch{display:inline-block;width:18px;height:18px;border-radius:4px;border:1px solid var(--line);vertical-align:middle}
+tr.gistrow td{background:var(--student-soft)}
+tr.newrow td{color:var(--muted);font-style:italic}
+.scroll{overflow-x:auto}
+.btn{font:inherit;font-weight:600;font-size:.92rem;padding:8px 14px;border-radius:7px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+.btn:hover{background:var(--surface2)}
+.btn:focus-visible{outline:2px solid var(--teacher);outline-offset:2px}
+.btn.primary{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.btn.primary:hover{opacity:.9}
+.btn[aria-pressed="true"]{background:var(--student-soft);border-color:var(--student);color:var(--ink)}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 14px}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:6px 16px;font-size:.95rem;align-items:baseline}
+.kv .k{color:var(--muted)}
+.big{font-family:"JetBrains Mono",monospace;font-size:1.6rem;font-weight:600}
+.bars{display:grid;grid-template-columns:auto 1fr;gap:6px 12px;align-items:center;margin-top:10px}
+.bars .w{font-size:.9rem}
+.bars .pair{display:flex;flex-direction:column;gap:3px}
+.bars .b{height:10px;border-radius:3px;position:relative}
+.bars .b.t{background:var(--teacher)}
+.bars .b.s{background:var(--student)}
+.bars .b span{position:absolute;left:calc(100% + 6px);top:-4px;font-family:"JetBrains Mono",monospace;font-size:.72rem;color:var(--muted);white-space:nowrap}
+.legend{display:flex;gap:16px;font-size:.85rem;color:var(--muted);margin-top:8px}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;vertical-align:-1px;margin-right:6px}
+.legend .t i{background:var(--teacher)} .legend .s i{background:var(--student)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.arith{white-space:pre;font-family:"JetBrains Mono",monospace;font-size:.8rem;line-height:1.7;background:var(--code-bg);padding:12px 14px;border-radius:8px;overflow-x:auto}
+.callout{border-left:3px solid var(--student);padding:4px 0 4px 16px;color:var(--muted);margin:16px 0;max-width:66ch}
+.callout strong{color:var(--ink)}
+.slope-up{color:var(--good)} .slope-down{color:var(--student)}
+dl.gloss{max-width:70ch}
+dl.gloss dt{font-weight:600;margin-top:14px}
+dl.gloss dd{margin:2px 0 0}
+.sidebyside{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}
+.muted{color:var(--muted)}
+@media (max-width:860px){
+  .wrap{grid-template-columns:1fr}
+  nav{position:static;height:auto;border-right:0;border-bottom:1px solid var(--line);padding:20px}
+  nav ol{display:flex;flex-wrap:wrap;gap:4px}
+  main{padding:24px 18px 60px}
+  h1{font-size:2rem}
+  .two,.sidebyside{grid-template-columns:1fr}
+}
+@media (prefers-reduced-motion:no-preference){
+  .tile .sw{transition:background-color .25s}
+  .bars .b{transition:width .25s}
+}
+</style>
+
+<div class="wrap">
+<nav aria-label="Steps">
+  <div class="eyebrow">The training process</div>
+  <ol>
+    <li><a href="#s1">The whole loop on one screen</a></li>
+    <li><a href="#s2">Words become rows of numbers</a></li>
+    <li><a href="#s3">What a long prompt costs</a></li>
+    <li><a href="#s4">Add blank rows to the table</a></li>
+    <li><a href="#s5">Pick their starting numbers</a></li>
+    <li><a href="#s6">Teacher pass</a></li>
+    <li><a href="#s7">Student pass and the mismatch score</a></li>
+    <li><a href="#s8">Find the slopes and nudge</a></li>
+    <li><a href="#s9">Ship the rows</a></li>
+    <li><a href="#s10">Toy vs. real</a></li>
+    <li><a href="#gloss">Plain-words glossary</a></li>
+  </ol>
+</nav>
+
+<main>
+<header class="hero">
+  <div class="step">A working miniature of Shopify's gist-token training</div>
+  <h1>Gist Trainer</h1>
+  <p class="lede">Every number on this page is real: a tiny model small enough to show all of its arithmetic, trained live in your browser by exactly the recipe in the article. Eight prompt words get squeezed into two made-up words. Scroll down and press the buttons.</p>
+</header>
+
+<!-- ============ 1 ============ -->
+<section id="s1">
+  <div class="step">Step 1</div>
+  <h2>The whole loop on one screen</h2>
+  <div class="prose">
+    <p>Here is the full process as a diagram. Do not worry about any word in it yet; every box gets its own step below, and by step 9 this picture should read like a sentence.</p>
+  </div>
+  <figure>
+    <svg viewBox="0 0 900 420" role="img" aria-label="Flow: the long prompt is split into chunks that seed the gist rows; a conversation is run through the same frozen model twice, once with the prompt (teacher) and once with the gist rows (student); the two prediction lists are compared, the comparison gives a slope for each gist number, the gist rows are nudged, and the loop repeats until the rows are written into the model's table.">
+      <defs>
+        <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="currentColor"/></marker>
+        <marker id="arrS" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--student)"/></marker>
+      </defs>
+      <g fill="none" stroke="currentColor" stroke-width="1.3" font-family="Source Sans 3, sans-serif" font-size="13">
+        <!-- prompt -->
+        <rect x="20" y="30" width="170" height="54" rx="6"/>
+        <text x="105" y="52" text-anchor="middle" fill="currentColor" stroke="none" font-weight="600">Real prompt</text>
+        <text x="105" y="70" text-anchor="middle" fill="currentColor" stroke="none" font-size="12">6,000 tokens</text>
+        <!-- gist rows -->
+        <rect x="20" y="150" width="170" height="54" rx="6" stroke="var(--student)"/>
+        <text x="105" y="172" text-anchor="middle" fill="currentColor" stroke="none" font-weight="600">Gist rows</text>
+        <text x="105" y="190" text-anchor="middle" fill="currentColor" stroke="none" font-size="12">1,500 made-up tokens</text>
+        <line x1="105" y1="84" x2="105" y2="148" marker-end="url(#arr)"/>
+        <text x="115" y="125" fill="currentColor" stroke="none" font-size="12">split into chunks,</text>
+        <text x="115" y="140" fill="currentColor" stroke="none" font-size="12">average each (start)</text>
+        <!-- conversation -->
+        <rect x="20" y="280" width="170" height="54" rx="6"/>
+        <text x="105" y="302" text-anchor="middle" fill="currentColor" stroke="none" font-weight="600">A logged conversation</text>
+        <text x="105" y="320" text-anchor="middle" fill="currentColor" stroke="none" font-size="12">question + reply</text>
+        <!-- model teacher -->
+        <rect x="300" y="30" width="170" height="54" rx="6" stroke="var(--teacher)"/>
+        <text x="385" y="52" text-anchor="middle" fill="currentColor" stroke="none" font-weight="600">Same frozen model</text>
+        <text x="385" y="70" text-anchor="middle" fill="currentColor" stroke="none" font-size="12">prompt in front</text>
+        <!-- model student -->
+        <rect x="300" y="150" width="170" height="54" rx="6" stroke="var(--student)"/>
+        <text x="385" y="172" text-anchor="middle" fill="currentColor" stroke="none" font-weight="600">Same frozen model</text>
+        <text x="385" y="190" text-anchor="middle" fill="currentColor" stroke="none" font-size="12">gist rows in front</text>
+        <line x1="190" y1="57" x2="298" y2="57" marker-end="url(#arr)"/>
+        <line x1="190" y1="177" x2="298" y2="177" marker-end="url(#arr)"/>
+        <!-- conversation feeds both -->
+        <path d="M190,307 L250,307 L250,70 L298,70" marker-end="url(#arr)"/>
+        <path d="M250,190 L298,190" marker-end="url(#arr)"/>
+        <text x="258" y="300" fill="currentColor" stroke="none" font-size="12">feeds both runs</text>
+        <!-- predictions -->
+        <rect x="560" y="30" width="150" height="54" rx="6" stroke="var(--teacher)"/>
+        <text x="635" y="52" text-anchor="middle" fill="currentColor" stroke="none" font-weight="600">Teacher list</text>
+        <text x="635" y="70" text-anchor="middle" fill="currentColor" stroke="none" font-size="12">next-word odds</text>
+        <rect x="560" y="150" width="150" height="54" rx="6" stroke="var(--student)"/>
+        <text x="635" y="172" text-anchor="middle" fill="currentColor" stroke="none" font-weight="600">Student list</text>
+        <text x="635" y="190" text-anchor="middle" fill="currentColor" stroke="none" font-size="12">next-word odds</text>
+        <line x1="470" y1="57" x2="558" y2="57" marker-end="url(#arr)"/>
+        <line x1="470" y1="177" x2="558" y2="177" marker-end="url(#arr)"/>
+        <!-- compare -->
+        <rect x="560" y="260" width="150" height="54" rx="6"/>
+        <text x="635" y="282" text-anchor="middle" fill="currentColor" stroke="none" font-weight="600">Mismatch score</text>
+        <text x="635" y="300" text-anchor="middle" fill="currentColor" stroke="none" font-size="12">0 = identical</text>
+        <line x1="635" y1="84" x2="635" y2="148" stroke-dasharray="4 3"/>
+        <line x1="635" y1="204" x2="635" y2="258" marker-end="url(#arr)"/>
+        <text x="645" y="235" fill="currentColor" stroke="none" font-size="12">compare</text>
+        <!-- nudge -->
+        <rect x="770" y="150" width="110" height="54" rx="6" stroke="var(--student)"/>
+        <text x="825" y="172" text-anchor="middle" fill="currentColor" stroke="none" font-weight="600">Slopes</text>
+        <text x="825" y="190" text-anchor="middle" fill="currentColor" stroke="none" font-size="12">per gist number</text>
+        <path d="M710,287 L825,287 L825,206" marker-end="url(#arr)"/>
+        <text x="730" y="280" fill="currentColor" stroke="none" font-size="12">which way lowers it?</text>
+        <!-- loop back to gist -->
+        <path d="M825,150 L825,105 L60,105 L60,148" stroke="var(--student)" stroke-width="1.6" fill="none" marker-end="url(#arrS)" />
+        <text x="400" y="98" text-anchor="middle" fill="var(--student)" stroke="none" font-size="12" font-weight="600">nudge the gist rows a little, then repeat thousands of times</text>
+        <!-- ship -->
+        <rect x="300" y="360" width="410" height="44" rx="6" stroke="var(--good)"/>
+        <text x="505" y="387" text-anchor="middle" fill="currentColor" stroke="none" font-weight="600">Score stops falling → write the rows into the table, ship</text>
+        <path d="M105,204 L105,240 L230,240 L230,382 L298,382" marker-end="url(#arr)"/>
+      </g>
+    </svg>
+    <figcaption>One frozen model, two inputs, one comparison, one nudge. The loop only ever changes the gist rows.</figcaption>
+  </figure>
+</section>
+
+<!-- ============ 2 ============ -->
+<section id="s2">
+  <div class="step">Step 2</div>
+  <h2>Words become rows of numbers</h2>
+  <div class="prose">
+    <p>A language model cannot read letters. Before anything happens, text is chopped into pieces (usually a word or part of a word; we will call each piece a <a class="term" href="#g-token">token</a>), and each token is looked up in a table. The table has one row per token, and each row is a list of numbers. That row is the only thing the model ever sees for that token.</p>
+    <p>A real model's rows are a few thousand numbers long. Our toy uses <strong>three</strong> numbers per row, so every row fits on a line and can be painted as a colour (first number → red, second → green, third → blue). The colour is just a way to see a row at a glance; the numbers are what matter.</p>
+    <p>Here is the toy's entire table. The rows are made up so the arithmetic fits on a screen; nothing here was learned from real text.</p>
+  </div>
+  <div class="panel scroll">
+    <table id="vocabTable"><thead><tr><th>Token</th><th>Colour</th><th class="num">n₁</th><th class="num">n₂</th><th class="num">n₃</th><th>Used as</th></tr></thead><tbody></tbody></table>
+  </div>
+</section>
+
+<!-- ============ 3 ============ -->
+<section id="s3">
+  <div class="step">Step 3</div>
+  <h2>What a long prompt costs</h2>
+  <div class="prose">
+    <p>A <a class="term" href="#g-prompt">system prompt</a> is a block of instructions placed in front of every conversation. In our toy it is eight tokens long. In Shopify's agent it was about 6,000.</p>
+    <p>Two costs come from it. First, the model must work through every prompt token before it can produce the first word of its reply. Second, and less obvious, for <em>every</em> word it writes it looks back across everything in front of it, prompt included. So a 6,000-token prompt is not paid once per request; it is re-scanned once per reply word.</p>
+  </div>
+  <div class="panel">
+    <h3>The toy prompt, as the model sees it</h3>
+    <div class="row" id="promptTiles"></div>
+    <p class="muted" style="margin:14px 0 0;font-size:.92rem">Then the user's question (e.g. <code>price?</code>), then the reply, one token at a time. Each reply token looks back across all 8 prompt tokens plus the question.</p>
+  </div>
+  <div class="prose">
+    <p>Gisting's bet is that most of those 6,000 rows are carrying very little each: grammar, connective words, repetition. If you could hand the model 1,500 rows that together carry the same instruction, both costs shrink by the same factor.</p>
+  </div>
+</section>
+
+<!-- ============ 4 ============ -->
+<section id="s4">
+  <div class="step">Step 4</div>
+  <h2>Add blank rows to the table</h2>
+  <div class="prose">
+    <p>Nothing says the table may only contain real words. We can append rows for tokens that do not exist in any language. Decide how many: Shopify chose a 4-to-1 squeeze, so 6,000 prompt tokens become 1,500 gist tokens. In the toy, 8 prompt tokens become <strong>2</strong> gist tokens.</p>
+    <p>At this moment the new rows are just names, <code>&lt;gist_0&gt;</code> and <code>&lt;gist_1&gt;</code>, with no numbers in them. They mean nothing yet. The entire training process that follows exists to fill in these six numbers.</p>
+  </div>
+  <div class="panel scroll">
+    <table><thead><tr><th>Token</th><th>Colour</th><th class="num">n₁</th><th class="num">n₂</th><th class="num">n₃</th><th>Used as</th></tr></thead>
+    <tbody>
+      <tr><td colspan="6" class="muted">… the 16 real-word rows from step 2 …</td></tr>
+      <tr class="newrow"><td class="mono">&lt;gist_0&gt;</td><td><span class="swatch" style="background:repeating-linear-gradient(45deg,transparent 0 4px,var(--line) 4px 6px)"></span></td><td class="num">?</td><td class="num">?</td><td class="num">?</td><td>new, stands in for prompt tokens 1–4</td></tr>
+      <tr class="newrow"><td class="mono">&lt;gist_1&gt;</td><td><span class="swatch" style="background:repeating-linear-gradient(45deg,transparent 0 4px,var(--line) 4px 6px)"></span></td><td class="num">?</td><td class="num">?</td><td class="num">?</td><td>new, stands in for prompt tokens 5–8</td></tr>
+    </tbody></table>
+  </div>
+</section>
+
+<!-- ============ 5 ============ -->
+<section id="s5">
+  <div class="step">Step 5</div>
+  <h2>Pick their starting numbers</h2>
+  <div class="prose">
+    <p>Training works by starting from <em>some</em> numbers and improving them. The obvious start is random numbers. Shopify found a far better one: cut the prompt into consecutive chunks (four tokens each for a 4-to-1 squeeze), and set each gist row to the <strong>average</strong> of the rows in its chunk. Gist row 0 starts as a blurred blend of prompt tokens 1–4; gist row 1 of tokens 5–8.</p>
+    <p>Try both. The "starting mismatch" number is explained fully in step 7; for now, lower is better and 0 would be perfect.</p>
+  </div>
+  <div class="panel">
+    <div class="chips" role="group" aria-label="Starting numbers">
+      <button class="btn" id="initRandom" aria-pressed="true">Random numbers</button>
+      <button class="btn" id="initMean" aria-pressed="false">Average of each chunk</button>
+    </div>
+    <div class="two">
+      <div>
+        <h3>Chunk arithmetic</h3>
+        <div class="arith" id="chunkArith"></div>
+      </div>
+      <div>
+        <h3>Resulting gist rows</h3>
+        <div class="row" id="gistTilesInit"></div>
+        <div class="kv" style="margin-top:14px">
+          <span class="k">Starting mismatch, random</span><span class="num" id="lossRand"></span>
+          <span class="k">Starting mismatch, averaged</span><span class="num" id="lossMean"></span>
+          <span class="k">Random ÷ averaged</span><span class="num" id="lossRatio"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="callout"><strong>Why it helps.</strong> Shopify saw their starting error fall by a factor of about 7 with averaged starts. The averaged rows already sit "near" the prompt tokens they replace, so training starts most of the way to the finish rather than from nowhere. The toy shows the same effect with its own ratio.</div>
+</section>
+
+<!-- ============ 6 ============ -->
+<section id="s6">
+  <div class="step">Step 6</div>
+  <h2>Teacher pass: run the model with the real prompt</h2>
+  <div class="prose">
+    <p>Now we need a target to aim for. Take one logged conversation, put the real prompt in front, and run the model. What comes out is not a word; it is a list of odds, one per candidate word, for what the next word should be. Save that list. It is the behaviour we are trying to preserve. We call this run the <a class="term" href="#g-teacher">teacher</a>, but note: it is the ordinary model doing its ordinary job.</p>
+    <p>To make the arithmetic visible, our toy model is a three-line recipe. A real model is the same idea repeated through dozens of layers with billions of numbers, but nothing conceptually different happens.</p>
+  </div>
+  <div class="panel">
+    <h3>Pick the user's question</h3>
+    <div class="chips" id="qChips" role="group" aria-label="Question"></div>
+    <div class="two">
+      <div>
+        <h3>Line 1 · How much does each prompt token matter for this question?</h3>
+        <p class="muted" style="font-size:.9rem">The model compares the question's row with each prompt row (multiply matching numbers, add them up). Higher = more relevant. The bar under each tile shows its share.</p>
+        <div class="row" id="teacherTiles"></div>
+        <h3 style="margin-top:18px">Line 2 · Blend the prompt rows by those shares, add the question's row</h3>
+        <div class="arith" id="teacherBlend"></div>
+      </div>
+      <div>
+        <h3>Line 3 · Score each candidate next word against that blend</h3>
+        <p class="muted" style="font-size:.9rem">Same compare-and-add against each candidate's row, then turned into odds that sum to 100%. This list is the teacher's answer for this question.</p>
+        <div class="bars" id="teacherBars"></div>
+        <div class="legend"><span class="t"><i></i>teacher (real prompt)</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 7 ============ -->
+<section id="s7">
+  <div class="step">Step 7</div>
+  <h2>Student pass and the mismatch score</h2>
+  <div class="prose">
+    <p>Run the <em>identical</em> model again on the <em>identical</em> question, with one change: the eight prompt rows are swapped for the two gist rows. This run is the <a class="term" href="#g-student">student</a>. Same weights, same recipe, different thing in front.</p>
+    <p>Now compare the two lists of odds. We need a single number that says "how far apart are these", so that "improve" has a meaning. The one Shopify uses (its technical name is <a class="term" href="#g-kl">KL divergence</a>) works like this: for each candidate word, take the teacher's odds and multiply by how much more the teacher believes in that word than the student does (measured on a log scale, so that halving belief counts the same as halving it again). Add up over all words. If the two lists are identical, every term is zero. The more the student under-rates words the teacher likes, the bigger it grows.</p>
+  </div>
+  <div class="panel">
+    <div class="two">
+      <div>
+        <h3>Line 1 · Shares, now over the two gist rows</h3>
+        <div class="row" id="studentTiles"></div>
+        <h3 style="margin-top:18px">Line 2 · Blend, add the question</h3>
+        <div class="arith" id="studentBlend"></div>
+      </div>
+      <div>
+        <h3>Teacher vs. student, same question</h3>
+        <div class="bars" id="compareBars"></div>
+        <div class="legend"><span class="t"><i></i>teacher</span><span class="s"><i></i>student</span></div>
+        <div class="kv" style="margin-top:14px">
+          <span class="k">Mismatch on this question</span><span class="big" id="klOne"></span>
+          <span class="k">Averaged over all 3 questions</span><span class="big" id="klAll"></span>
+        </div>
+      </div>
+    </div>
+    <details style="margin-top:12px"><summary class="muted" style="cursor:pointer">Show the per-word arithmetic of the mismatch score</summary><div class="arith" id="klArith" style="margin-top:8px"></div></details>
+  </div>
+  <div class="callout"><strong>Why average over several questions?</strong> The gist rows must work for <em>every</em> conversation the prompt would have handled, not one. So the score we actually train on is the average mismatch across a large, varied set of logged conversations. Shopify's last big gain came from making that set bigger and more varied. The toy uses three questions.</div>
+</section>
+
+<!-- ============ 8 ============ -->
+<section id="s8">
+  <div class="step">Step 8</div>
+  <h2>Find the slopes and nudge</h2>
+  <div class="prose">
+    <p>We have six numbers we are allowed to change (two gist rows × three numbers) and one score we want to lower. For each of the six, ask a simple question: <em>if I raised this number by a hair, would the score go down or up?</em> The toy answers it literally: raise the number a tiny bit, recompute the score; lower it a tiny bit, recompute; the difference, divided by the size of the hair, is that number's <a class="term" href="#g-slope">slope</a>. A negative slope means "raising this lowers the score".</p>
+    <p>Then move every number a small step against its slope, all six at once. That is one training step. Repeat. The score falls, quickly at first, then flattens as the student converges on the teacher.</p>
+    <p>Everything in the model that is <em>not</em> a gist number is left untouched. That is what "the weights are frozen" means: the model's own billions of numbers also have slopes, but we ignore them and move only the six.</p>
+  </div>
+  <div class="panel">
+    <div class="chips">
+      <button class="btn primary" id="stepOne">Take one step</button>
+      <button class="btn" id="step25">Run 25 steps</button>
+      <button class="btn" id="step200">Run 200 steps</button>
+      <button class="btn" id="resetBtn">Reset to starting numbers</button>
+    </div>
+    <div class="two">
+      <div class="scroll">
+        <table id="slopeTable"><thead><tr><th>Gist number</th><th class="num">Value now</th><th class="num">Score if +hair</th><th class="num">Score if −hair</th><th class="num">Slope</th><th>Move</th></tr></thead><tbody></tbody></table>
+        <p class="muted" style="font-size:.85rem;margin-top:8px">Hair = 0.0001. Step size = 0.5 × slope. Steps taken: <span class="num" id="stepCount">0</span></p>
+      </div>
+      <div>
+        <h3>Mismatch score over steps</h3>
+        <figure style="margin:8px 0 0">
+          <svg id="lossChart" viewBox="0 0 420 200" role="img" aria-label="Line chart of the mismatch score falling as training steps accumulate"></svg>
+          <figcaption id="lossCaption"></figcaption>
+        </figure>
+        <h3 style="margin-top:12px">Gist rows now</h3>
+        <div class="row" id="gistTilesNow"></div>
+      </div>
+    </div>
+  </div>
+  <div class="prose">
+    <p>Scroll back up to step 7 after a few steps: the amber bars move toward the blue ones for every question, even though we only ever looked at the score, never at any single word. The prompt's meaning is being packed into six numbers in whatever form the model finds easiest to read. Those numbers are not a summary a human could decode; they are whatever makes the model behave the same.</p>
+  </div>
+</section>
+
+<!-- ============ 9 ============ -->
+<section id="s9">
+  <div class="step">Step 9</div>
+  <h2>Ship the rows</h2>
+  <div class="prose">
+    <p>When the score stops falling, stop. The gist rows are final. Two small edits make them live: append the rows to the model's table permanently, and tell the tokenizer (the text-chopper) that <code>&lt;gist_0&gt;</code> and <code>&lt;gist_1&gt;</code> are real tokens now. From then on, every request begins with those two tokens instead of the eight-word prompt. The serving software treats a gist token exactly the way it treats <code>the</code>: look up its row, feed it in. No special code anywhere.</p>
+  </div>
+  <div class="panel scroll">
+    <table id="finalTable"><thead><tr><th>Token</th><th>Colour</th><th class="num">n₁</th><th class="num">n₂</th><th class="num">n₃</th><th>Used as</th></tr></thead><tbody></tbody></table>
+  </div>
+  <div class="panel">
+    <div class="two">
+      <div><h3>Before</h3><div class="mono" style="font-size:.9rem;line-height:1.8">always answer politely quote prices in dollars briefly <span class="muted">+</span> price?<br><span class="muted">9 tokens in front of every reply word</span></div></div>
+      <div><h3>After</h3><div class="mono" style="font-size:.9rem;line-height:1.8">&lt;gist_0&gt; &lt;gist_1&gt; <span class="muted">+</span> price?<br><span class="muted">3 tokens in front of every reply word</span></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 10 ============ -->
+<section id="s10">
+  <div class="step">Step 10</div>
+  <h2>Toy vs. real: what scales, and what the toy hides</h2>
+  <div class="panel scroll">
+    <table>
+      <thead><tr><th>Thing</th><th>This toy</th><th>Shopify's setup</th></tr></thead>
+      <tbody>
+        <tr><td>Numbers per row</td><td class="num">3</td><td>a few thousand</td></tr>
+        <tr><td>Prompt length</td><td class="num">8 tokens</td><td>~6,000 tokens</td></tr>
+        <tr><td>Gist tokens</td><td class="num">2 (4-to-1)</td><td>~1,500 (4-to-1)</td></tr>
+        <tr><td>Numbers being trained</td><td class="num">6</td><td>1,500 × a few thousand</td></tr>
+        <tr><td>Model recipe</td><td>3 lines, one layer</td><td>dozens of layers; the gist rows must work at every one</td></tr>
+        <tr><td>Conversations in the score</td><td class="num">3</td><td>a large, deliberately varied set</td></tr>
+        <tr><td>How slopes are found</td><td>nudge each number, re-score</td><td>backpropagation: all slopes in one pass (same answer, vastly faster)</td></tr>
+        <tr><td>Time per full run</td><td>instant</td><td>30 h → 6 h after saving the teacher's lists once and reusing them</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="prose">
+    <p><strong>Two things the toy hides.</strong> First, the model has many layers, and the gist rows only enter at the bottom; training has to find rows whose effect, after passing through every layer, matches the prompt's. That is why it takes hours, not seconds. Second, when averaging the score over many conversations, <em>how</em> you average matters. Averaging each reply's tokens first and then averaging replies down-weights every token in a long reply; Shopify found this made the student hallucinate. Averaging over all tokens in the batch at once kept long replies at full weight and produced stable rows.</p>
+    <p><strong>What the toy shows faithfully.</strong> The frozen model. The two passes. The one score. Slopes that come from the score alone. Averaged starts beating random starts. And the ending: the deliverable is rows in a table, nothing else.</p>
+  </div>
+</section>
+
+<!-- ============ glossary ============ -->
+<section id="gloss">
+  <div class="step">Reference</div>
+  <h2>Plain-words glossary</h2>
+  <dl class="gloss">
+    <dt id="g-token">Token</dt><dd>A piece of text the model treats as one unit: usually a word or part of a word, sometimes punctuation. Text is chopped into tokens before the model sees it.</dd>
+    <dt id="g-embedding">Row / embedding</dt><dd>The list of numbers the table holds for a token. "Embedding" is the technical name; on this page it is just "the token's row".</dd>
+    <dt id="g-prompt">System prompt</dt><dd>A fixed block of instructions placed in front of every conversation, invisible to the user, telling the model how to behave.</dd>
+    <dt>Gist token</dt><dd>A made-up token added to the table whose row is trained so that a handful of them, placed in front, make the model behave as if the whole system prompt were there.</dd>
+    <dt id="g-teacher">Teacher</dt><dd>The model run with the real prompt in front. Its list of next-word odds is the target.</dd>
+    <dt id="g-student">Student</dt><dd>The same model run with the gist tokens in front. Its list is what we want to match to the teacher's.</dd>
+    <dt>Distillation</dt><dd>Any training that copies one run's outputs rather than learning from labelled right answers. "Self-distillation" means teacher and student are the same model.</dd>
+    <dt id="g-kl">KL divergence / mismatch score</dt><dd>A single number measuring how far one list of odds is from another. Zero means identical. It grows fastest when the student gives low odds to words the teacher gives high odds to.</dd>
+    <dt id="g-slope">Slope</dt><dd>For one adjustable number: how much the score changes if that number is raised by a hair. Its sign says which way to move; its size says how much that number matters right now. "Gradient" is the technical name for the full set of slopes.</dd>
+    <dt>Frozen weights</dt><dd>The model's own numbers are left exactly as they are during training; only the gist rows move.</dd>
+    <dt>Backpropagation</dt><dd>A way of computing every slope at once from a single pass, instead of re-scoring after nudging each number individually. Same answer as the toy's method, enormously faster.</dd>
+    <dt>Tokenizer</dt><dd>The text-chopper: the component that turns text into tokens and knows which tokens exist.</dd>
+    <dt>Batch</dt><dd>The set of conversations whose mismatch scores are averaged together for one training step.</dd>
+  </dl>
+</section>
+</main>
+</div>
+
+<script>
+(function(){
+  // ---------- toy data ----------
+  const E = {
+    always:[0.2,0.0,0.3], answer:[0.3,0.1,0.2], politely:[0.9,0.0,-0.2], quote:[0.0,0.7,0.2],
+    prices:[0.0,0.9,0.1], in:[0.1,0.2,0.1], dollars:[0.0,0.8,0.4], briefly:[0.1,0.0,0.9],
+    hello:[0.8,0.0,0.2], "price?":[0.1,0.9,0.0], "refund?":[0.4,0.6,-0.1],
+    "$":[0.0,0.9,0.6], sure:[0.7,0.1,0.5], sorry:[0.8,0.2,-0.3], euros:[0.0,0.7,-0.5], ok:[0.3,0.0,0.8]
+  };
+  const ROLE = {
+    always:"prompt", answer:"prompt", politely:"prompt", quote:"prompt", prices:"prompt", in:"prompt", dollars:"prompt · also a candidate reply word", briefly:"prompt",
+    hello:"user question", "price?":"user question", "refund?":"user question",
+    "$":"candidate reply word", sure:"candidate reply word", sorry:"candidate reply word", euros:"candidate reply word", ok:"candidate reply word"
+  };
+  const PROMPT=["always","answer","politely","quote","prices","in","dollars","briefly"];
+  const OUT=["$","dollars","euros","sure","sorry","ok"];
+  const QS=["hello","price?","refund?"];
+  const P=PROMPT.map(t=>E[t]);
+  const K=2, D=3, HAIR=1e-4, LR=0.5;
+
+  // ---------- toy model ----------
+  const dot=(a,b)=>a.reduce((s,x,i)=>s+x*b[i],0);
+  const softmax=v=>{const m=Math.max(...v);const e=v.map(x=>Math.exp(x-m));const s=e.reduce((a,b)=>a+b);return e.map(x=>x/s)};
+  function model(prefix,q){
+    const rel=prefix.map(p=>2*dot(q,p));
+    const w=softmax(rel);
+    const c=[0,1,2].map(i=>prefix.reduce((s,p,j)=>s+w[j]*p[i],0));
+    const h=[0,1,2].map(i=>c[i]+q[i]);
+    const logits=OUT.map(o=>3*dot(h,E[o]));
+    return {w,c,h,p:softmax(logits)};
+  }
+  const klTerms=(t,s)=>t.map((x,i)=>x*Math.log(x/s[i]));
+  const KL=(t,s)=>klTerms(t,s).reduce((a,b)=>a+b,0);
+  const teacher=QS.map(q=>model(P,E[q]));
+  function loss(g){return QS.reduce((a,q,i)=>a+KL(teacher[i].p,model(g,E[q]).p),0)/QS.length}
+  function meanInit(){return [0,1].map(k=>[0,1,2].map(i=>P.slice(4*k,4*k+4).reduce((s,p)=>s+p[i],0)/4))}
+  // seeded random so the page looks the same every load
+  function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+  function randInit(){const r=mulberry32(20260903);return [0,1].map(()=>[0,1,2].map(()=>+(r()*2-1).toFixed(2)))}
+  function slopes(g){
+    const rows=[];
+    for(let k=0;k<K;k++)for(let i=0;i<D;i++){
+      const a=g.map(r=>r.slice());a[k][i]+=HAIR;
+      const b=g.map(r=>r.slice());b[k][i]-=HAIR;
+      const la=loss(a),lb=loss(b);
+      rows.push({k,i,v:g[k][i],la,lb,s:(la-lb)/(2*HAIR)});
+    }
+    return rows;
+  }
+
+  // ---------- state ----------
+  const state={initMode:"random",gist:randInit(),steps:0,hist:[],q:1};
+  state.hist=[loss(state.gist)];
+  const L_RAND=loss(randInit()), L_MEAN=loss(meanInit());
+
+  // ---------- helpers ----------
+  const $=s=>document.querySelector(s);
+  const f2=x=>(x>=0?"+":"")+x.toFixed(2);
+  const f4=x=>x.toFixed(4);
+  const clamp=x=>Math.max(0,Math.min(255,Math.round(x)));
+  const col=v=>`rgb(${clamp(128+120*v[0])},${clamp(128+120*v[1])},${clamp(128+120*v[2])})`;
+  function tile(label,v,opts={}){
+    const d=document.createElement("div");d.className="tile"+(opts.gist?" gist":"")+(opts.empty?" empty":"");
+    d.innerHTML=`<div class="sw" style="background:${opts.empty?"":col(v)}"></div><div class="lbl">${label}</div><div class="vals">${v.map(x=>x.toFixed(2)).join("<br>")}</div>`+(opts.w!==undefined?`<div class="wbar" title="share ${(opts.w*100).toFixed(0)}%"><i style="width:${(opts.w*100).toFixed(0)}%"></i></div>`:"");
+    return d;
+  }
+  function fill(el,nodes){el.replaceChildren(...nodes)}
+  function bars(el,t,s){
+    const html=OUT.map((o,i)=>{
+      const tb=`<div class="b t" style="width:${(t[i]*100).toFixed(1)}%"><span>${(t[i]*100).toFixed(0)}%</span></div>`;
+      const sb=s?`<div class="b s" style="width:${(s[i]*100).toFixed(1)}%"><span>${(s[i]*100).toFixed(0)}%</span></div>`:"";
+      return `<div class="w mono">${o}</div><div class="pair">${tb}${sb}</div>`;
+    }).join("");
+    el.innerHTML=html;
+  }
+  function blendText(prefixNames,prefix,w,q,c,h){
+    const lines=prefixNames.map((n,j)=>`${(w[j]*100).toFixed(0).padStart(3)}% × ${n.padEnd(9)} [${prefix[j].map(f2).join(" ")}]`);
+    return lines.join("\n")+`\n= blend               [${c.map(f2).join(" ")}]\n+ question "${q}"      [${E[q].map(f2).join(" ")}]\n= h                   [${h.map(f2).join(" ")}]`;
+  }
+
+  // ---------- static renders ----------
+  (function vocab(){
+    const tb=$("#vocabTable tbody");
+    tb.innerHTML=Object.keys(E).map(t=>`<tr><td class="mono">${t}</td><td><span class="swatch" style="background:${col(E[t])}"></span></td>${E[t].map(x=>`<td class="num mono">${f2(x)}</td>`).join("")}<td class="muted">${ROLE[t]}</td></tr>`).join("");
+  })();
+  fill($("#promptTiles"),PROMPT.map((t,j)=>tile(t,E[t])));
+  (function chunk(){
+    const m=meanInit();
+    const txt=[0,1].map(k=>{
+      const names=PROMPT.slice(4*k,4*k+4);
+      return `<gist_${k}> = average of ${names.join(", ")}\n`+names.map(n=>`   [${E[n].map(f2).join(" ")}]`).join("\n")+`\n ÷ 4 → [${m[k].map(f2).join(" ")}]`;
+    }).join("\n\n");
+    $("#chunkArith").textContent=txt;
+    $("#lossRand").textContent=f4(L_RAND);
+    $("#lossMean").textContent=f4(L_MEAN);
+    $("#lossRatio").textContent=(L_RAND/L_MEAN).toFixed(1)+"× lower with averaging";
+  })();
+  (function chips(){
+    const c=$("#qChips");
+    c.innerHTML=QS.map((q,i)=>`<button class="btn" data-q="${i}" aria-pressed="${i===state.q}">${q}</button>`).join("");
+    c.addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;state.q=+b.dataset.q;[...c.children].forEach(x=>x.setAttribute("aria-pressed",x===b));render()});
+  })();
+
+  // ---------- dynamic render ----------
+  function render(){
+    const qi=state.q,q=QS[qi];
+    const t=teacher[qi];
+    // teacher
+    fill($("#teacherTiles"),PROMPT.map((n,j)=>tile(n,E[n],{w:t.w[j]})));
+    $("#teacherBlend").textContent=blendText(PROMPT,P,t.w,q,t.c,t.h);
+    bars($("#teacherBars"),t.p,null);
+    // student
+    const s=model(state.gist,E[q]);
+    fill($("#studentTiles"),state.gist.map((g,k)=>tile(`<gist_${k}>`,g,{gist:true,w:s.w[k]})));
+    $("#studentBlend").textContent=blendText(["<gist_0>","<gist_1>"],state.gist,s.w,q,s.c,s.h);
+    bars($("#compareBars"),t.p,s.p);
+    const terms=klTerms(t.p,s.p);
+    $("#klOne").textContent=f4(KL(t.p,s.p));
+    $("#klAll").textContent=f4(loss(state.gist));
+    $("#klArith").textContent=OUT.map((o,i)=>`${o.padEnd(8)} teacher ${(t.p[i]*100).toFixed(1).padStart(5)}%  student ${(s.p[i]*100).toFixed(1).padStart(5)}%  →  ${(t.p[i]).toFixed(3)} × ln(${t.p[i].toFixed(3)} ÷ ${s.p[i].toFixed(3)}) = ${terms[i]>=0?"+":""}${terms[i].toFixed(4)}`).join("\n")+`\n${"".padEnd(8)} sum = ${f4(KL(t.p,s.p))}   (0 would mean identical lists)`;
+    // slopes
+    const rows=slopes(state.gist);
+    $("#slopeTable tbody").innerHTML=rows.map(r=>`<tr><td class="mono" style="white-space:nowrap">&lt;gist_${r.k}&gt; n${["₁","₂","₃"][r.i]}</td><td class="num mono">${f2(r.v)}</td><td class="num mono">${r.la.toFixed(6)}</td><td class="num mono">${r.lb.toFixed(6)}</td><td class="num mono">${f2(r.s)}</td><td class="${r.s<0?"slope-up":"slope-down"}">${Math.abs(r.s)<0.005?"barely":(r.s<0?"raise it ↑":"lower it ↓")}</td></tr>`).join("");
+    $("#stepCount").textContent=state.steps;
+    fill($("#gistTilesNow"),state.gist.map((g,k)=>tile(`<gist_${k}>`,g,{gist:true})));
+    fill($("#gistTilesInit"),(state.initMode==="random"?randInit():meanInit()).map((g,k)=>tile(`<gist_${k}>`,g,{gist:true})));
+    drawLoss();
+    // final table
+    $("#finalTable tbody").innerHTML=`<tr><td colspan="6" class="muted">… the 16 real-word rows, unchanged …</td></tr>`+state.gist.map((g,k)=>`<tr class="gistrow"><td class="mono">&lt;gist_${k}&gt;</td><td><span class="swatch" style="background:${col(g)}"></span></td>${g.map(x=>`<td class="num mono">${f2(x)}</td>`).join("")}<td>trained · stands in for prompt tokens ${4*k+1}–${4*k+4}${state.steps===0?" · <em>not trained yet, go back to step 8</em>":""}</td></tr>`).join("");
+  }
+  function drawLoss(){
+    const svg=$("#lossChart");const W=420,H=200,pl=44,pr=12,pt=12,pb=28;
+    const h=state.hist;const n=Math.max(h.length,26);
+    const ymax=Math.max(...h,0.01);
+    const x=i=>pl+(W-pl-pr)*i/(n-1);const y=v=>pt+(H-pt-pb)*(1-v/ymax);
+    const pts=h.map((v,i)=>`${x(i).toFixed(1)},${y(v).toFixed(1)}`).join(" ");
+    const ticks=[0,ymax/2,ymax];
+    svg.innerHTML=`<g font-family="JetBrains Mono, monospace" font-size="10" fill="currentColor">
+      ${ticks.map(v=>`<line x1="${pl}" x2="${W-pr}" y1="${y(v)}" y2="${y(v)}" stroke="currentColor" stroke-opacity=".18"/><text x="${pl-6}" y="${y(v)+3}" text-anchor="end">${v.toFixed(3)}</text>`).join("")}
+      <line x1="${pl}" x2="${W-pr}" y1="${H-pb}" y2="${H-pb}" stroke="currentColor" stroke-opacity=".4"/>
+      <text x="${pl}" y="${H-8}">step 0</text><text x="${W-pr}" y="${H-8}" text-anchor="end">step ${n-1}</text>
+      <polyline points="${pts}" fill="none" stroke="var(--student)" stroke-width="2"/>
+      <circle cx="${x(h.length-1)}" cy="${y(h[h.length-1])}" r="3.5" fill="var(--student)"/>
+    </g>`;
+    $("#lossCaption").textContent=`Started at ${f4(h[0])}, now ${f4(h[h.length-1])} after ${state.steps} step${state.steps===1?"":"s"} (${state.initMode==="random"?"random":"averaged"} start).`;
+  }
+  function doSteps(n){
+    for(let s=0;s<n;s++){
+      const rows=slopes(state.gist);
+      rows.forEach(r=>{state.gist[r.k][r.i]-=LR*r.s});
+      state.steps++;state.hist.push(loss(state.gist));
+    }
+    render();
+  }
+  function reset(){state.gist=state.initMode==="random"?randInit():meanInit();state.steps=0;state.hist=[loss(state.gist)];render()}
+
+  $("#stepOne").addEventListener("click",()=>doSteps(1));
+  $("#step25").addEventListener("click",()=>doSteps(25));
+  $("#step200").addEventListener("click",()=>doSteps(200));
+  $("#resetBtn").addEventListener("click",reset);
+  $("#initRandom").addEventListener("click",()=>{state.initMode="random";$("#initRandom").setAttribute("aria-pressed","true");$("#initMean").setAttribute("aria-pressed","false");reset()});
+  $("#initMean").addEventListener("click",()=>{state.initMode="mean";$("#initMean").setAttribute("aria-pressed","true");$("#initRandom").setAttribute("aria-pressed","false");reset()});
+
+  // nav highlight
+  const links=[...document.querySelectorAll("nav a")];
+  const secs=links.map(a=>document.querySelector(a.getAttribute("href")));
+  if("IntersectionObserver" in window){
+    const io=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){links.forEach(l=>l.classList.toggle("active",l.getAttribute("href")==="#"+e.target.id))}})},{rootMargin:"-30% 0px -60% 0px"});
+    secs.forEach(s=>s&&io.observe(s));
+  }
+  render();
+})();
+</script>
+</body></html>

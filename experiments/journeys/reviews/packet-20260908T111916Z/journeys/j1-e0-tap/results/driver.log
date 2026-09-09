@@ -1,0 +1,17 @@
+=== 08:05:07 session 1: Read calc.py and explain what each function does in two sentences each.
+exit=0 wall=30s turns 3 | result:   Here's what each function in `calc.py` does:  **`add(a, b)`** Adds two numbers together and returns the result. It performs a straightforw
+=== 08:05:37 session 2: Run the tests with python -m pytest -q and fix whatever fails without changing the tests.
+exit=0 wall=64s turns 7 | result:   All 3 tests pass now. The only failure was `test_mean_empty` — `mean([])` raised `ZeroDivisionError`. I added an empty-list guard to `mean
+=== 08:06:41 session 3: Add a subtract(a, b) function to calc.py and a test for it in test_calc.py, then run the tests.
+exit=0 wall=58s turns 6 | result:   Done. `subtract(a, b)` added to calc.py:4 and `test_subtract` to test_calc.py — both pass.  One note: the test run shows **1 pre-existing 
+=== 08:07:39 session 4: Refactor mean() so it does not divide by zero on an empty list; keep existing tests passing.
+exit=0 wall=73s turns 8 | result:   Done. `mean()` in `calc.py:7` now returns `0` for an empty list instead of raising `ZeroDivisionError` — matching what `test_mean_empty` e
+=== 08:08:52 session 5: List the files in this repo and write a one-paragraph README.md describing the project.
+exit=0 wall=132s turns 11 | result:   Done.  **Files in the repo:** - `calc.py` — calculator module (`add`, `divide`, `mean`) - `test_calc.py` — pytest-style assertions for the
+=== 08:11:04 session 6: Add type hints to every function in calc.py and run the tests.
+exit=0 wall=81s turns 7 | result:   Done — all 3 tests pass.  **Type hints added** to all three functions in `calc.py`: - `add(a: float, b: float) -> float` - `divide(a: floa
+=== 08:12:25 session 7: There is a bug in divide when b is zero. Add a clear error message and a test that expects it.
+exit=0 wall=130s turns 9 | result:   Done. The requested change works, but the test run surfaced a pre-existing failure in a different function:  **Changes made:** - `calc.py:
+=== 08:14:35 session 8: Create a new file stats.py with a median(values) function and tests; run the tests.
+exit=0 wall=100s turns 7 | result:   All 6 tests pass. Created:  - **`stats.py`** — `median(values)`: sorts a copy, returns the middle element for odd lengths, the average of 
+ALL_SESSIONS_DONE

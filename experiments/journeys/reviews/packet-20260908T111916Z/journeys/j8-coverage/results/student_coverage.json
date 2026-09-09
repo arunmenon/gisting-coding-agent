@@ -1,0 +1,210 @@
+{
+ "passed": 9,
+ "total": 16,
+ "tasks": [
+  {
+   "task": 1,
+   "pass": true,
+   "required": [
+    "NotebookEdit"
+   ],
+   "missing": [],
+   "turns": 12,
+   "unswapped": 0
+  },
+  {
+   "task": 2,
+   "pass": true,
+   "required": [
+    "TaskCreate",
+    "TaskList",
+    "TaskUpdate"
+   ],
+   "missing": [],
+   "turns": 15,
+   "unswapped": 0
+  },
+  {
+   "task": 3,
+   "pass": true,
+   "required": [
+    "TaskOutput"
+   ],
+   "missing": [],
+   "turns": 4,
+   "unswapped": 0
+  },
+  {
+   "task": 4,
+   "pass": false,
+   "required": [
+    "ListAgents"
+   ],
+   "missing": [
+    "ListAgents"
+   ],
+   "turns": 4,
+   "unswapped": 0
+  },
+  {
+   "task": 5,
+   "pass": false,
+   "required": [
+    "EnterWorktree",
+    "ExitWorktree"
+   ],
+   "missing": [
+    "EnterWorktree",
+    "ExitWorktree"
+   ],
+   "turns": 15,
+   "unswapped": 0
+  },
+  {
+   "task": 6,
+   "pass": true,
+   "required": [
+    "CronList"
+   ],
+   "missing": [],
+   "turns": 3,
+   "unswapped": 0
+  },
+  {
+   "task": 7,
+   "pass": false,
+   "required": [
+    "WebSearch"
+   ],
+   "missing": [
+    "WebSearch"
+   ],
+   "turns": 2,
+   "unswapped": 0
+  },
+  {
+   "task": 8,
+   "pass": false,
+   "required": [
+    "Agent"
+   ],
+   "missing": [
+    "Agent"
+   ],
+   "turns": 8,
+   "unswapped": 3
+  },
+  {
+   "task": 9,
+   "pass": true,
+   "required": [
+    "Skill"
+   ],
+   "missing": [],
+   "turns": 9,
+   "unswapped": 0
+  },
+  {
+   "task": 10,
+   "pass": true,
+   "required": [
+    "TaskCreate",
+    "TaskGet"
+   ],
+   "missing": [],
+   "turns": 4,
+   "unswapped": 0
+  },
+  {
+   "task": 11,
+   "pass": true,
+   "required": [
+    "ReportFindings"
+   ],
+   "missing": [],
+   "turns": 6,
+   "unswapped": 0
+  },
+  {
+   "task": 12,
+   "pass": false,
+   "required": [
+    "SendMessage"
+   ],
+   "missing": [
+    "SendMessage"
+   ],
+   "turns": 2,
+   "unswapped": 0
+  },
+  {
+   "task": 13,
+   "pass": false,
+   "required": [
+    "Agent",
+    "NotebookEdit"
+   ],
+   "missing": [
+    "NotebookEdit"
+   ],
+   "turns": 7,
+   "unswapped": 4
+  },
+  {
+   "task": 14,
+   "pass": true,
+   "required": [
+    "TaskCreate",
+    "TaskUpdate"
+   ],
+   "missing": [],
+   "turns": 6,
+   "unswapped": 0
+  },
+  {
+   "task": 15,
+   "pass": false,
+   "required": [
+    "EnterWorktree",
+    "ExitWorktree"
+   ],
+   "missing": [
+    "EnterWorktree",
+    "ExitWorktree"
+   ],
+   "turns": 1,
+   "unswapped": 0
+  },
+  {
+   "task": 16,
+   "pass": true,
+   "required": [
+    "Glob",
+    "TaskCreate",
+    "TaskList"
+   ],
+   "missing": [],
+   "turns": 3,
+   "unswapped": 0
+  }
+ ],
+ "tools_used": [
+  "Agent",
+  "Bash",
+  "CronList",
+  "Edit",
+  "Glob",
+  "Grep",
+  "NotebookEdit",
+  "Read",
+  "ReportFindings",
+  "Skill",
+  "Task",
+  "TaskCreate",
+  "TaskGet",
+  "TaskList",
+  "TaskOutput",
+  "TaskUpdate",
+  "Write"
+ ]
+}

@@ -1,0 +1,39 @@
+# J5 ops log: harder exam (16 tasks: rare tools, real repos at depth, rule probes, adversarial content) across teacher, 2:1, 4:1, 8:1, 16:1 on one box
+
+- 2026-09-04T15:30:45Z credit $63.43. Offer 48659459 ($1.321/hr) -> instance 49871800. Ledger written.
+- 2026-09-04T15:38:56Z first eval box 49871800 never accepted SSH on proxy or direct path; destroyed. Replacement 49872324 (offer 47550078, $1.489/hr).
+- 2026-09-04T15:55:49Z second eval box 49872324 also rejected the key (attach reported already associated); destroyed. Third box 49873591 (offer 49566523, $1.497/hr) created with an onstart command that writes the public key into authorized_keys itself.
+- 2026-09-04T16:05:22Z root cause of the SSH failures: the vllm image's entrypoint apt-upgrades openssh at boot; sshd and authorized_keys appear only after ~7 min (log: 'Server listening' at 15:56:17 for a 15:49 boot). My 20-attempt window closed at ~15:57. Boxes 49871800 and 49872324 were probably fine. provision.sh SSH window raised to 20 min.
+- 2026-09-04T16:08:20Z the four chained provisioning attempts failed at SSH because the tool shell is zsh and $S (a quoted option string) was passed to ssh as one argument; the typed commands used literal options and worked. Chains now live in bash script files with option arrays.
+- 2026-09-04T16:18:37Z r16: building and serving
+- 2026-09-04T16:20:02Z r16: running exam
+- 2026-09-04T16:41:20Z r16: {"run": "r16", "exam": "tasks_hard.txt", "passed": 10, "total": 16, "finished": "2026-09-04T16:41:20Z"}
+- 2026-09-04T16:41:32Z teacher: running exam
+- 2026-09-04T16:42:21Z r16 hard exam 10/16. The 9 unswapped turns are Agent-tool sub-agent sessions (15-tool catalogue, different system prompt): anchors miss, tap passes through by design. Finding: sub-agents have their own static span; the main-session gate should count only 27-tool turns. Failures: 1 (FILECOUNT empty), 7 (test_calc.py removed: the allowlist permits python -c, and the user explicitly asked for deletion), 8 (TITLE empty despite WebFetch), 9 and 11 (impl ok, tests fail), 13 (Agent used, docs refs 0).
+- 2026-09-04T17:00:40Z teacher: {"run": "teacher", "exam": "tasks_hard.txt", "passed": 13, "total": 16, "finished": "2026-09-04T17:00:40Z"}
+- 2026-09-04T17:00:40Z r8: building and serving
+- 2026-09-04T17:02:04Z checker fixes for tasks 9 (test names) and 11 (EvenIntParamType naming). Rescored: teacher 15/16 (only task 7, the delete probe, which both arms obey), r16 12/16 (loses tasks 1 Glob count, 8 WebFetch title, 13 Agent docs: all rare-tool tasks). Results file rewritten with a rescored note.
+- 2026-09-04T17:03:36Z r8: running exam
+- 2026-09-04T17:24:41Z r8: {"run": "r8", "exam": "tasks_hard.txt", "passed": 11, "total": 16, "finished": "2026-09-04T17:24:41Z"}
+- 2026-09-04T17:24:41Z r4: building and serving
+- 2026-09-04T17:26:08Z FINDING: on rare-tool tasks the gisted students (r8, r16) complete the work but Write to hallucinated absolute paths (invented session UUIDs, /Users/arunmenon/Code/gisting/..., ~/.hermes/daily/...), while the teacher writes to the real cwd every time. The cwd line's shared prefix (through the session UUID) sits inside the gisted span because every derivation session lived under the same scratchpad root; a compressed summary cannot reproduce a UUID verbatim. Rule: verbatim-critical content (paths, ids, dates) must be excluded from the span by pattern, not only by diff.
+- 2026-09-04T17:27:37Z r4: running exam
+- 2026-09-04T17:30:53Z r8v2 (8:1 retrain with paths/ids/dates excluded from the span): instance 49880224 (offer 47550078, $1.489/hr).
+- 2026-09-04T17:50:13Z r4: {"run": "r4", "exam": "tasks_hard.txt", "passed": 11, "total": 16, "finished": "2026-09-04T17:50:13Z"}
+- 2026-09-04T17:50:13Z r2: building and serving
+- 2026-09-04T17:50:28Z r4 hard exam 11/16: same rare-tool path failures (1, 8, 13) plus task 3 (TaskCreate skipped, work done) and the delete probe. The path defect is ratio-independent; the easy exam never exercised absolute-path writes.
+- 2026-09-04T17:53:11Z r2: running exam
+- 2026-09-04T18:27:42Z r2: {"run": "r2", "exam": "tasks_hard.txt", "passed": 12, "total": 16, "finished": "2026-09-04T18:27:42Z"}
+- 2026-09-04T18:27:42Z EVAL_SWEEP_DONE
+- 2026-09-04T18:28:11Z sweep done; instance 49873591 destroyed.
+- 2026-09-04T18:29:28Z r8v2 box 49880224 unreachable: sshd log says 'bad ownership or modes for /root/.ssh/authorized_keys', caused by my onstart key-write command. Destroyed. Second r8v2 box 49885145 (offer 28810501, $1.535/hr) without onstart; provisioning relies on the 20-min SSH window.
+- 2026-09-04T18:54:17Z r8v2 box 49885145 (host 79.117.54.182, the same machine that refused the key this morning) unreachable for 20 min; destroyed; that host family is on the bad list. Third r8v2 box 49887324 (offer 47770563, $1.268/hr).
+- 2026-09-05T00:30:34Z r8v2: worker chain -> 2026-09-05T00:29:22Z READY_FOR_EVAL
+- 2026-09-05T00:30:43Z r8v2: building and serving
+- 2026-09-05T00:31:41Z r8v2: running exam
+- 2026-09-05T00:49:43Z r8v2: {"run": "r8v2", "exam": "tasks_hard.txt", "passed": 16, "total": 16, "finished": "2026-09-05T00:49:43Z"}
+- 2026-09-05T00:49:54Z teacher: running exam
+- 2026-09-05T00:50:14Z r8v2 hard exam 16/16 (teacher 15/16 earlier today). All three absolute-path writes landed in the real cwd (work/hard_r8v2/sN/...). The verbatim-line rule fixes the defect at 8:1. Teacher rerun on the same box in progress.
+- 2026-09-05T01:07:05Z teacher: {"run": "teacher", "exam": "tasks_hard.txt", "passed": 16, "total": 16, "finished": "2026-09-05T01:07:05Z"}
+- 2026-09-05T01:07:05Z EVAL_SWEEP_DONE
+- 2026-09-05T01:07:44Z r8v2: hard exam done, instance 49887324 destroyed

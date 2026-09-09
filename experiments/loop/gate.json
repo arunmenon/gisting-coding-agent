@@ -1,0 +1,1 @@
+{"task_pass_min_delta_points": -10, "tool_name_validity_min": 0.99, "malformed_json_max": 0, "unswapped_turns_max": 0, "teacher_reference": {"run": "teacher", "tasks_passed": 12, "tasks_total": 12}}

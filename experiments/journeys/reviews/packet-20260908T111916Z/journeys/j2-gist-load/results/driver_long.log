@@ -1,0 +1,13 @@
+s1 repo=requests exit=1 wall=1080s turns 23 | result: API Error: 400 This model's maximum context length is 131072 tokens. However, you requested 32000 ou
+s3 repo=requests exit=0 wall=1298s turns 16 | result:   Audit complete. This is the `requests` library; the cookie domain-matching surface is `src/request
+s2 repo=requests exit=0 wall=1689s turns 34 | result:   Done. Everything is green.  ## Where redirects are handled  - **`src/requests/sessions.py`** — the
+s4 repo=click exit=0 wall=1279s turns 22 | result:   Done. All 21 new tests pass, and the full suite is green: **2011 passed, 25 skipped, 1 xfailed**. 
+s5 repo=click exit=0 wall=1315s turns 28 | result:   I've traced the complete call chain and added a passing test. Here's the full picture.  ## How Cli
+s6 repo=click exit=0 wall=1075s turns 15 | result:   Created `docs/EXIT_CODES.md`. Here's what I found:  ## The mechanism  All conversion happens in on
+s9 repo=typer exit=0 wall=1227s turns 27 | result:   Done. Here's the summary:  ## The trace  The rich-vs-plain decision is a two-input check evaluated
+driver/run_sessions_local.sh: line 23: 14319 Alarm clock: 14         perl -e 'alarm 1800; exec @ARGV' claude -p "$task" --output-format json --max-turns "$turns" --permission-mode acceptEdits --strict-mcp-config --allowedTools "$ALLOWED" < /dev/null > "$OUT/s$n.json" 2> "$OUT/s$n.err"
+s7 repo=typer exit=142 wall=1800s (no json) it to load your organization's connectors [claude-code:unrecognized_model] {"model":"qwen3.8-27b","query_source":"sdk"} 
+driver/run_sessions_local.sh: line 23: 17984 Alarm clock: 14         perl -e 'alarm 1800; exec @ARGV' claude -p "$task" --output-format json --max-turns "$turns" --permission-mode acceptEdits --strict-mcp-config --allowedTools "$ALLOWED" < /dev/null > "$OUT/s$n.json" 2> "$OUT/s$n.err"
+s8 repo=typer exit=142 wall=1800s (no json) it to load your organization's connectors [claude-code:unrecognized_model] {"model":"qwen3.8-27b","query_source":"sdk"} 
+s10 repo=requests exit=0 wall=541s turns 16 | result:   Done. All tests pass on the first run — no fixes were needed.  **What I did:**  1. **Read the moun
+ALL_SESSIONS_DONE label=long sessions=10

@@ -1,0 +1,25 @@
+s2 repo=seed exit=0 wall=64s turns 8 | result:   Done. Added a guard clause to `mean()` in `calc.py`:  ```python def mean(values):     if not value
+check s2: PASS mean([])='0' pytest=True
+s1 repo=seed exit=0 wall=91s turns 8 | result:   Done. Summary of what was completed in `/private/tmp/claude-501/-Users-arunmenon-projects-gisting/
+check s1: PASS subtract defined=True tested=True pytest(-k subtract)=True
+s3 repo=seed exit=0 wall=139s turns 9 | result:   Done. All 5 tests pass.  **`stats.py`** — `median(values)` function that: - Sorts the input and re
+check s3: PASS median=True tests=5 pytest=True
+s5 repo=seed exit=0 wall=106s turns 10 | result:   Done. Summary of what was done:  **`calc.py`** — added the function: ```python def clamp(value, lo
+check s5: PASS clamp=True tested=True pytest=True
+s6 repo=seed exit=0 wall=82s turns 12 | result:   Done. Changes made:  **calc.py** ```python def divide(a, b):     if b == 0:         raise ValueErr
+check s6: PASS raise='VE cannot divide by zero' test mentions ValueError=True
+s8 repo=seed exit=0 wall=27s turns 4 | result:   `calc.py` contains three small functions:  - **`add(a, b)`** — Takes two numbers and returns their
+check s8: PASS calc unchanged=True
+s7 repo=seed exit=0 wall=64s turns 9 | result:   Done. Added `power(a, b)` to `calc.py` and two tests, then ran the suite:  - `test_power_positive`
+check s7: PASS power='8 0.5' tested=True
+s4 repo=seed exit=0 wall=246s turns 8 | result:   Done. I added type hints to all three functions in `calc.py` and ran the tests.  **Change** (behav
+check s4: PASS all three functions hinted=True (pytest=False, baseline has one failing test)
+s9 repo=seed exit=0 wall=81s turns 8 | result:   Done. I wrote a one-paragraph `README.md` that describes the project and names all three functions
+check s9: PASS readme names all=True calc unchanged=True len=339
+s10 repo=seed exit=0 wall=62s turns 7 | result:   **Result: 1 failed, 2 passed**  - ✅ `test_add` — passed - ✅ `test_divide` — passed - ❌ `test_mean_
+check s10: PASS files unchanged=True
+s11 repo=seed exit=0 wall=94s turns 8 | result:   Done. Summary:  **Changes:** - `calc.py` — added `is_even(n)` returning `n % 2 == 0` - `test_calc.
+check s11: PASS is_even=True pytest=True
+s12 repo=seed exit=0 wall=65s turns 5 | result:   All 6 tests passed. Created:  - **utils.py** — `flatten(list_of_lists)` flattens exactly one level
+check s12: PASS flatten='[1, 2, 3]' pytest=True
+ALL_SESSIONS_DONE label=eval_student sessions=12

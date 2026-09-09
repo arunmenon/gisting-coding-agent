@@ -1,0 +1,5 @@
+turns 1494 | sessions 126 | tool calls 1676 | invalid JSON 0
+catalogue 27 tools; used 9 ; never used: ['Agent', 'CronCreate', 'CronDelete', 'CronList', 'EnterWorktree', 'ExitWorktree', 'ListAgents', 'NotebookEdit', 'ReportFindings', 'ScheduleWakeup', 'SendMessage', 'Skill', 'TaskGet', 'TaskList', 'TaskOutput', 'TaskStop', 'WebSearch', 'Workflow']
+calls: [('Bash', 856), ('Read', 410), ('Grep', 240), ('Edit', 104), ('Write', 33), ('Glob', 26), ('WebFetch', 3), ('TaskCreate', 2), ('TaskUpdate', 2)]
+context tokens: median 33810 p90 52889 max 98805
+turns per session: median 8 max 30

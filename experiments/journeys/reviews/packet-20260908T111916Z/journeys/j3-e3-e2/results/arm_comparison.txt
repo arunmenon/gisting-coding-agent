@@ -1,0 +1,3 @@
+teacher  turns  64 | sessions 12 | turns/session median 5.0 | input tok median  24258 | output tok median  180 | TTFT median 23.8s | latency median 35.3s | tool calls  69 invalid 0 | {'Read': 25, 'Bash': 18, 'Edit': 16, 'Write': 5, 'Glob': 4, 'Grep': 1}
+student  turns  72 | sessions 12 | turns/session median 6.0 | input tok median  11410 | output tok median  210 | TTFT median 2.2s | latency median 11.8s | tool calls  84 invalid 0 | {'Bash': 25, 'Read': 25, 'Edit': 16, 'Write': 9, 'Glob': 6, 'Grep': 2, 'mcp__gisting__session_state': 1}
+task score: teacher 12/12, student 12/12

@@ -1,0 +1,22 @@
+# J4 ops log: compression-ratio sweep (E4), 2:1 / 8:1 / 16:1, one box each; 4:1 point from J3
+
+- 2026-09-04T05:17:33Z credit $42.67. Instances: r2=49824695 (offer 28810499, $1.000/hr), r8=49824696 (offer 47719142, $0.993/hr), r16=49824697 (offer 46474489, $0.998/hr). Ledger written.
+- 2026-09-04T05:37:57Z r2 box 49824695 refused the SSH key on proxy and direct paths for 10 min; destroyed; replacement 49825884 (offer 47849044, $0.998/hr).
+- 2026-09-04T05:41:57Z r16 box 49824697 went offline minutes after provisioning; destroyed; replacement 49826071 (offer 47099377, $0.996/hr).
+- 2026-09-04T05:42:19Z r8 (49824696) chain: delta 05:33Z, training started 05:33Z. Hardened loop primitives in loop/: recipes.jsonl, gate.json, controller.py, provision.sh, boxes.json; worker chain vast/chain_sweep.sh (download x3, OOM -> shorter cap, crash -> warm start, server x2, lock file, disk check, cache check).
+- 2026-09-04T05:53:08Z r2 replacement 49825884 stuck in loading/stopped for 15 min; destroyed; third r2 box 49826749 (offer 44111199, $0.868/hr).
+- 2026-09-04T06:10:33Z r2 third box 49826749 provisioned (ssh9.vast.ai:26748), chain launched; added to loop/boxes.json.
+- 2026-09-04T08:15:14Z r2 box 49826749 no longer exists in the account (reclaimed or watchdog after a stalled build); logs lost. r8: OOM at smax 32000, self-healed to 25600 at 06:04Z, step 65/135. r16: step 50/165 at 32000. Controller patched to record vanished boxes; provision idle limit raised to 150 min.
+- 2026-09-04T08:18:59Z r2 fourth box 49836774 (offer 46908080, $1.469/hr, Colorado) provisioned, chain started 08:18Z, registered in boxes.json.
+- 2026-09-04T10:21:35Z r8: ready, running eval
+- 2026-09-04T10:29:31Z r8: recorded {"status": "ok", "kl_init": 0.0964, "kl_final": 0.0304, "gate": "PASS"}
+- 2026-09-04T10:30:08Z r8: destroyed instance 49824696
+- 2026-09-04T12:08:09Z r16: ready, running eval
+- 2026-09-04T12:15:36Z r16: recorded {"status": "ok", "kl_init": 0.1357, "kl_final": 0.0207, "gate": "PASS"}
+- 2026-09-04T12:15:41Z r16: destroyed instance 49826071
+- 2026-09-04T12:16:03Z r2: unreachable this round (api status running)
+- 2026-09-04T12:16:30Z r16 recorded 11/12; the miss was the task-3 checker not counting unittest-style test methods; checker fixed (^\s*def test_), s3 rescored PASS, ledger line corrected to 12/12. r16 destroyed 12:15Z. r8 and r16 both: 0 malformed, 0 invented tool names, all turns swapped.
+- 2026-09-04T13:19:53Z r2: ready, running eval
+- 2026-09-04T13:30:20Z r2: recorded {"status": "ok", "kl_init": 0.0731, "kl_final": 0.0384, "gate": "PASS"}
+- 2026-09-04T13:30:21Z r2: destroyed instance 49836774
+- 2026-09-04T13:30Z r2: 12/12, 0 malformed, 0 invented names, all swapped, 16,083 input tokens/turn; attempt 1 OOM at smax 32000 after 3 h (step ~65/135), warm-started for 0.52 epoch at 25600. Box destroyed 13:30Z. Sweep complete; controller stopped. Credit 81.29 -> 63.43 across J4.

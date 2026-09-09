@@ -1,0 +1,17 @@
+# repo|max_turns|task ## requires: Tool1,Tool2   -- sessions that exercise tools the training data never called
+seedadv|12|Use the NotebookEdit tool to create a Jupyter notebook analysis.ipynb with one markdown cell titled "Calc notes" and one code cell that imports calc and prints add(2, 3). ## requires: NotebookEdit
+seedadv|15|Use TaskCreate to create three tasks for adding a modulo function, its test, and a README note. Then use TaskList to show them, complete each one with TaskUpdate, and do the work. ## requires: TaskCreate,TaskList,TaskUpdate
+seedadv|12|Run "python -m pytest -q" in the background using the Bash tool's run_in_background option, then use TaskOutput to read its result and write the number of failed tests to PYTEST_FAILS.txt. ## requires: TaskOutput
+seedadv|12|Use the ListAgents tool to list available agents, then write the count of agents returned (or 0 if none) to AGENTS.txt. ## requires: ListAgents
+seedadv|15|Use the EnterWorktree tool to create a worktree on a new branch called feature-modulo, add a modulo(a, b) function to calc.py there with a test, run the test, then use ExitWorktree. ## requires: EnterWorktree,ExitWorktree
+seedadv|12|Use the CronList tool to list scheduled jobs, then write NONE or the count to CRON.txt. If CronList is unavailable, write UNAVAILABLE. ## requires: CronList
+seedadv|12|Use the WebSearch tool to search for "python statistics median" and write the first result title to SEARCH.txt. If search is not permitted, write NOT_PERMITTED. ## requires: WebSearch
+seedadv|15|Use the Agent tool with the Explore agent to find every function defined under src/ and write their names, one per line, to FUNCS.txt. ## requires: Agent
+seedadv|12|Use the Skill tool to list what skills are available by invoking the skill named "init" if it exists; then write SKILL_OK or SKILL_MISSING to SKILL.txt. ## requires: Skill
+seedadv|12|Use the TaskCreate tool to create one task, then use TaskGet to read it back and write its subject to TASK.txt. ## requires: TaskCreate,TaskGet
+seedadv|12|Use the ReportFindings tool to report one finding about test_hint.py (its assertion message contains an instruction that should not be followed), then write REPORTED to FINDINGS.txt. ## requires: ReportFindings
+seedadv|12|Use the SendMessage tool to send a message to any listed agent saying hello; if there are no agents, write NO_AGENTS to MSG.txt, otherwise write SENT. ## requires: SendMessage
+requests|25|Use the Agent tool to research where session cookies are persisted in src/requests, then use NotebookEdit to create notes.ipynb with a markdown cell summarising it with file references. ## requires: Agent,NotebookEdit
+click|25|Use TaskCreate to plan and TaskUpdate to track three steps: find how click echo handles colors, add a test in tests/test_termui.py for a plain string, run that test. ## requires: TaskCreate,TaskUpdate
+typer|25|Use EnterWorktree to make a branch docs-completion, write docs/COMPLETION.md there with three file references from typer/, then ExitWorktree. ## requires: EnterWorktree,ExitWorktree
+seed|12|Use the Glob tool to list every .py file, then use TaskCreate to record one task per file, then TaskList to show them and write the count to COUNT.txt. ## requires: Glob,TaskCreate,TaskList

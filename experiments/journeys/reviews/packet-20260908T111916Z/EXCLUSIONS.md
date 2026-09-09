@@ -1,0 +1,1 @@
+Excluded from this packet: raw request logs (requests*.jsonl), datasets (train_*.jsonl*), teacher caches (*.pt), trained rows (gist_rows.pt), tokenizer and checkpoint deltas, API keys and instance keys, boxes.json (hosts), and files over 3 MB. Reviewer may request any of these by name; they will be added and the manifest regenerated.

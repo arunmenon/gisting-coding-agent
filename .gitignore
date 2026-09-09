@@ -1,0 +1,33 @@
+# --- secrets: never commit ---
+**/.instance_key_*
+**/.vast_key
+**/.vast_api_key
+*.pem
+*.key
+id_rsa*
+
+# --- virtualenvs / caches ---
+**/.venv/
+__pycache__/
+*.pyc
+.DS_Store
+
+# --- large data & model artifacts ---
+*.pt
+*.pth
+*.safetensors
+*.bin
+*.jsonl
+*.jsonl.gz
+*.gz
+*.npz
+**/tokenizer/
+**/*.attempt*.log
+**/vllm*.log
+**/supervise*.log
+
+# tokenizer / checkpoint artifacts (large, generated)
+tokenizer.json
+tokenizer.model
+**/checkpoint_delta/
+*.events.log

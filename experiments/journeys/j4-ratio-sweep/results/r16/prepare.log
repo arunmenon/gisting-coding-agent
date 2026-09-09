@@ -1,0 +1,15 @@
+embed_tokens: (248320, 5120) torch.bfloat16 | needed rows 249176 | new vocab 249216
+real-token row norm: mean 0.8998 std 0.1466
+  system_0     602 tokens ->   38 gist rows [248077, 248115)
+  system_2     525 tokens ->   33 gist rows [248115, 248148)
+  system_4      49 tokens ->    4 gist rows [248148, 248152)
+  system_5     369 tokens ->   24 gist rows [248152, 248176)
+  tools      15994 tokens -> 1000 gist rows [248176, 249176)
+gist row norm: mean 0.3988 std 0.0532 (mean of 16 rows shrinks norm; expected)
+cosine(gist_0, its chunk) = [0.298, 0.395, 0.389, 0.415, 0.345, 0.44, 0.271, 0.406, 0.237, 0.258, 0.395, 0.415, 0.344, 0.264, 0.42, 0.42] | cosine(gist_0, random tokens) mean 0.008
+wrote model-00003-of-00018.safetensors
+lm_head: (248320, 5120) torch.bfloat16
+wrote model-00018-of-00018.safetensors
+config vocab_size 248320 -> 249216
+real-token rows [0, 248077) unchanged; 243 former spare rows now hold gist rows; 896 rows appended
+reload check passed; delta written to /root/gist/out/checkpoint_delta

@@ -1,0 +1,25 @@
+s3 repo=seed exit=0 wall=125s turns 4 | result:   Done — all 5 tests pass.  - **`stats.py`** — `median(values)`: sorts a copy, returns the middle el
+check s3: PASS median=True tests=5 pytest=True
+s2 repo=seed exit=0 wall=183s turns 7 | result:   Done. `mean()` in calc.py:7-10 now returns `0` for an empty list instead of raising `ZeroDivisionE
+check s2: PASS mean([])='0' pytest=True
+s1 repo=seed exit=0 wall=211s turns 7 | result:   Done. Added `subtract` to `calc.py:4` and `test_subtract` to `test_calc.py:6` (covering both posit
+check s1: FAIL subtract defined=True tested=True pytest=False
+s4 repo=seed exit=0 wall=267s turns 6 | result:   Type hints added to all three functions in calc.py:  - `add(a: float, b: float) -> float` - `divid
+check s4: PASS all three functions hinted=True (pytest=False, baseline has one failing test)
+s8 repo=seed exit=0 wall=59s turns 2 | result:   `calc.py` contains three small functions:  - **`add(a, b)`** — Returns the sum of the two argument
+check s8: PASS calc unchanged=True
+s5 repo=seed exit=0 wall=299s turns 8 | result:   Done. `clamp` is added and its test passes, but the suite has a pre-existing failure unrelated to 
+check s5: PASS clamp=True tested=True pytest=True
+s7 repo=seed exit=0 wall=308s turns 10 | result:   Done. Summary:  **Changes:** - `calc.py:7-8` — added `power(a, b)` returning `a ** b` - `test_calc
+s6 repo=seed exit=0 wall=337s turns 9 | result:   Done. `divide` now guards against zero, and the new test passes.  **calc.py:4-7** ```python def di
+check s6: PASS raise='VE cannot divide by zero' test mentions ValueError=True
+check s7: PASS power='8 0.5' tested=True
+s9 repo=seed exit=0 wall=219s turns 7 | result:   Done. `README.md` now contains a single paragraph describing the project and naming all three func
+check s9: PASS readme names all=True calc unchanged=True len=397
+s10 repo=seed exit=0 wall=144s turns 6 | result:   **`test_calc.py::test_mean_empty` fails** (the other two tests pass).  **Why:** The test asserts `
+check s10: PASS files unchanged=True
+s12 repo=seed exit=0 wall=165s turns 7 | result:   Done. Created two files and ran the tests:  - `utils.py:1` — `flatten(list_of_lists)` flattens exa
+check s12: PASS flatten='[1, 2, 3]' pytest=True
+s11 repo=seed exit=0 wall=203s turns 8 | result:   Done. Added `is_even` to calc.py:11 and `test_is_even` (covers even, odd, and zero) to test_calc.p
+check s11: PASS is_even=True pytest=True
+ALL_SESSIONS_DONE label=eval_teacher sessions=12

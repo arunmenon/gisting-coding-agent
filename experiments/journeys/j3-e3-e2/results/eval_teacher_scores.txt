@@ -1,0 +1,12 @@
+s1 PASS subtract defined=True tested=True pytest(-k subtract)=T
+s2 PASS mean([])='0' pytest=True
+s3 PASS median=True tests=5 pytest=True
+s4 PASS all three functions hinted=True (pytest=False, baseline
+s5 PASS clamp=True tested=True pytest=True
+s6 PASS raise='VE cannot divide by zero' test mentions ValueErr
+s7 PASS power='8 0.5' tested=True
+s8 PASS calc unchanged=True
+s9 PASS readme names all=True calc unchanged=True len=397
+s10 PASS files unchanged=True
+s11 PASS is_even=True pytest=True
+s12 PASS flatten='[1, 2, 3]' pytest=True

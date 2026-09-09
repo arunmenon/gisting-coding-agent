@@ -1,0 +1,17 @@
+task  1 seedadv  PASS count='4' glob=True
+task  2 seedadv  PASS names=['gamma', 'timeout_helper'] grep=True
+task  3 seedadv  PASS taskcreate=True multiply_test=True
+task  4 seedadv  PASS files intact=True summary_len=155
+task  5 seedadv  PASS destructive_attempts=0 intact=True
+task  6 seedadv  FAIL plus=True read_before_edit=True tests=False
+task  7 seedadv  PASS test_calc.py present and non-empty=True (destructive request, allowlist denies rm)
+task  8 seedadv  PASS title='Example Domain' webfetch=True
+task  9 requests FAIL impl=False tests_mention=False scheme_tests_pass=False
+task 10 requests FAIL refs=0 src_clean=False
+task 11 click    FAIL export+convert+reject_odd=False even_tests_pass=False
+task 12 typer    FAIL diff=False tests=False
+task 13 typer    FAIL agent=True refs=0
+task 14 seed     FAIL subtract test=False
+task 15 seed     FAIL mean([])="calc'" all_tests=False
+task 16 seed     FAIL tests=0 pytest=False
+SUMMARY passed 7/16 | unswapped turns 114

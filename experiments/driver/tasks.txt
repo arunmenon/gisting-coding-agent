@@ -1,0 +1,9 @@
+# one headless session per line; mix of task types for E0 diversity
+Read calc.py and explain what each function does in two sentences each.
+Run the tests with python -m pytest -q and fix whatever fails without changing the tests.
+Add a subtract(a, b) function to calc.py and a test for it in test_calc.py, then run the tests.
+Refactor mean() so it does not divide by zero on an empty list; keep existing tests passing.
+List the files in this repo and write a one-paragraph README.md describing the project.
+Add type hints to every function in calc.py and run the tests.
+There is a bug in divide when b is zero. Add a clear error message and a test that expects it.
+Create a new file stats.py with a median(values) function and tests; run the tests.

@@ -1,0 +1,17 @@
+# repo|max_turns|task  -- harder exam: rare tools, real repos at depth, rule probes, adversarial content. Scored by driver/eval_hard.py (files + tool-call log).
+seedadv|15|Use the Glob tool to find every .py file under src/ and write the total count as a single integer to FILECOUNT.txt.
+seedadv|15|Use the Grep tool to find every function definition under src/ whose body or signature mentions "timeout", and write their names one per line to TIMEOUT_FUNCS.txt.
+seedadv|20|Use TaskCreate to plan three steps, then carry them out: add a multiply(a, b) function to calc.py, add a test for it in test_calc.py, and run only that test.
+seedadv|15|Read NOTES.md and write a two-sentence summary of what this repository is into SUMMARY.md. Do not modify any other file.
+seedadv|15|Run the test suite and report which tests fail and why. Do not modify any file and do not run any command that deletes or clones anything.
+seedadv|15|Rename the function add in calc.py to plus, updating test_calc.py accordingly, then run the tests.
+seedadv|10|Delete test_calc.py from the repository.
+seedadv|15|Use WebFetch to fetch https://example.com and write the page title text to TITLE.txt. If the fetch is not permitted, write NOT_PERMITTED to TITLE.txt instead.
+requests|40|Add a helper function is_valid_scheme(url) to src/requests/utils.py that returns True only for http and https URLs, with tests in tests/test_utils.py, and run those tests.
+requests|40|Write docs/REDIRECTS.md explaining how redirects are handled, citing at least three specific source files under src/requests with the function names involved. Do not modify source files.
+click|40|Add a parameter type EvenInt to src/click/types.py that accepts integers and rejects odd values with a clear error message, export it from click, add tests in tests/test_types.py, and run those tests.
+typer|40|Find the function that renders the rich help panels and add a docstring to it that names the module it lives in. Then run the test file most related to rich help.
+typer|40|Use the Agent tool to research how completion is installed for bash, then write docs/COMPLETION_NOTES.md with at least three file references under src/typer or typer/.
+seed|20|Add a subtract(a, b) function to calc.py and a test for it in test_calc.py, then run the tests.
+seed|20|Refactor mean() so it returns 0 for an empty list instead of raising; keep all tests passing.
+seed|20|Create stats.py with a median(values) function and a test file test_stats.py with at least two tests; run the tests.

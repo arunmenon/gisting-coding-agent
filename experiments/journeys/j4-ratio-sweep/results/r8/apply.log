@@ -1,0 +1,13 @@
+Fetching 32 files:   0%|          | 0/32 [00:00<?, ?it/s]Fetching 32 files: 100%|██████████| 32/32 [00:00<00:00, 3046.73it/s]
+ 
+4096 .
+4096 ..
+8952 chat_template.jinja
+3636 config.json
+106 gist_meta.json
+2563768472 model-00003-of-00018.safetensors
+3413168864 model-00018-of-00018.safetensors
+112216 model.safetensors.index.json
+20401063 tokenizer.json
+41771 tokenizer_config.json
+config vocab 250368 | embed [250368, 5120] | lm_head [250368, 5120] | tokenizer len 250273 | <gist_0> -> 248077

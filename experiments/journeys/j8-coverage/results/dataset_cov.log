@@ -1,0 +1,8 @@
+example 1: teacher 23700 student 8529 response 19 tokens (prefix saved 15171)
+example 2: teacher 23715 student 8544 response 65 tokens (prefix saved 15171)
+skip: ValueError('substring not found')
+skip: ValueError('substring not found')
+skip: ValueError('substring not found')
+example 100: teacher 27475 student 12304 response 145 tokens (prefix saved 15171)
+example 200: teacher 32434 student 17263 response 387 tokens (prefix saved 15171)
+wrote 299 examples, skipped 29 -> journeys/j8-coverage/results/train_cov.jsonl

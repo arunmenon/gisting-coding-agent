@@ -1,0 +1,10 @@
+teacher cache: 1457 examples cached, 1195 usable under student max len 30000, K=32
+steps for 1.00 epochs at accum 8: 146
+train 1171 examples, eval 24, gist rows (4386, 5120), trainable params 22456320
+step 0 eval KL/token 0.0534
+step 40  eval KL/token 0.0436
+step 80  eval KL/token 0.0276
+step 120  eval KL/token 0.0243
+final eval KL/token 0.0152; gist rows saved to /root/gist_rows.pt
+2026-09-04T01:33:19Z train_done step 0 eval KL/token 0.0534 step 40  eval KL/token 0.0436 step 80  eval KL/token 0.0276 step 120  eval KL/token 0.0243 final eval KL/token 0.0152; gist rows saved to /r
+2026-09-04T01:33:20Z export_done wrote 4386 gist rows into /root/qwen3.8-27b-gist/model-00003-of-00018.safetensors | mean row change 0.8393 (max 1.3137) | row norm before 0.578 after 1.029

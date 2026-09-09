@@ -1,0 +1,17 @@
+task  1          FAIL no session or work dir
+task  2          FAIL no session or work dir
+task  3          FAIL no session or work dir
+task  4          FAIL no session or work dir
+task  5          FAIL no session or work dir
+task  6          FAIL no session or work dir
+task  7          FAIL no session or work dir
+task  8          FAIL no session or work dir
+task  9          FAIL no session or work dir
+task 10          FAIL no session or work dir
+task 11          FAIL no session or work dir
+task 12          FAIL no session or work dir
+task 13          FAIL no session or work dir
+task 14          FAIL no session or work dir
+task 15          FAIL no session or work dir
+task 16          FAIL no session or work dir
+SUMMARY passed 0/16 | unswapped turns 0

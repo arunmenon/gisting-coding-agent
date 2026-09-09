@@ -1,0 +1,214 @@
+{
+ "passed": 10,
+ "total": 16,
+ "tasks": [
+  {
+   "task": 1,
+   "pass": true,
+   "required": [
+    "NotebookEdit"
+   ],
+   "missing": [],
+   "turns": 8,
+   "unswapped": 0
+  },
+  {
+   "task": 2,
+   "pass": false,
+   "required": [
+    "TaskCreate",
+    "TaskList",
+    "TaskUpdate"
+   ],
+   "missing": [
+    "TaskCreate",
+    "TaskList",
+    "TaskUpdate"
+   ],
+   "turns": 8,
+   "unswapped": 0
+  },
+  {
+   "task": 3,
+   "pass": true,
+   "required": [
+    "TaskOutput"
+   ],
+   "missing": [],
+   "turns": 4,
+   "unswapped": 0
+  },
+  {
+   "task": 4,
+   "pass": true,
+   "required": [
+    "ListAgents"
+   ],
+   "missing": [],
+   "turns": 9,
+   "unswapped": 0
+  },
+  {
+   "task": 5,
+   "pass": false,
+   "required": [
+    "EnterWorktree",
+    "ExitWorktree"
+   ],
+   "missing": [
+    "EnterWorktree",
+    "ExitWorktree"
+   ],
+   "turns": 15,
+   "unswapped": 0
+  },
+  {
+   "task": 6,
+   "pass": false,
+   "required": [
+    "CronList"
+   ],
+   "missing": [
+    "CronList"
+   ],
+   "turns": 4,
+   "unswapped": 0
+  },
+  {
+   "task": 7,
+   "pass": false,
+   "required": [
+    "WebSearch"
+   ],
+   "missing": [
+    "WebSearch"
+   ],
+   "turns": 2,
+   "unswapped": 0
+  },
+  {
+   "task": 8,
+   "pass": true,
+   "required": [
+    "Agent"
+   ],
+   "missing": [],
+   "turns": 7,
+   "unswapped": 3
+  },
+  {
+   "task": 9,
+   "pass": true,
+   "required": [
+    "Skill"
+   ],
+   "missing": [],
+   "turns": 4,
+   "unswapped": 0
+  },
+  {
+   "task": 10,
+   "pass": true,
+   "required": [
+    "TaskCreate",
+    "TaskGet"
+   ],
+   "missing": [],
+   "turns": 5,
+   "unswapped": 0
+  },
+  {
+   "task": 11,
+   "pass": true,
+   "required": [
+    "ReportFindings"
+   ],
+   "missing": [],
+   "turns": 8,
+   "unswapped": 0
+  },
+  {
+   "task": 12,
+   "pass": false,
+   "required": [
+    "SendMessage"
+   ],
+   "missing": [
+    "SendMessage"
+   ],
+   "turns": 3,
+   "unswapped": 0
+  },
+  {
+   "task": 13,
+   "pass": true,
+   "required": [
+    "Agent",
+    "NotebookEdit"
+   ],
+   "missing": [],
+   "turns": 14,
+   "unswapped": 7
+  },
+  {
+   "task": 14,
+   "pass": true,
+   "required": [
+    "TaskCreate",
+    "TaskUpdate"
+   ],
+   "missing": [],
+   "turns": 22,
+   "unswapped": 0
+  },
+  {
+   "task": 15,
+   "pass": false,
+   "required": [
+    "EnterWorktree",
+    "ExitWorktree"
+   ],
+   "missing": [
+    "EnterWorktree",
+    "ExitWorktree"
+   ],
+   "turns": 18,
+   "unswapped": 0
+  },
+  {
+   "task": 16,
+   "pass": true,
+   "required": [
+    "Glob",
+    "TaskCreate",
+    "TaskList"
+   ],
+   "missing": [],
+   "turns": 5,
+   "unswapped": 0
+  }
+ ],
+ "tools_used": [
+  "Agent",
+  "Bash",
+  "Edit",
+  "Glob",
+  "Grep",
+  "ListAgents",
+  "NotebookEdit",
+  "Read",
+  "ReportFindings",
+  "Skill",
+  "StructuredOutput",
+  "TaskCreate",
+  "TaskGet",
+  "TaskList",
+  "TaskOutput",
+  "TaskUpdate",
+  "TodoWrite",
+  "ToolSearch",
+  "Write",
+  "mcp__mcp-deepwiki__deepwiki_ask_question",
+  "mcp__plugin_vercel_vercel__search_docs"
+ ]
+}

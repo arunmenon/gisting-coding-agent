@@ -1,0 +1,10 @@
+2026-09-08T05:02:41Z download_attempt_1
+2026-09-08T05:06:16Z delta_done config vocab 252288 | embed [252288, 5120] | lm_head [252288, 5120] | tokenizer len 252247 | <gist_0> -> 248077
+2026-09-08T05:06:17Z cache_ok examples=1756
+2026-09-08T05:06:17Z train_start attempt=1 smax=30000 epochs=1 reduce=batch init=none
+2026-09-08T11:09:33Z train_done step 0 eval KL/token 0.0225 step 40  eval KL/token 0.0139 step 80  eval KL/token 0.0105 step 120  eval KL/token 0.0116 step 160  eval KL/token 0.0079 final eval KL/token 0.0081; gist rows saved to /root/gist_rows.pt 
+2026-09-08T11:09:36Z export_done wrote 4170 gist rows into /root/qwen3.8-27b-gist/model-00003-of-00018.safetensors | mean row change 0.8019 (max 1.3364) | row norm before 0.574 after 0.998
+2026-09-08T11:09:46Z gist_trained_launch_attempt_1
+2026-09-08T11:14:18Z gen_test_trained: TOTAL gist ids emitted: 0 =>  PASS
+2026-09-08T11:14:18Z READY_FOR_EVAL
+2026-09-08T11:16:36Z serve_ratio_r8t4_READY wrote 4170 gist rows into /root/qwen3.8-27b-gist/model-00003-of-00018.safetensors | mean row change 0.8019 (max 1.3364) 

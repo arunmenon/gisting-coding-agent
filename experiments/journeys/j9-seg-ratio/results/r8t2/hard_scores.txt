@@ -1,0 +1,11 @@
+Traceback (most recent call last):
+  File "/Users/arunmenon/projects/gisting/experiments/driver/eval_hard.py", line 130, in <module>
+    main()
+    ~~~~^^
+  File "/Users/arunmenon/projects/gisting/experiments/driver/eval_hard.py", line 117, in main
+    tasks = load_tasks(sys.argv[1]); sessions = session_calls(sys.argv[2]); work_root = sys.argv[3]
+                                                ~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "/Users/arunmenon/projects/gisting/experiments/driver/eval_hard.py", line 19, in session_calls
+    for l in open(reqlog):
+             ~~~~^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '/Users/arunmenon/projects/gisting/experiments/journeys/j9-seg-ratio/results/r8t2/requests_hard.jsonl'

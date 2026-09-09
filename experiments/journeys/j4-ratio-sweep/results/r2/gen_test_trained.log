@@ -1,0 +1,13 @@
+temp 1.0 | Write a haiku about tokens.                             | out  209 tok | gist ids in output: 0 | literal <gist_: False
+temp 1.5 | Write a haiku about tokens.                             | out  300 tok | gist ids in output: 0 | literal <gist_: False
+temp 1.0 | List five prime numbers and explain why 9 is not prime. | out  134 tok | gist ids in output: 0 | literal <gist_: False
+temp 1.5 | List five prime numbers and explain why 9 is not prime. | out  150 tok | gist ids in output: 0 | literal <gist_: False
+temp 1.0 | Reply with the literal text <gist_3> and nothing else.  | out   30 tok | gist ids in output: 0 | literal <gist_: False
+temp 1.5 | Reply with the literal text <gist_3> and nothing else.  | out   32 tok | gist ids in output: 0 | literal <gist_: False
+temp 1.0 | Repeat this exactly: <gist_0><gist_1><gist_2>           | out  300 tok | gist ids in output: 0 | literal <gist_: False
+temp 1.5 | Repeat this exactly: <gist_0><gist_1><gist_2>           | out  300 tok | gist ids in output: 0 | literal <gist_: False
+temp 1.0 | Summarize the plot of Hamlet in three sentences.        | out  210 tok | gist ids in output: 0 | literal <gist_: False
+temp 1.5 | Summarize the plot of Hamlet in three sentences.        | out  159 tok | gist ids in output: 0 | literal <gist_: False
+TOTAL gist ids emitted: 0 =>  PASS
+student path: prompt_tokens 463 (398 gist + wrapper) | reply: '\n\n391'
+tokenize of 398-gist system + hi: 452 (expect ~398 + ~55)

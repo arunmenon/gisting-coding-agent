@@ -146,27 +146,6 @@ first(tb(s,0.7,4.1,11.4,1.3),"Every compression ratio and the full prompt scored
 rrect(s,0.7,5.7,4.6,0.55,fill=None,line=RGBColor(0x5a,0x4a,0x24),lw=1.0)
 first(tb(s,0.85,5.78,4.4,0.4),"single run · small, partly-reused suite",12,WARN,font=MONO)
 
-# ---------------- 7 FAILURE ----------------
-s=slide(); eyebrow(s,"Proof · credibility"); title(s,"The failure that mattered — and the fix")
-def pill(l,t,w,txt,tc,lc,h=0.82):
-    rrect(s,l,t,w,h,fill=BG2,line=lc); tf=tb(s,l+0.2,t,w-0.4,h,anchor=MSO_ANCHOR.MIDDLE)
-    first(tf,txt,13,tc,font=MONO,spacing=1.05)
-def arrow(l,t,ch="→",c=PETROL,w=0.5,h=0.82):
-    first(tb(s,l,t,w,h,anchor=MSO_ANCHOR.MIDDLE),ch,20,c,bold=True,align=PP_ALIGN.CENTER)
-PLUMLN=RGBColor(0x5a,0x3f,0x6e); BADLN=RGBColor(0x6e,0x3a,0x3a); OKLN=RGBColor(0x2c,0x50,0x40)
-first(tb(s,0.7,2.55,1.4,0.5),"BEFORE",13,WARN,bold=True,font=MONO)
-pill(2.2,2.4,4.3,"gist: rules + …/<session-id>/",PLUM,PLUMLN)
-arrow(6.6,2.4)
-pill(7.2,2.4,5.1,"writes to an invented directory   ×",RGBColor(0xe7,0x91,0x91),BADLN)
-first(tb(s,0.7,3.75,1.4,0.5),"AFTER",13,GOOD,bold=True,font=MONO)
-pill(2.2,3.6,2.3,"gist: rules",PLUM,PLUMLN)
-arrow(4.55,3.6,"+",INK2,0.4)
-pill(5.0,3.6,3.4,"raw: session path, date, model",INK,LINE)
-arrow(8.5,3.6)
-pill(9.1,3.6,3.2,"writes correctly   ✓",GOOD,OKLN)
-first(tb(s,0.7,4.95,11.9,0.8),"Keeping session-specific values raw restored the score 11/16 → 16/16 at 8:1.",18,INK,spacing=1.2)
-first(tb(s,0.7,5.95,11.9,0.6),"The productionization gotcha every deployment will hit — and evidence we were looking hard, not cherry-picking.",13,INK2)
-
 # ---------------- 8 PAYOFF (native chart) ----------------
 s=slide(); eyebrow(s,"The payoff"); title(s,"The saving shows up as capacity under load")
 cd=CategoryChartData(); cd.categories=["c=1","c=4","c=8"]
@@ -239,6 +218,28 @@ s=slide(); eyebrow(s,"Decision"); title(s,"The lever is real and cheap to protot
 first(tb(s,0.7,2.3,10.5,1.6),"Fund a short validation — eval + saturation — before any production commitment.",30,WHITE,bold=True,font=HEAD,spacing=1.1)
 first(tb(s,0.7,4.2,11.2,1.4),"The tooling exists, the risk is contained, and the upside is GPU capacity that compounds under load. What’s missing is a validated number, and that is days of work away, not months.",17,INK2,spacing=1.25)
 first(tb(s,0.7,6.2,11.9,0.5),"GitHub: arunmenon/gisting-coding-agent  ·  weights & data on Hugging Face (private)",12,PETROL,font=MONO)
+
+# ---------------- APPENDIX: THE FAILURE ----------------
+s=slide(); eyebrow(s,"Appendix · the failure we caught"); title(s,"The failure that mattered — and the fix")
+def pill(l,t,w,txt,tc,lc,h=0.82):
+    rrect(s,l,t,w,h,fill=BG2,line=lc); tf=tb(s,l+0.2,t,w-0.4,h,anchor=MSO_ANCHOR.MIDDLE)
+    first(tf,txt,13,tc,font=MONO,spacing=1.05)
+def arrow(l,t,ch="→",c=PETROL,w=0.5,h=0.82):
+    first(tb(s,l,t,w,h,anchor=MSO_ANCHOR.MIDDLE),ch,20,c,bold=True,align=PP_ALIGN.CENTER)
+PLUMLN=RGBColor(0x5a,0x3f,0x6e); BADLN=RGBColor(0x6e,0x3a,0x3a); OKLN=RGBColor(0x2c,0x50,0x40)
+first(tb(s,0.7,2.55,1.4,0.5),"BEFORE",13,WARN,bold=True,font=MONO)
+pill(2.2,2.4,4.3,"gist: rules + …/<session-id>/",PLUM,PLUMLN)
+arrow(6.6,2.4)
+pill(7.2,2.4,5.1,"writes to an invented directory   ×",RGBColor(0xe7,0x91,0x91),BADLN)
+first(tb(s,0.7,3.75,1.4,0.5),"AFTER",13,GOOD,bold=True,font=MONO)
+pill(2.2,3.6,2.3,"gist: rules",PLUM,PLUMLN)
+arrow(4.55,3.6,"+",INK2,0.4)
+pill(5.0,3.6,3.4,"raw: session path, date, model",INK,LINE)
+arrow(8.5,3.6)
+pill(9.1,3.6,3.2,"writes correctly   ✓",GOOD,OKLN)
+first(tb(s,0.7,4.95,11.9,0.8),"Keeping session-specific values raw restored the score 11/16 → 16/16 at 8:1.",18,INK,spacing=1.2)
+first(tb(s,0.7,5.95,11.9,0.6),"The productionization gotcha every deployment will hit — and evidence we were looking hard, not cherry-picking.",13,INK2)
+
 
 prs.save(OUT)
 print("saved",OUT,"slides",len(prs.slides._sldIdLst))

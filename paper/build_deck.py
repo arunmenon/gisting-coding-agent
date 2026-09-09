@@ -179,18 +179,6 @@ slide('''
 <p class="lead">Every compression ratio and the full prompt scored a perfect <b>12 / 12</b> on the task suite, while input dropped from <b>~24k</b> to <b>~9&ndash;11k</b> tokens per turn.</p>
 <p style="margin-top:1rem"><span class="tag warn">single run &middot; small, partly-reused suite</span></p>''')
 
-# ---- 7 THE FAILURE ----
-slide('''
-<div class="eyebrow">Proof &middot; credibility</div>
-<h2>The failure that mattered &mdash; and the fix</h2>
-<div class="ba">
-  <div><span class="tag warn big">BEFORE</span></div>
-  <div class="baflow"><span class="pill plum">gist: rules + &hellip;/&lt;session-id&gt;/</span><span class="parrow">&rarr;</span><span class="pill bad">writes to an invented directory &#10007;</span></div>
-  <div><span class="tag good big">AFTER</span></div>
-  <div class="baflow"><span class="pill plum">gist: rules</span><span class="plus">+</span><span class="pill">raw: session path, date, model</span><span class="parrow">&rarr;</span><span class="pill ok">writes to the right place &#10003;</span></div>
-</div>
-<p class="lead" style="margin-top:1.5rem">Keeping session-specific values <b>raw</b> restored the score <b style="color:var(--good)">11/16 &rarr; 16/16</b> at 8:1.</p>
-<p class="caption">The productionization gotcha every deployment will hit &mdash; and evidence we were looking hard, not cherry-picking.</p>''')
 
 # ---- 8 PAYOFF (SVG chart) ----
 def bars():
@@ -293,6 +281,19 @@ slide('''
 <p class="big-verdict">Fund a short validation &mdash; eval&nbsp;+&nbsp;saturation &mdash; before any production commitment.</p>
 <p class="lead" style="margin-top:1.3rem">The tooling exists, the risk is contained, and the upside is <b>GPU capacity that compounds under load</b>. What&rsquo;s missing is a validated number, and that is days of work away, not months.</p>
 <div class="stack" style="margin-top:1.6rem">GitHub: arunmenon/gisting-coding-agent &middot; weights &amp; data on Hugging Face (private)</div>''')
+
+# ---- APPENDIX: THE FAILURE ----
+slide('''
+<div class="eyebrow">Appendix &middot; the failure we caught</div>
+<h2>The failure that mattered &mdash; and the fix</h2>
+<div class="ba">
+  <div><span class="tag warn big">BEFORE</span></div>
+  <div class="baflow"><span class="pill plum">gist: rules + &hellip;/&lt;session-id&gt;/</span><span class="parrow">&rarr;</span><span class="pill bad">writes to an invented directory &#10007;</span></div>
+  <div><span class="tag good big">AFTER</span></div>
+  <div class="baflow"><span class="pill plum">gist: rules</span><span class="plus">+</span><span class="pill">raw: session path, date, model</span><span class="parrow">&rarr;</span><span class="pill ok">writes to the right place &#10003;</span></div>
+</div>
+<p class="lead" style="margin-top:1.5rem">Keeping session-specific values <b>raw</b> restored the score <b style="color:var(--good)">11/16 &rarr; 16/16</b> at 8:1.</p>
+<p class="caption">The productionization gotcha every deployment will hit &mdash; and evidence we were looking hard, not cherry-picking.</p>''')
 
 # nav
 JS = """

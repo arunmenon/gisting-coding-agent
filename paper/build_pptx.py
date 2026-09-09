@@ -1,0 +1,220 @@
+from pptx import Presentation
+from pptx.util import Inches, Pt, Emu
+from pptx.dml.color import RGBColor
+from pptx.enum.text import PP_ALIGN, MSO_ANCHOR
+from pptx.enum.shapes import MSO_SHAPE
+from pptx.chart.data import CategoryChartData
+from pptx.enum.chart import XL_CHART_TYPE, XL_LEGEND_POSITION
+from PIL import Image
+import os
+
+FIG="/private/tmp/claude-501/-Users-arunmenon-projects-gisting/82deba89-c9a1-41e0-9e61-ec090b34e902/scratchpad/paper_figs"
+OUT="/Users/arunmenon/projects/gisting/Gisting-CTO-deck.pptx"
+
+BG=RGBColor(0x0e,0x14,0x17); BG2=RGBColor(0x14,0x1d,0x21); INK=RGBColor(0xee,0xf3,0xf3)
+INK2=RGBColor(0x9f,0xb2,0xb6); LINE=RGBColor(0x25,0x33,0x3a); PETROL=RGBColor(0x3f,0xb0,0xc6)
+PETROL2=RGBColor(0x1f,0x5f,0x6e); PLUM=RGBColor(0xc3,0x9b,0xe0); COPPER=RGBColor(0xe0,0x8a,0x4c)
+GOOD=RGBColor(0x57,0xc0,0x8a); WARN=RGBColor(0xe3,0xb2,0x4c); SLATE=RGBColor(0x4a,0x5a,0x60); WHITE=RGBColor(0xff,0xff,0xff)
+HEAD="Georgia"; BODY="Calibri"; MONO="Consolas"
+
+prs=Presentation(); prs.slide_width=Inches(13.333); prs.slide_height=Inches(7.5)
+BLANK=prs.slide_layouts[6]
+SW,SH=13.333,7.5
+
+def slide():
+    s=prs.slides.add_slide(BLANK)
+    r=s.shapes.add_shape(MSO_SHAPE.RECTANGLE,0,0,prs.slide_width,prs.slide_height)
+    r.fill.solid(); r.fill.fore_color.rgb=BG; r.line.fill.background()
+    r.shadow.inherit=False
+    return s
+
+def tb(s,l,t,w,h,anchor=MSO_ANCHOR.TOP):
+    b=s.shapes.add_textbox(Inches(l),Inches(t),Inches(w),Inches(h)); tf=b.text_frame
+    tf.word_wrap=True; tf.vertical_anchor=anchor; return tf
+
+def setpara(p,text,size,color,bold=False,font=BODY,align=PP_ALIGN.LEFT,spacing=1.0,after=0):
+    p.text=text; p.alignment=align; p.line_spacing=spacing; p.space_after=Pt(after)
+    for r in p.runs:
+        r.font.size=Pt(size); r.font.bold=bold; r.font.name=font; r.font.color.rgb=color
+    return p
+
+def addpara(tf,text,size,color,bold=False,font=BODY,align=PP_ALIGN.LEFT,spacing=1.0,after=0,bullet=False):
+    p=tf.add_paragraph(); return setpara(p,text,size,color,bold,font,align,spacing,after)
+
+def first(tf,text,size,color,bold=False,font=BODY,align=PP_ALIGN.LEFT,spacing=1.0,after=0):
+    return setpara(tf.paragraphs[0],text,size,color,bold,font,align,spacing,after)
+
+def rrect(s,l,t,w,h,fill=BG2,line=LINE,lw=1.0,shape=MSO_SHAPE.ROUNDED_RECTANGLE):
+    sh=s.shapes.add_shape(shape,Inches(l),Inches(t),Inches(w),Inches(h))
+    sh.shadow.inherit=False
+    if fill is None: sh.fill.background()
+    else: sh.fill.solid(); sh.fill.fore_color.rgb=fill
+    if line is None: sh.line.fill.background()
+    else: sh.line.color.rgb=line; sh.line.width=Pt(lw)
+    try: sh.adjustments[0]=0.06
+    except Exception: pass
+    return sh
+
+def eyebrow(s,text,y=0.5):
+    first(tb(s,0.7,y,11.9,0.4),text.upper(),13,PETROL,bold=True,font=MONO)
+def title(s,text,y=0.92,size=34,w=11.9):
+    first(tb(s,0.7,y,w,1.5),text,size,INK,bold=True,font=HEAD,spacing=1.02)
+def pic(s,path,l,t,w):
+    im=Image.open(path); ar=im.height/im.width; ph=w*ar
+    # white card behind
+    rrect(s,l-0.12,t-0.12,w+0.24,ph+0.24,fill=WHITE,line=LINE,lw=1.0)
+    s.shapes.add_picture(path,Inches(l),Inches(t),Inches(w))
+    return ph
+
+def card(s,l,t,w,h,kicker,kcolor,bodyfn):
+    rrect(s,l,t,w,h,fill=BG2,line=LINE,lw=1.0)
+    tf=tb(s,l+0.28,t+0.24,w-0.56,h-0.48)
+    first(tf,kicker.upper(),11,kcolor,bold=True,font=MONO,after=6)
+    bodyfn(tf)
+
+# ---------------- 1 TITLE ----------------
+s=slide()
+eyebrow(s,"Development study · self-hosted coding agent",0.9)
+first(tb(s,0.7,1.35,10.5,3.2),"Turning the prompt tax into GPU capacity",46,INK,bold=True,font=HEAD,spacing=1.02)
+first(tb(s,0.7,4.7,9.6,1.2),"Compressing a coding agent’s fixed preamble into a handful of learned “gist” tokens — what it buys, what it costs, and what to fund next.",18,INK2,spacing=1.2)
+tf=tb(s,0.7,6.1,11,0.9)
+first(tf,"Arun Menon · arumenon@paypal.com",13,INK2,font=MONO)
+addpara(tf,"Claude Code → proxy → vLLM → Qwen3.8-27B (hybrid attention) · one GPU",12,PETROL,font=MONO,after=0)
+
+# ---------------- 2 BLUF ----------------
+s=slide(); eyebrow(s,"Bottom line up front"); title(s,"The answer in four lines")
+cw,gap=2.85,0.2; x0=0.7; y=2.1; ch=3.9
+cards=[("The tax",COPPER,"Every turn re-sends ~17.5–21k fixed tokens, over 90% tool schemas — about 0.72 of a short session."),
+       ("The lever",PLUM,"Replace it with a few thousand learned tokens. Base model frozen; deployed in a proxy, no client or engine change."),
+       ("The payoff",PETROL,"~16% more throughput at eight concurrent sessions — capacity per GPU, not faster single replies."),
+       ("The caveat",WARN,"A development study: the lever is real; the dollar-per-session number is not proven yet.")]
+for i,(k,c,body) in enumerate(cards):
+    card(s,x0+i*(cw+gap),y,cw,ch,k,c,lambda tf,b=body:first(tf,b,15,INK,spacing=1.15))
+first(tb(s,0.7,6.25,11.9,0.6),"You can stop here. The rest is the evidence, the catch, and what it would take to bank the saving.",12.5,INK2)
+
+# ---------------- 3 WHY TCO ----------------
+s=slide(); eyebrow(s,"The cost lens"); title(s,"Why this is a total-cost question")
+first(tb(s,0.7,2.0,11.6,1.0),"For a self-hosted agent, serving cost is driven by how many tokens the model reads per turn, which caps how many sessions a GPU can carry. Three cost drivers — gisting acts on the first.",17,INK2,spacing=1.2)
+cw=3.75; y=3.4; ch=2.9
+c3=[("GPU capacity  ← gisting acts here",PETROL,"Token-bound. Fewer input tokens per turn → more concurrent sessions per GPU before latency degrades.",PETROL2),
+    ("Engineering",INK2,"One-time: build the proxy, the template, and the training loop. The loop is reusable across models.",LINE),
+    ("Risk",INK2,"Compressed rules are harder to audit; the benefit is model-dependent. Managed, not eliminated.",LINE)]
+for i,(k,c,body,ln) in enumerate(c3):
+    sh=rrect(s,0.7+i*(cw+0.2),y,cw,ch,fill=BG2,line=ln,lw=1.25 if ln==PETROL2 else 1.0)
+    tf=tb(s,0.7+i*(cw+0.2)+0.28,y+0.24,cw-0.56,ch-0.48)
+    first(tf,k.upper(),11,c,bold=True,font=MONO,after=8); addpara(tf,body,15,INK,spacing=1.15)
+
+# ---------------- 4 THE TAX ----------------
+s=slide(); eyebrow(s,"The tax, measured"); title(s,"Most of every turn is machine-readable boilerplate")
+ph=pic(s,FIG+"/fig_span.png",0.7,2.15,7.2)
+bx=8.4
+def bignum(y,num,ncol,unit):
+    first(tb(s,bx,y,4.2,0.7),num,30,ncol,bold=True,font=MONO)
+    first(tb(s,bx,y+0.62,4.2,0.5),unit,12,INK2,font=MONO)
+bignum(2.15,"17.5–21k",COPPER,"fixed tokens per turn")
+bignum(3.35,">90%",COPPER,"is tool schemas, not rules")
+bignum(4.55,"0.72",PETROL,"of a short session’s input")
+first(tb(s,bx,5.5,4.2,1.4),"Recovered from real logged sessions: the span that is byte-identical across sessions, split from per-session values (paths, git status, date) that stay raw.",12,INK2,spacing=1.2)
+
+# ---------------- 5 THE IDEA ----------------
+s=slide(); eyebrow(s,"The lever"); title(s,"Teach the model a shorthand for the boilerplate")
+pic(s,FIG+"/fig2_method.png",0.7,2.15,7.4)
+bx=8.6; tf=tb(s,bx,2.2,4.0,4.6)
+pts=["Grow the vocabulary with gist tokens, seeded from the block they replace.",
+     "Self-distillation: the model matches its own behaviour, short gist vs. full block.",
+     "All base weights frozen — only the new embedding rows are trained.",
+     "Proxy-only deployment: no change to the client or the inference engine."]
+first(tf,"▪  "+pts[0],15,INK,spacing=1.15,after=10)
+for p in pts[1:]: addpara(tf,"▪  "+p,15,INK,spacing=1.15,after=10)
+addpara(tf,"The only trained object is a small embedding tensor. Cheap to produce, cheap to serve.",12.5,INK2,spacing=1.2)
+
+# ---------------- 6 PARITY ----------------
+s=slide(); eyebrow(s,"Proof · parity"); title(s,"The short prompt matched the full prompt")
+chips=[("2:1","12 / 12"),("4:1","12 / 12"),("8:1","12 / 12"),("16:1","12 / 12")]
+for i,(r,sc) in enumerate(chips):
+    rrect(s,0.7+i*2.2,2.2,1.9,1.3,fill=BG2,line=PETROL2,lw=1.25)
+    tf=tb(s,0.7+i*2.2,2.35,1.9,1.1,anchor=MSO_ANCHOR.MIDDLE)
+    first(tf,r,22,PETROL,bold=True,font=MONO,align=PP_ALIGN.CENTER,after=2)
+    addpara(tf,sc,13,GOOD,font=MONO,align=PP_ALIGN.CENTER)
+first(tb(s,0.7,4.1,11.4,1.3),"Every compression ratio and the full prompt scored a perfect 12 / 12 on the task suite, while input dropped from ~24k to ~9–11k tokens per turn.",18,INK2,spacing=1.25)
+rrect(s,0.7,5.7,4.6,0.55,fill=None,line=RGBColor(0x5a,0x4a,0x24),lw=1.0)
+first(tb(s,0.85,5.78,4.4,0.4),"single run · small, partly-reused suite",12,WARN,font=MONO)
+
+# ---------------- 7 FAILURE ----------------
+s=slide(); eyebrow(s,"Proof · credibility"); title(s,"The failure that mattered — and the fix")
+pic(s,FIG+"/fig5_defect.png",0.7,2.15,7.2)
+bx=8.4; tf=tb(s,bx,2.2,4.2,4.6)
+first(tf,"A working-directory path with a session id was mistaken for fixed text and folded into the gist — so the model wrote results to invented directories.",15.5,INK,spacing=1.2,after=12)
+addpara(tf,"▪  Keep session-specific values raw by pattern.",14.5,INK,spacing=1.15,after=6)
+addpara(tf,"▪  Score recovers 11/16 → 16/16 at 8:1 (11/15 → 15/15 excluding one defective probe).",14.5,INK,spacing=1.15,after=12)
+addpara(tf,"The productionization gotcha every deployment will hit — and evidence we were looking hard, not cherry-picking.",12,INK2,spacing=1.2)
+
+# ---------------- 8 PAYOFF (native chart) ----------------
+s=slide(); eyebrow(s,"The payoff"); title(s,"The saving shows up as capacity under load")
+cd=CategoryChartData(); cd.categories=["c=1","c=4","c=8"]
+cd.add_series("full prompt",(6.9,16.4,20.0)); cd.add_series("gist",(7.2,18.9,23.2))
+gf=s.shapes.add_chart(XL_CHART_TYPE.COLUMN_CLUSTERED,Inches(0.7),Inches(2.1),Inches(7.4),Inches(4.6),cd)
+ch=gf.chart; ch.has_title=True; ch.chart_title.text_frame.text="requests / minute  (higher is better)"
+for r in ch.chart_title.text_frame.paragraphs[0].runs: r.font.size=Pt(12); r.font.color.rgb=INK2; r.font.name=MONO; r.font.bold=False
+ch.has_legend=True; ch.legend.position=XL_LEGEND_POSITION.TOP; ch.legend.include_in_layout=False
+ch.legend.font.color.rgb=INK2; ch.legend.font.size=Pt(12)
+ser=ch.plots[0].series
+ser[0].format.fill.solid(); ser[0].format.fill.fore_color.rgb=SLATE
+ser[1].format.fill.solid(); ser[1].format.fill.fore_color.rgb=PETROL
+ch.plots[0].has_data_labels=True; ch.plots[0].data_labels.font.size=Pt(11); ch.plots[0].data_labels.font.color.rgb=INK
+for ax in (ch.category_axis,ch.value_axis):
+    ax.tick_labels.font.color.rgb=INK2; ax.tick_labels.font.size=Pt(12); ax.format.line.color.rgb=LINE
+ch.value_axis.has_major_gridlines=True; ch.value_axis.major_gridlines.format.line.color.rgb=RGBColor(0x1b,0x26,0x2b)
+tf=tb(s,8.4,2.4,4.2,4.0)
+first(tf,"Throughput rises with concurrency — and the gain grows as the service gets busier. A single reply is barely faster.",16,INK,spacing=1.2,after=14)
+addpara(tf,"For a shared internal agent service, this is sessions per GPU — the number that sets cost.",14,INK2,spacing=1.2,after=10)
+addpara(tf,"One replay; direction, not precision.",12,INK2,font=MONO)
+
+# ---------------- 9 WHY CAPACITY ----------------
+s=slide(); eyebrow(s,"The catch · architecture"); title(s,"Why it’s capacity, not speed")
+first(tb(s,0.7,2.0,11.6,1.1),"This model uses full attention in only 16 of its 64 layers. A shorter prompt saves decode work only there — so the win is more sessions in parallel, not a faster individual answer.",17,INK2,spacing=1.2)
+gx,gy,cell,gp=0.7,3.5,0.42,0.1
+for k in range(64):
+    col=k%16; row=k//16
+    c=PETROL if k<16 else RGBColor(0x24,0x30,0x36)
+    rrect(s,gx+col*(cell+gp),gy+row*(cell+gp),cell,cell,fill=c,line=None,shape=MSO_SHAPE.ROUNDED_RECTANGLE)
+first(tb(s,0.7,5.9,11.6,0.9),"■ full-attention layers (where a shorter prompt helps)      ■ linear-attention layers (fixed-size state).  The benefit is architecture-dependent: a different model shifts it.",12.5,INK2,spacing=1.2)
+
+# ---------------- 10 THE LAB ----------------
+s=slide(); eyebrow(s,"The capability"); title(s,"We built the lab, not just the result")
+pic(s,FIG+"/fig_loop.png",0.7,2.3,8.0)
+bx=9.1; tf=tb(s,bx,2.3,3.6,4.4)
+first(tf,"An unattended, cost-guarded loop: provision a GPU → train → serve → evaluate → destroy, then the next recipe.",15.5,INK,spacing=1.2,after=12)
+addpara(tf,"▪  Spend-safety is structural: idle watchdog, ledger, sync-before-destroy, global deadline.",14,INK,spacing=1.15,after=8)
+addpara(tf,"▪  Makes the next model cheap to try — the capability outlasts this study.",14,INK,spacing=1.15)
+
+# ---------------- 11 LEDGER ----------------
+s=slide(); eyebrow(s,"Honest ledger"); title(s,"What’s proven, what isn’t")
+proven=["Equal task scores on our suites, every ratio.","Half-to-two-thirds fewer tokens read per turn.","Throughput rises under load; the fix removes the path failure.","The tooling works end to end."]
+notyet=["Generalisation on unseen, held-out work.","A saturation test → a real sessions-per-GPU / $ number.","The cause of the serving gain (a hypothesis).","Rare-tool reach (left unscored by harness faults).","Audit guarantees that compressed rules still bind."]
+def col(l,kicker,kc,items,linec):
+    rrect(s,l,2.15,5.75,4.35,fill=BG2,line=linec,lw=1.0)
+    tf=tb(s,l+0.3,2.4,5.15,3.9); first(tf,kicker.upper(),12,kc,bold=True,font=MONO,after=10)
+    for it in items: addpara(tf,"▪  "+it,14,INK,spacing=1.12,after=7)
+col(0.7,"Established here",GOOD,proven,RGBColor(0x2c,0x50,0x40))
+col(6.85,"Not yet",WARN,notyet,RGBColor(0x5a,0x4a,0x24))
+first(tb(s,0.7,6.65,11.9,0.5),"An independent adversarial review of the whole program was run and folded into the writeup.",12,INK2)
+
+# ---------------- 12 THE ASK ----------------
+s=slide(); eyebrow(s,"The ask"); title(s,"From “real lever” to a number you can budget")
+asks=[("1 · Validate","A held-out eval with paired, repeated runs. Is the parity real beyond our own tasks?"),
+      ("2 · Quantify","A saturation test under sustained load. Converts “throughput direction” into sessions per GPU and a cost per session."),
+      ("3 · Pilot","A guarded rollout with explicit rule-audit and write-target checks at the serving boundary.")]
+cw=3.75
+for i,(k,body) in enumerate(asks):
+    card(s,0.7+i*(cw+0.2),2.2,cw,3.4,k,PETROL,lambda tf,b=body:first(tf,b,15,INK,spacing=1.2))
+first(tb(s,0.7,6.0,11.9,0.7),"Bounded effort: a single GPU over days, not a new research program — the loop and serving path already exist.",13,INK2)
+
+# ---------------- 13 DECISION ----------------
+s=slide(); eyebrow(s,"Decision"); title(s,"The lever is real and cheap to prototype")
+first(tb(s,0.7,2.3,10.5,1.6),"Fund a short validation — eval + saturation — before any production commitment.",30,WHITE,bold=True,font=HEAD,spacing=1.1)
+first(tb(s,0.7,4.2,11.2,1.4),"The tooling exists, the risk is contained, and the upside is GPU capacity that compounds under load. What’s missing is a validated number, and that is days of work away, not months.",17,INK2,spacing=1.25)
+first(tb(s,0.7,6.2,11.9,0.5),"GitHub: arunmenon/gisting-coding-agent  ·  weights & data on Hugging Face (private)",12,PETROL,font=MONO)
+
+prs.save(OUT)
+print("saved",OUT,"slides",len(prs.slides._sldIdLst))

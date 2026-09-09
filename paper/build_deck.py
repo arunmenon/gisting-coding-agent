@@ -109,7 +109,7 @@ slide('''
 <div class="title-wrap">
   <div class="eyebrow">Development study &middot; self-hosted coding agent</div>
   <h1>Turning the prompt tax into GPU capacity</h1>
-  <p class="lead">Compressing a coding agent&rsquo;s fixed preamble into a handful of learned &ldquo;gist&rdquo; tokens &mdash; what it buys, what it costs, and what to fund next.</p>
+  <p class="lead">Compressing a coding agent&rsquo;s fixed preamble into a handful of learned &ldquo;gist&rdquo; tokens: what it buys, what it costs, and what to fund next.</p>
   <div class="byline">Arun Menon &middot; arumenon@paypal.com</div>
   <div class="stack">Claude Code &rarr; proxy &rarr; vLLM &rarr; Qwen3.8-27B (hybrid attention) &middot; one GPU</div>
 </div>''')
@@ -119,9 +119,9 @@ slide('''
 <div class="eyebrow">Bottom line up front</div>
 <h2>The answer in four lines</h2>
 <div class="grid4" style="margin-top:1.2rem">
-  <div class="card copper"><div class="k">The tax</div><div class="v">At every step, the coding agent (Claude Code) re-sends the same fixed preamble to the model &mdash; <b>~17.5&ndash;21k</b> tokens, over <b>90% tool schemas</b>, about <b>0.72</b> of a short session.</div></div>
+  <div class="card copper"><div class="k">The tax</div><div class="v">At every step, the coding agent (Claude Code) re-sends the same fixed preamble to the model: <b>~17.5&ndash;21k</b> tokens, over <b>90% tool schemas</b>, about <b>0.72</b> of a short session.</div></div>
   <div class="card plum"><div class="k">The lever</div><div class="v">Replace it with a few thousand <b>learned tokens</b>. Base model frozen; deployed in a <b>proxy</b>, no client or engine change.</div></div>
-  <div class="card"><div class="k">The payoff</div><div class="v"><b>~16% more throughput</b> at eight concurrent sessions &mdash; <b>capacity per GPU</b>, not faster single replies.</div></div>
+  <div class="card"><div class="k">The payoff</div><div class="v"><b>~16% more throughput</b> at eight concurrent sessions: <b>capacity per GPU</b>, not faster single replies.</div></div>
   <div class="card warn"><div class="k">The caveat</div><div class="v">A <b>development study</b>: the lever is real; the dollar-per-session number is <b>not proven yet</b>.</div></div>
 </div>
 <p class="caption">You can stop here. The rest is the evidence, the catch, and what it would take to bank the saving.</p>''')
@@ -130,7 +130,7 @@ slide('''
 slide('''
 <div class="eyebrow">The cost lens</div>
 <h2>Why this is a total-cost question</h2>
-<p class="lead" style="margin-bottom:1.4rem">For a self-hosted agent, serving cost is driven by <b>how many tokens the model reads per turn</b>, which caps <b>how many sessions a GPU can carry</b>. Three cost drivers &mdash; gisting acts on the first.</p>
+<p class="lead" style="margin-bottom:1.4rem">For a self-hosted agent, serving cost is driven by <b>how many tokens the model reads per turn</b>, which caps <b>how many sessions a GPU can carry</b>. Three cost drivers; gisting acts on the first.</p>
 <div class="grid3">
   <div class="card" style="border-color:var(--petrol2)"><div class="k" style="color:var(--petrol)">GPU capacity &nbsp;&larr; gisting acts here</div><div class="v">Token-bound. Fewer input tokens per turn &rarr; more concurrent sessions per GPU before latency degrades.</div></div>
   <div class="card"><div class="k" style="color:var(--ink2)">Engineering</div><div class="v">One-time: build the proxy, the template, and the training loop. The loop is reusable across models.</div></div>
@@ -160,11 +160,11 @@ slide('''
 <div class="flow">
   <div class="step"><div class="n">01</div><h3>Grow the vocabulary</h3><p>Add a few thousand new &ldquo;gist&rdquo; tokens, seeded from the block they replace.</p></div>
   <div class="arrow">&rarr;</div>
-  <div class="step"><div class="n">02</div><h3>Self-distil</h3><p>The model matches its own behaviour &mdash; short gist vs. full block. <b style="color:var(--plum)">All base weights frozen</b>; only the new rows train.</p></div>
+  <div class="step"><div class="n">02</div><h3>Self-distil</h3><p>The model matches its own behaviour (short gist vs. full block). <b style="color:var(--plum)">All base weights frozen</b>; only the new rows train.</p></div>
   <div class="arrow">&rarr;</div>
   <div class="step"><div class="n">03</div><h3>Serve via a proxy</h3><p>The proxy swaps the span for gist tokens. <b>No change to the client or the engine.</b></p></div>
 </div>
-<p class="caption">The only trained object is a small embedding tensor &mdash; cheap to produce, cheap to serve.</p>''')
+<p class="caption">The only trained object is a small embedding tensor: cheap to produce, cheap to serve.</p>''')
 
 # ---- 6 PARITY ----
 slide('''
@@ -208,9 +208,9 @@ slide('''
 <div class="figrow">
   <div>%s</div>
   <div>
-    <p class="lead">Throughput rises with concurrency &mdash; and the gain <b>grows</b> as the service gets busier. A single reply is barely faster.</p>
+    <p class="lead">Throughput rises with concurrency, and the gain <b>grows</b> as the service gets busier. A single reply is barely faster.</p>
     <div style="margin-top:1rem"><span class="tag" style="color:var(--petrol);border-color:var(--petrol2)">full prompt</span> <span class="tag" style="color:#3fb0c6;border-color:var(--petrol2)">gist</span></div>
-    <p class="caption">For a shared internal agent service, this is <b>sessions per GPU</b> &mdash; the number that sets cost. One replay; direction, not precision.</p>
+    <p class="caption">For a shared internal agent service, this is <b>sessions per GPU</b>, the number that sets cost. One replay; direction, not precision.</p>
   </div>
 </div>''' % bars())
 
@@ -219,7 +219,7 @@ layers="".join('<i class="on"></i>' if k<16 else '<i></i>' for k in range(64))
 slide('''
 <div class="eyebrow">The catch &middot; architecture</div>
 <h2>Why it&rsquo;s capacity, not speed</h2>
-<p class="lead">This model uses full attention in only <b>16 of its 64 layers</b>. A shorter prompt saves decode work only there &mdash; so the win is more sessions in parallel, not a faster individual answer.</p>
+<p class="lead">This model uses full attention in only <b>16 of its 64 layers</b>. A shorter prompt saves decode work only there, so the win is more sessions in parallel, not a faster individual answer.</p>
 <div class="layers">%s</div>
 <p class="caption"><span style="color:var(--petrol)">&#9632;</span> full-attention layers (benefit) &nbsp;&nbsp; <span style="color:#3a4a51">&#9632;</span> linear-attention layers (fixed-size state). The benefit is <b>architecture-dependent</b>: a different model shifts it.</p>''' % layers)
 
@@ -235,8 +235,8 @@ slide('''
   <div class="pnode">Destroy</div><div class="parrow" style="color:var(--copper)">&#8635;</div>
   <div class="pnode" style="border-style:dashed;color:var(--ink2)">next recipe</div>
 </div>
-<div class="safety">SPEND-SAFETY &middot; structural &nbsp;&mdash;&nbsp; <b>idle watchdog</b> &middot; <b>ledger at creation</b> &middot; <b>sync-before-destroy</b> &middot; <b>global deadline</b></div>
-<p class="caption">One detached controller drives every recipe end to end, unattended. Makes the <b>next</b> model cheap to try &mdash; the capability outlasts this study.</p>''')
+<div class="safety">SPEND-SAFETY &middot; structural &nbsp;&middot;&nbsp; <b>idle watchdog</b> &middot; <b>ledger at creation</b> &middot; <b>sync-before-destroy</b> &middot; <b>global deadline</b></div>
+<p class="caption">One detached controller drives every recipe end to end, unattended. Makes the <b>next</b> model cheap to try: the capability outlasts this study.</p>''')
 
 # ---- 11 LEDGER ----
 slide('''
@@ -272,20 +272,20 @@ slide('''
   <div class="card"><div class="k">2 &middot; Quantify</div><div class="v">A saturation test under sustained load. Converts &ldquo;throughput direction&rdquo; into <b>sessions per GPU</b> and a cost per session.</div></div>
   <div class="card"><div class="k">3 &middot; Pilot</div><div class="v">A guarded rollout with explicit rule-audit and write-target checks at the serving boundary.</div></div>
 </div>
-<p class="caption">Bounded effort: a single GPU over days, not a new research program &mdash; the loop and serving path already exist.</p>''')
+<p class="caption">Bounded effort: a single GPU over days, not a new research program; the loop and serving path already exist.</p>''')
 
 # ---- 13 DECISION ----
 slide('''
 <div class="eyebrow">Decision</div>
 <h2>The lever is real and cheap to prototype</h2>
-<p class="big-verdict">Fund a short validation &mdash; eval&nbsp;+&nbsp;saturation &mdash; before any production commitment.</p>
+<p class="big-verdict">Fund a short validation (eval&nbsp;+&nbsp;saturation) before any production commitment.</p>
 <p class="lead" style="margin-top:1.3rem">The tooling exists, the risk is contained, and the upside is <b>GPU capacity that compounds under load</b>. What&rsquo;s missing is a validated number, and that is days of work away, not months.</p>
 <div class="stack" style="margin-top:1.6rem">GitHub: arunmenon/gisting-coding-agent &middot; weights &amp; data on Hugging Face (private)</div>''')
 
 # ---- APPENDIX: THE FAILURE ----
 slide('''
 <div class="eyebrow">Appendix &middot; the failure we caught</div>
-<h2>The failure that mattered &mdash; and the fix</h2>
+<h2>The failure that mattered, and the fix</h2>
 <div class="ba">
   <div><span class="tag warn big">BEFORE</span></div>
   <div class="baflow"><span class="pill plum">gist: rules + &hellip;/&lt;session-id&gt;/</span><span class="parrow">&rarr;</span><span class="pill bad">writes to an invented directory &#10007;</span></div>
@@ -293,7 +293,7 @@ slide('''
   <div class="baflow"><span class="pill plum">gist: rules</span><span class="plus">+</span><span class="pill">raw: session path, date, model</span><span class="parrow">&rarr;</span><span class="pill ok">writes to the right place &#10003;</span></div>
 </div>
 <p class="lead" style="margin-top:1.5rem">Keeping session-specific values <b>raw</b> restored the score <b style="color:var(--good)">11/16 &rarr; 16/16</b> at 8:1.</p>
-<p class="caption">The productionization gotcha every deployment will hit &mdash; and evidence we were looking hard, not cherry-picking.</p>''')
+<p class="caption">The productionization gotcha every deployment will hit, and evidence we were looking hard, not cherry-picking.</p>''')
 
 # nav
 JS = """

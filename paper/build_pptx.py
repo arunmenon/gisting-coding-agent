@@ -76,7 +76,7 @@ def card(s,l,t,w,h,kicker,kcolor,bodyfn):
 s=slide()
 eyebrow(s,"Development study · self-hosted coding agent",0.9)
 first(tb(s,0.7,1.35,10.5,3.2),"Turning the prompt tax into GPU capacity",46,INK,bold=True,font=HEAD,spacing=1.02)
-first(tb(s,0.7,4.7,9.6,1.2),"Compressing a coding agent’s fixed preamble into a handful of learned “gist” tokens — what it buys, what it costs, and what to fund next.",18,INK2,spacing=1.2)
+first(tb(s,0.7,4.7,9.6,1.2),"Compressing a coding agent’s fixed preamble into a handful of learned “gist” tokens: what it buys, what it costs, and what to fund next.",18,INK2,spacing=1.2)
 tf=tb(s,0.7,6.1,11,0.9)
 first(tf,"Arun Menon · arumenon@paypal.com",13,INK2,font=MONO)
 addpara(tf,"Claude Code → proxy → vLLM → Qwen3.8-27B (hybrid attention) · one GPU",12,PETROL,font=MONO,after=0)
@@ -84,9 +84,9 @@ addpara(tf,"Claude Code → proxy → vLLM → Qwen3.8-27B (hybrid attention) ·
 # ---------------- 2 BLUF ----------------
 s=slide(); eyebrow(s,"Bottom line up front"); title(s,"The answer in four lines")
 cw,gap=2.85,0.2; x0=0.7; y=2.1; ch=3.9
-cards=[("The tax",COPPER,"At every step, the coding agent (Claude Code) re-sends the same fixed preamble to the model — ~17.5–21k tokens, over 90% tool schemas, about 0.72 of a short session."),
+cards=[("The tax",COPPER,"At every step, the coding agent (Claude Code) re-sends the same fixed preamble to the model: ~17.5–21k tokens, over 90% tool schemas, about 0.72 of a short session."),
        ("The lever",PLUM,"Replace it with a few thousand learned tokens. Base model frozen; deployed in a proxy, no client or engine change."),
-       ("The payoff",PETROL,"~16% more throughput at eight concurrent sessions — capacity per GPU, not faster single replies."),
+       ("The payoff",PETROL,"~16% more throughput at eight concurrent sessions: capacity per GPU, not faster single replies."),
        ("The caveat",WARN,"A development study: the lever is real; the dollar-per-session number is not proven yet.")]
 for i,(k,c,body) in enumerate(cards):
     card(s,x0+i*(cw+gap),y,cw,ch,k,c,lambda tf,b=body:first(tf,b,15,INK,spacing=1.15))
@@ -94,7 +94,7 @@ first(tb(s,0.7,6.25,11.9,0.6),"You can stop here. The rest is the evidence, the 
 
 # ---------------- 3 WHY TCO ----------------
 s=slide(); eyebrow(s,"The cost lens"); title(s,"Why this is a total-cost question")
-first(tb(s,0.7,2.0,11.6,1.0),"For a self-hosted agent, serving cost is driven by how many tokens the model reads per turn, which caps how many sessions a GPU can carry. Three cost drivers — gisting acts on the first.",17,INK2,spacing=1.2)
+first(tb(s,0.7,2.0,11.6,1.0),"For a self-hosted agent, serving cost is driven by how many tokens the model reads per turn, which caps how many sessions a GPU can carry. Three cost drivers; gisting acts on the first.",17,INK2,spacing=1.2)
 cw=3.75; y=3.4; ch=2.9
 c3=[("GPU capacity  ← gisting acts here",PETROL,"Token-bound. Fewer input tokens per turn → more concurrent sessions per GPU before latency degrades.",PETROL2),
     ("Engineering",INK2,"One-time: build the proxy, the template, and the training loop. The loop is reusable across models.",LINE),
@@ -122,7 +122,7 @@ first(tb(s,0.7,5.7,11.9,0.6),"The coding-agent harness prepends the same block, 
 # ---------------- 5 THE IDEA ----------------
 s=slide(); eyebrow(s,"The lever"); title(s,"Teach the model a shorthand for the boilerplate")
 steps=[("01","Grow the vocabulary","Add a few thousand new “gist” tokens, seeded from the block they replace."),
-       ("02","Self-distil","The model matches its own behaviour — short gist vs. full block. All base weights frozen; only the new rows train."),
+       ("02","Self-distil","The model matches its own behaviour (short gist vs. full block). All base weights frozen; only the new rows train."),
        ("03","Serve via a proxy","The proxy swaps the span for gist tokens. No change to the client or the engine.")]
 sw,gap,y,h=3.7,0.35,2.7,3.2
 for i,(n,t,b) in enumerate(steps):
@@ -132,7 +132,7 @@ for i,(n,t,b) in enumerate(steps):
     addpara(tf,t,20,WHITE,bold=True,font=HEAD,after=10)
     addpara(tf,b,14,INK2,spacing=1.2)
     if i<2: first(tb(s,l+sw-0.02,y+h/2-0.35,gap+0.1,0.7,anchor=MSO_ANCHOR.MIDDLE),"→",26,PETROL,bold=True,align=PP_ALIGN.CENTER)
-first(tb(s,0.7,6.15,11.9,0.6),"The only trained object is a small embedding tensor — cheap to produce, cheap to serve.",13,INK2)
+first(tb(s,0.7,6.15,11.9,0.6),"The only trained object is a small embedding tensor: cheap to produce, cheap to serve.",13,INK2)
 
 # ---------------- 6 PARITY ----------------
 s=slide(); eyebrow(s,"Proof · parity"); title(s,"The short prompt matched the full prompt")
@@ -163,13 +163,13 @@ for ax in (ch.category_axis,ch.value_axis):
     ax.tick_labels.font.color.rgb=INK2; ax.tick_labels.font.size=Pt(12); ax.format.line.color.rgb=LINE
 ch.value_axis.has_major_gridlines=True; ch.value_axis.major_gridlines.format.line.color.rgb=RGBColor(0x1b,0x26,0x2b)
 tf=tb(s,8.4,2.4,4.2,4.0)
-first(tf,"Throughput rises with concurrency — and the gain grows as the service gets busier. A single reply is barely faster.",16,INK,spacing=1.2,after=14)
-addpara(tf,"For a shared internal agent service, this is sessions per GPU — the number that sets cost.",14,INK2,spacing=1.2,after=10)
+first(tf,"Throughput rises with concurrency, and the gain grows as the service gets busier. A single reply is barely faster.",16,INK,spacing=1.2,after=14)
+addpara(tf,"For a shared internal agent service, this is sessions per GPU, the number that sets cost.",14,INK2,spacing=1.2,after=10)
 addpara(tf,"One replay; direction, not precision.",12,INK2,font=MONO)
 
 # ---------------- 9 WHY CAPACITY ----------------
 s=slide(); eyebrow(s,"The catch · architecture"); title(s,"Why it’s capacity, not speed")
-first(tb(s,0.7,2.0,11.6,1.1),"This model uses full attention in only 16 of its 64 layers. A shorter prompt saves decode work only there — so the win is more sessions in parallel, not a faster individual answer.",17,INK2,spacing=1.2)
+first(tb(s,0.7,2.0,11.6,1.1),"This model uses full attention in only 16 of its 64 layers. A shorter prompt saves decode work only there, so the win is more sessions in parallel, not a faster individual answer.",17,INK2,spacing=1.2)
 gx,gy,cell,gp=0.7,3.5,0.42,0.1
 for k in range(64):
     col=k%16; row=k//16
@@ -188,8 +188,8 @@ for i,(n,w) in enumerate(nodes):
     first(tb(s,cx,y,0.55,h,anchor=MSO_ANCHOR.MIDDLE),ch,20,cc,bold=True,align=PP_ALIGN.CENTER); cx+=0.55
 rrect(s,cx,y,1.7,h,fill=None,line=RGBColor(0x3a,0x4a,0x51)); tf=tb(s,cx,y,1.7,h,anchor=MSO_ANCHOR.MIDDLE); first(tf,"next recipe",13,INK2,align=PP_ALIGN.CENTER)
 rrect(s,0.7,4.35,11.9,0.95,fill=RGBColor(0x22,0x1a,0x11),line=RGBColor(0x5a,0x4a,0x2a))
-first(tb(s,0.95,4.35,11.4,0.95,anchor=MSO_ANCHOR.MIDDLE),"SPEND-SAFETY · structural  —  idle watchdog · ledger at creation · sync-before-destroy · global deadline",13,COPPER,font=MONO)
-first(tb(s,0.7,5.6,11.9,0.8),"One detached controller drives every recipe end to end, unattended. Makes the next model cheap to try — the capability outlasts this study.",14,INK2,spacing=1.2)
+first(tb(s,0.95,4.35,11.4,0.95,anchor=MSO_ANCHOR.MIDDLE),"SPEND-SAFETY · structural  ·  idle watchdog · ledger at creation · sync-before-destroy · global deadline",13,COPPER,font=MONO)
+first(tb(s,0.7,5.6,11.9,0.8),"One detached controller drives every recipe end to end, unattended. Makes the next model cheap to try: the capability outlasts this study.",14,INK2,spacing=1.2)
 
 # ---------------- 11 LEDGER ----------------
 s=slide(); eyebrow(s,"Honest ledger"); title(s,"What’s proven, what isn’t")
@@ -211,16 +211,16 @@ asks=[("1 · Validate","A held-out eval with paired, repeated runs. Is the parit
 cw=3.75
 for i,(k,body) in enumerate(asks):
     card(s,0.7+i*(cw+0.2),2.2,cw,3.4,k,PETROL,lambda tf,b=body:first(tf,b,15,INK,spacing=1.2))
-first(tb(s,0.7,6.0,11.9,0.7),"Bounded effort: a single GPU over days, not a new research program — the loop and serving path already exist.",13,INK2)
+first(tb(s,0.7,6.0,11.9,0.7),"Bounded effort: a single GPU over days, not a new research program; the loop and serving path already exist.",13,INK2)
 
 # ---------------- 13 DECISION ----------------
 s=slide(); eyebrow(s,"Decision"); title(s,"The lever is real and cheap to prototype")
-first(tb(s,0.7,2.3,10.5,1.6),"Fund a short validation — eval + saturation — before any production commitment.",30,WHITE,bold=True,font=HEAD,spacing=1.1)
+first(tb(s,0.7,2.3,10.5,1.6),"Fund a short validation (eval + saturation) before any production commitment.",30,WHITE,bold=True,font=HEAD,spacing=1.1)
 first(tb(s,0.7,4.2,11.2,1.4),"The tooling exists, the risk is contained, and the upside is GPU capacity that compounds under load. What’s missing is a validated number, and that is days of work away, not months.",17,INK2,spacing=1.25)
 first(tb(s,0.7,6.2,11.9,0.5),"GitHub: arunmenon/gisting-coding-agent  ·  weights & data on Hugging Face (private)",12,PETROL,font=MONO)
 
 # ---------------- APPENDIX: THE FAILURE ----------------
-s=slide(); eyebrow(s,"Appendix · the failure we caught"); title(s,"The failure that mattered — and the fix")
+s=slide(); eyebrow(s,"Appendix · the failure we caught"); title(s,"The failure that mattered, and the fix")
 def pill(l,t,w,txt,tc,lc,h=0.82):
     rrect(s,l,t,w,h,fill=BG2,line=lc); tf=tb(s,l+0.2,t,w-0.4,h,anchor=MSO_ANCHOR.MIDDLE)
     first(tf,txt,13,tc,font=MONO,spacing=1.05)
@@ -238,7 +238,7 @@ pill(5.0,3.6,3.4,"raw: session path, date, model",INK,LINE)
 arrow(8.5,3.6)
 pill(9.1,3.6,3.2,"writes correctly   ✓",GOOD,OKLN)
 first(tb(s,0.7,4.95,11.9,0.8),"Keeping session-specific values raw restored the score 11/16 → 16/16 at 8:1.",18,INK,spacing=1.2)
-first(tb(s,0.7,5.95,11.9,0.6),"The productionization gotcha every deployment will hit — and evidence we were looking hard, not cherry-picking.",13,INK2)
+first(tb(s,0.7,5.95,11.9,0.6),"The productionization gotcha every deployment will hit, and evidence we were looking hard, not cherry-picking.",13,INK2)
 
 
 prs.save(OUT)

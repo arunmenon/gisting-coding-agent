@@ -1,0 +1,312 @@
+import json
+figs = json.load(open("paper_figs/figs.json"))
+
+CSS = """
+:root{
+  --bg:#0e1417; --bg2:#141d21; --panel:#18232800; --ink:#eef3f3; --ink2:#9fb2b6;
+  --line:#25333a; --petrol:#3fb0c6; --petrol2:#1f5f6e; --plum:#c39be0; --copper:#e08a4c;
+  --good:#57c08a; --warn:#e3b24c; --card:#fbfbf9;
+  --serif:"Fraunces",Georgia,serif; --sans:"IBM Plex Sans",system-ui,sans-serif; --mono:"IBM Plex Mono",ui-monospace,monospace;
+}
+*{box-sizing:border-box}
+html{scroll-snap-type:y mandatory;scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:17px;line-height:1.5;-webkit-font-smoothing:antialiased}
+.deck{width:100%}
+.slide{min-height:100vh;scroll-snap-align:start;display:flex;flex-direction:column;justify-content:center;
+  padding:clamp(30px,6vh,70px) clamp(28px,7vw,120px) clamp(60px,9vh,96px);position:relative;border-bottom:1px solid var(--line);overflow:hidden}
+.eyebrow{font-family:var(--mono);font-size:.74rem;letter-spacing:.22em;text-transform:uppercase;color:var(--petrol);margin-bottom:.9rem}
+h1{font-family:var(--serif);font-weight:600;font-size:clamp(2rem,4.4vw,3.5rem);line-height:1.06;margin:.1em 0;letter-spacing:-.01em;text-wrap:balance}
+h2{font-family:var(--serif);font-weight:600;font-size:clamp(1.7rem,3.8vw,2.9rem);line-height:1.08;margin:0 0 .5em;letter-spacing:-.01em;text-wrap:balance;max-width:20ch}
+.lead{color:var(--ink2);font-size:clamp(1.02rem,1.5vw,1.28rem);max-width:60ch;line-height:1.5}
+.sub{color:var(--ink2);max-width:64ch;font-size:1.05rem}
+p{margin:.5em 0}
+b,strong{color:var(--ink);font-weight:600}
+.mono{font-family:var(--mono)}
+.tag{display:inline-block;font-family:var(--mono);font-size:.72rem;letter-spacing:.04em;padding:4px 10px;border-radius:999px;border:1px solid var(--line);color:var(--ink2)}
+.tag.warn{color:var(--warn);border-color:#5a4a24}
+.tag.good{color:var(--good);border-color:#2c5040}
+/* title */
+.title-wrap{max-width:34ch}
+.byline{font-family:var(--mono);color:var(--ink2);font-size:.9rem;margin-top:2.2rem}
+.stack{font-family:var(--mono);color:var(--petrol);font-size:.8rem;letter-spacing:.05em;margin-top:.5rem}
+/* grids */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:26px}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+@media(max-width:860px){.grid2,.grid4,.grid3{grid-template-columns:1fr}}
+/* cards */
+.card{background:var(--bg2);border:1px solid var(--line);border-radius:14px;padding:22px 22px}
+.card .k{font-family:var(--mono);font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--petrol);margin-bottom:.55rem}
+.card.copper .k{color:var(--copper)} .card.plum .k{color:var(--plum)} .card.good .k{color:var(--good)} .card.warn .k{color:var(--warn)}
+.card .v{font-size:1.02rem;color:var(--ink);line-height:1.45}
+.card .v b{color:#fff}
+.bignum{font-family:var(--mono);font-weight:600;font-size:clamp(2rem,4.4vw,3.2rem);line-height:1;letter-spacing:-.02em}
+.bignum.petrol{color:var(--petrol)} .bignum.copper{color:var(--copper)} .bignum.plum{color:var(--plum)} .bignum.good{color:var(--good)}
+.unit{font-family:var(--mono);font-size:.8rem;color:var(--ink2);margin-top:.5rem;letter-spacing:.02em}
+/* figure card (paper diagrams are light-bg) */
+.figcard{background:var(--card);border-radius:14px;padding:14px;border:1px solid var(--line)}
+.figcard img{display:block;width:100%;height:auto;border-radius:6px}
+.figrow{display:grid;grid-template-columns:1.25fr .9fr;gap:34px;align-items:center}
+@media(max-width:900px){.figrow{grid-template-columns:1fr}}
+ul.clean{list-style:none;padding:0;margin:.4rem 0}
+ul.clean li{padding-left:1.3em;position:relative;margin:.6rem 0;color:var(--ink2)}
+ul.clean li b{color:var(--ink)}
+ul.clean li::before{content:"";position:absolute;left:0;top:.62em;width:8px;height:8px;border-radius:2px;background:var(--petrol)}
+ul.clean.plum li::before{background:var(--plum)} ul.clean.copper li::before{background:var(--copper)}
+ul.clean.good li::before{background:var(--good)} ul.clean.warn li::before{background:var(--warn)}
+.ratiorow{display:flex;gap:14px;flex-wrap:wrap;margin:1.2rem 0}
+.chip{font-family:var(--mono);border:1px solid var(--petrol2);border-radius:10px;padding:12px 18px;text-align:center;background:var(--bg2)}
+.chip .r{color:var(--petrol);font-size:1.15rem;font-weight:600}
+.chip .s{color:var(--good);font-size:.85rem;margin-top:4px}
+.caption{color:var(--ink2);font-size:.92rem;max-width:60ch;margin-top:1rem}
+.big-verdict{font-family:var(--serif);font-size:clamp(1.4rem,2.6vw,2.1rem);line-height:1.25;max-width:24ch;color:#fff}
+/* layer motif */
+.layers{display:grid;grid-template-columns:repeat(16,1fr);gap:4px;max-width:520px;margin:1rem 0}
+.layers i{aspect-ratio:1;border-radius:3px;background:#243036;display:block}
+.layers i.on{background:var(--petrol)}
+/* footer rail */
+.rail{position:fixed;left:0;right:0;bottom:0;height:44px;display:flex;align-items:center;justify-content:space-between;
+  padding:0 clamp(20px,5vw,60px);font-family:var(--mono);font-size:.74rem;color:var(--ink2);
+  background:linear-gradient(0deg,rgba(14,20,23,.95),rgba(14,20,23,.0));z-index:20;pointer-events:none}
+.dots{display:flex;gap:7px;pointer-events:auto}
+.dots b{width:8px;height:8px;border-radius:50%;background:#2b3a41;display:block;cursor:pointer;transition:background .2s,transform .2s}
+.dots b.on{background:var(--petrol);transform:scale(1.35)}
+.count b{color:var(--petrol)}
+svg text{font-family:var(--mono)}
+.hint{position:fixed;right:16px;top:14px;font-family:var(--mono);font-size:.7rem;color:var(--ink2);opacity:.6;z-index:20}
+"""
+
+def fig(key):
+    return figs[key]
+
+S = []
+def slide(html): S.append('<section class="slide">%s</section>' % html)
+
+# ---- 1 TITLE ----
+slide('''
+<div class="title-wrap">
+  <div class="eyebrow">Development study &middot; self-hosted coding agent</div>
+  <h1>Turning the prompt tax into GPU capacity</h1>
+  <p class="lead">Compressing a coding agent&rsquo;s fixed preamble into a handful of learned &ldquo;gist&rdquo; tokens &mdash; what it buys, what it costs, and what to fund next.</p>
+  <div class="byline">Arun Menon &middot; arumenon@paypal.com</div>
+  <div class="stack">Claude Code &rarr; proxy &rarr; vLLM &rarr; Qwen3.8-27B (hybrid attention) &middot; one GPU</div>
+</div>''')
+
+# ---- 2 BLUF ----
+slide('''
+<div class="eyebrow">Bottom line up front</div>
+<h2>The answer in four lines</h2>
+<div class="grid4" style="margin-top:1.2rem">
+  <div class="card copper"><div class="k">The tax</div><div class="v">Every turn re-sends <b>~17.5&ndash;21k</b> fixed tokens, over <b>90% tool schemas</b> &mdash; about <b>0.72</b> of a short session.</div></div>
+  <div class="card plum"><div class="k">The lever</div><div class="v">Replace it with a few thousand <b>learned tokens</b>. Base model frozen; deployed in a <b>proxy</b>, no client or engine change.</div></div>
+  <div class="card"><div class="k">The payoff</div><div class="v"><b>~16% more throughput</b> at eight concurrent sessions &mdash; <b>capacity per GPU</b>, not faster single replies.</div></div>
+  <div class="card warn"><div class="k">The caveat</div><div class="v">A <b>development study</b>: the lever is real; the dollar-per-session number is <b>not proven yet</b>.</div></div>
+</div>
+<p class="caption">You can stop here. The rest is the evidence, the catch, and what it would take to bank the saving.</p>''')
+
+# ---- 3 WHY TCO ----
+slide('''
+<div class="eyebrow">The cost lens</div>
+<h2>Why this is a total-cost question</h2>
+<p class="lead" style="margin-bottom:1.4rem">For a self-hosted agent, serving cost is driven by <b>how many tokens the model reads per turn</b>, which caps <b>how many sessions a GPU can carry</b>. Three cost drivers &mdash; gisting acts on the first.</p>
+<div class="grid3">
+  <div class="card" style="border-color:var(--petrol2)"><div class="k" style="color:var(--petrol)">GPU capacity &nbsp;&larr; gisting acts here</div><div class="v">Token-bound. Fewer input tokens per turn &rarr; more concurrent sessions per GPU before latency degrades.</div></div>
+  <div class="card"><div class="k" style="color:var(--ink2)">Engineering</div><div class="v">One-time: build the proxy, the template, and the training loop. The loop is reusable across models.</div></div>
+  <div class="card"><div class="k" style="color:var(--ink2)">Risk</div><div class="v">Compressed rules are harder to audit; benefit is model-dependent. Managed, not eliminated.</div></div>
+</div>''')
+
+# ---- 4 THE TAX MEASURED ----
+slide('''
+<div class="eyebrow">The tax, measured</div>
+<h2>Most of every turn is machine-readable boilerplate</h2>
+<div class="figrow">
+  <div class="figcard"><img alt="Static span composition" src="%s"></div>
+  <div>
+    <div style="display:flex;gap:30px;flex-wrap:wrap">
+      <div><div class="bignum copper">17.5&ndash;21k</div><div class="unit">fixed tokens per turn</div></div>
+      <div><div class="bignum copper">&gt;90%%</div><div class="unit">is tool schemas, not rules</div></div>
+      <div><div class="bignum petrol">0.72</div><div class="unit">of a short session&rsquo;s input</div></div>
+    </div>
+    <p class="caption">Recovered from real logged sessions: the byte-identical span across sessions, split from the per-session values (paths, git status, date) that must stay raw.</p>
+  </div>
+</div>''' % fig("span"))
+
+# ---- 5 THE IDEA ----
+slide('''
+<div class="eyebrow">The lever</div>
+<h2>Teach the model a shorthand for the boilerplate</h2>
+<div class="figrow">
+  <div class="figcard"><img alt="Gisting method" src="%s"></div>
+  <div>
+    <ul class="clean plum">
+      <li><b>Grow the vocabulary</b> with gist tokens, seeded from the block they replace.</li>
+      <li><b>Self-distillation:</b> the model matches its own behaviour with the short gist vs. the full block.</li>
+      <li><b>All base weights frozen</b> &mdash; only the new embedding rows are trained.</li>
+      <li><b>Proxy-only deployment:</b> no change to the client or the inference engine.</li>
+    </ul>
+    <p class="caption">The only trained object is a small embedding tensor. Cheap to produce, cheap to serve.</p>
+  </div>
+</div>''' % fig("method"))
+
+# ---- 6 PARITY ----
+slide('''
+<div class="eyebrow">Proof &middot; parity</div>
+<h2>The short prompt matched the full prompt</h2>
+<div class="ratiorow">
+  <div class="chip"><div class="r">2:1</div><div class="s">12 / 12</div></div>
+  <div class="chip"><div class="r">4:1</div><div class="s">12 / 12</div></div>
+  <div class="chip"><div class="r">8:1</div><div class="s">12 / 12</div></div>
+  <div class="chip"><div class="r">16:1</div><div class="s">12 / 12</div></div>
+</div>
+<p class="lead">Every compression ratio and the full prompt scored a perfect <b>12 / 12</b> on the task suite, while input dropped from <b>~24k</b> to <b>~9&ndash;11k</b> tokens per turn.</p>
+<p style="margin-top:1rem"><span class="tag warn">single run &middot; small, partly-reused suite</span></p>''')
+
+# ---- 7 THE FAILURE ----
+slide('''
+<div class="eyebrow">Proof &middot; credibility</div>
+<h2>The failure that mattered &mdash; and the fix</h2>
+<div class="figrow">
+  <div class="figcard"><img alt="Verbatim-content failure and fix" src="%s"></div>
+  <div>
+    <p class="lead">A working-directory path with a <b>session id</b> was mistaken for fixed text and folded into the gist &mdash; so the model wrote results to invented directories.</p>
+    <ul class="clean copper" style="margin-top:1rem">
+      <li>Keep session-specific values <b>raw</b> by pattern.</li>
+      <li>Score recovers <b>11/16 &rarr; 16/16</b> at 8:1 (11/15 &rarr; 15/15 excluding one defective probe).</li>
+    </ul>
+    <p class="caption">This is the productionization gotcha every deployment will hit &mdash; and evidence we were looking hard, not cherry-picking.</p>
+  </div>
+</div>''' % fig("defect"))
+
+# ---- 8 PAYOFF (SVG chart) ----
+def bars():
+    groups=[("c=1",6.9,7.2,"+5%"),("c=4",16.4,18.9,"+15%"),("c=8",20.0,23.2,"+16%")]
+    W,H=680,340; padL,padB,padT=54,54,40; ymax=26
+    plotH=H-padB-padT; plotW=W-padL-20
+    gw=plotW/len(groups); bw=gw*0.24
+    out=['<svg viewBox="0 0 %d %d" width="100%%" role="img" aria-label="Throughput full prompt versus gist by concurrency">'%(W,H)]
+    # baseline
+    out.append('<line x1="%d" y1="%d" x2="%d" y2="%d" stroke="#2b3a41" stroke-width="1.5"/>'%(padL,H-padB,W-10,H-padB))
+    for i,(lab,fu,gi,dl) in enumerate(groups):
+        cx=padL+gw*i+gw*0.5
+        for j,(val,col) in enumerate([(fu,'#4a5a60'),(gi,'#3fb0c6')]):
+            bh=val/ymax*plotH; x=cx-bw*1.05+j*(bw+8); y=H-padB-bh
+            out.append('<rect x="%.1f" y="%.1f" width="%.1f" height="%.1f" rx="3" fill="%s"/>'%(x,y,bw,bh,col))
+            out.append('<text x="%.1f" y="%.1f" fill="#cfe0e3" font-size="13" text-anchor="middle">%.1f</text>'%(x+bw/2,y-7,val))
+        # delta above gist
+        gbh=gi/ymax*plotH
+        out.append('<text x="%.1f" y="%.1f" fill="#57c08a" font-size="14" font-weight="600" text-anchor="middle">%s</text>'%(cx+bw*0.5+4,H-padB-gbh-26,dl))
+        out.append('<text x="%.1f" y="%d" fill="#9fb2b6" font-size="14" text-anchor="middle">%s</text>'%(cx,H-padB+24,lab))
+    out.append('<text x="%d" y="22" fill="#9fb2b6" font-size="13">requests / minute &nbsp;&middot;&nbsp; higher is better</text>'%padL)
+    out.append('</svg>')
+    return "".join(out)
+slide('''
+<div class="eyebrow">The payoff</div>
+<h2>The saving shows up as capacity under load</h2>
+<div class="figrow">
+  <div>%s</div>
+  <div>
+    <p class="lead">Throughput rises with concurrency &mdash; and the gain <b>grows</b> as the service gets busier. A single reply is barely faster.</p>
+    <div style="margin-top:1rem"><span class="tag" style="color:var(--petrol);border-color:var(--petrol2)">full prompt</span> <span class="tag" style="color:#3fb0c6;border-color:var(--petrol2)">gist</span></div>
+    <p class="caption">For a shared internal agent service, this is <b>sessions per GPU</b> &mdash; the number that sets cost. One replay; direction, not precision.</p>
+  </div>
+</div>''' % bars())
+
+# ---- 9 WHY CAPACITY NOT SPEED ----
+layers="".join('<i class="on"></i>' if k<16 else '<i></i>' for k in range(64))
+slide('''
+<div class="eyebrow">The catch &middot; architecture</div>
+<h2>Why it&rsquo;s capacity, not speed</h2>
+<p class="lead">This model uses full attention in only <b>16 of its 64 layers</b>. A shorter prompt saves decode work only there &mdash; so the win is more sessions in parallel, not a faster individual answer.</p>
+<div class="layers">%s</div>
+<p class="caption"><span style="color:var(--petrol)">&#9632;</span> full-attention layers (benefit) &nbsp;&nbsp; <span style="color:#3a4a51">&#9632;</span> linear-attention layers (fixed-size state). The benefit is <b>architecture-dependent</b>: a different model shifts it.</p>''' % layers)
+
+# ---- 10 THE LAB ----
+slide('''
+<div class="eyebrow">The capability</div>
+<h2>We built the lab, not just the result</h2>
+<div class="figrow">
+  <div class="figcard"><img alt="Automated experiment loop" src="%s"></div>
+  <div>
+    <p class="lead">An unattended, cost-guarded loop: <b>provision a GPU &rarr; train &rarr; serve &rarr; evaluate &rarr; destroy</b>, then the next recipe.</p>
+    <ul class="clean" style="margin-top:1rem">
+      <li>Spend-safety is <b>structural</b>: idle watchdog, ledger, sync-before-destroy, global deadline.</li>
+      <li>Makes the <b>next</b> model cheap to try &mdash; the capability outlasts this study.</li>
+    </ul>
+  </div>
+</div>''' % fig("loop"))
+
+# ---- 11 LEDGER ----
+slide('''
+<div class="eyebrow">Honest ledger</div>
+<h2>What&rsquo;s proven, what isn&rsquo;t</h2>
+<div class="grid2" style="margin-top:1rem">
+  <div class="card good"><div class="k">Established here</div>
+    <ul class="clean good" style="margin:0">
+      <li>Equal task scores on our suites, every ratio.</li>
+      <li>Half-to-two-thirds fewer tokens read per turn.</li>
+      <li>Throughput rises under load; the fix removes the path failure.</li>
+      <li>The tooling works end to end.</li>
+    </ul>
+  </div>
+  <div class="card warn"><div class="k">Not yet</div>
+    <ul class="clean warn" style="margin:0">
+      <li>Generalisation on unseen, held-out work.</li>
+      <li>A saturation test &rarr; a real sessions-per-GPU / $ number.</li>
+      <li>The <b>cause</b> of the serving gain (a hypothesis, not proven).</li>
+      <li>Rare-tool reach (left unscored by harness faults).</li>
+      <li>Audit guarantees that compressed rules still bind.</li>
+    </ul>
+  </div>
+</div>
+<p class="caption">An independent adversarial review of the whole program was run and folded into the writeup.</p>''')
+
+# ---- 12 THE ASK ----
+slide('''
+<div class="eyebrow">The ask</div>
+<h2>From &ldquo;real lever&rdquo; to a number you can budget</h2>
+<div class="grid3" style="margin-top:1rem">
+  <div class="card"><div class="k">1 &middot; Validate</div><div class="v">A held-out eval with paired, repeated runs. Answers: is the parity real beyond our own tasks?</div></div>
+  <div class="card"><div class="k">2 &middot; Quantify</div><div class="v">A saturation test under sustained load. Converts &ldquo;throughput direction&rdquo; into <b>sessions per GPU</b> and a cost per session.</div></div>
+  <div class="card"><div class="k">3 &middot; Pilot</div><div class="v">A guarded rollout with explicit rule-audit and write-target checks at the serving boundary.</div></div>
+</div>
+<p class="caption">Bounded effort: a single GPU over days, not a new research program &mdash; the loop and serving path already exist.</p>''')
+
+# ---- 13 DECISION ----
+slide('''
+<div class="eyebrow">Decision</div>
+<h2>The lever is real and cheap to prototype</h2>
+<p class="big-verdict">Fund a short validation &mdash; eval&nbsp;+&nbsp;saturation &mdash; before any production commitment.</p>
+<p class="lead" style="margin-top:1.3rem">The tooling exists, the risk is contained, and the upside is <b>GPU capacity that compounds under load</b>. What&rsquo;s missing is a validated number, and that is days of work away, not months.</p>
+<div class="stack" style="margin-top:1.6rem">GitHub: arunmenon/gisting-coding-agent &middot; weights &amp; data on Hugging Face (private)</div>''')
+
+# nav
+JS = """
+const slides=[...document.querySelectorAll('.slide')];
+const dots=document.getElementById('dots'), count=document.getElementById('count');
+slides.forEach((s,i)=>{const b=document.createElement('b');b.onclick=()=>slides[i].scrollIntoView();dots.appendChild(b);});
+const dotEls=[...dots.children];
+let cur=0;
+const io=new IntersectionObserver((es)=>{es.forEach(e=>{if(e.isIntersecting){cur=slides.indexOf(e.target);
+  dotEls.forEach((d,i)=>d.classList.toggle('on',i===cur));
+  count.innerHTML='<b>'+String(cur+1).padStart(2,'0')+'</b> / '+String(slides.length).padStart(2,'0');}})},{threshold:.55});
+slides.forEach(s=>io.observe(s));
+function go(d){const n=Math.max(0,Math.min(slides.length-1,cur+d));slides[n].scrollIntoView();}
+addEventListener('keydown',e=>{
+  if(['ArrowDown','ArrowRight','PageDown',' '].includes(e.key)){e.preventDefault();go(1);}
+  if(['ArrowUp','ArrowLeft','PageUp'].includes(e.key)){e.preventDefault();go(-1);}
+  if(e.key==='Home'){e.preventDefault();slides[0].scrollIntoView();}
+  if(e.key==='End'){e.preventDefault();slides[slides.length-1].scrollIntoView();}
+});
+"""
+
+html = ('<title>Gisting: the capacity lever</title>\n'
+ '<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>'
+ '<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">'
+ '<style>'+CSS+'</style>\n'
+ '<div class="hint">&larr; &rarr; to navigate</div>'
+ '<div class="deck">'+''.join(S)+'</div>'
+ '<div class="rail"><div class="count" id="count">01 / 13</div><div class="dots" id="dots"></div></div>'
+ '<script>'+JS+'</script>')
+open("gisting-cto-deck.html","w").write(html)
+print("wrote gisting-cto-deck.html", len(html)//1024, "KB | slides", len(S))

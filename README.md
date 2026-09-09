@@ -14,7 +14,8 @@ and unscored results plainly and incorporates an independent adversarial review.
 - `Gisting-NeurIPS-paper.docx` / `Gisting-NeurIPS-paper.html` — the whitepaper (self-contained).
 - `Gisting-NeurIPS-review.md` — independent critical review, reconciled into the paper.
 - `reviewer-brief.md` — brief used to solicit that review.
-- `paper/` — build scripts (`build_neurips.py`, `draw_figs.py`, `build_docx.py`) and figures.
+- `paper/` — build scripts (`build_neurips.py`, `draw_figs.py`, `build_docx.py`, `build_deck.py`) and figures.
+- `Gisting-CTO-deck.html` — executive deck (TCO lens) walking the study from cost problem to capacity payoff to funding ask.
 
 ## Findings at a glance (see paper for caveats)
 - The static preamble is ~17.5k–21k tokens, over 90% tool schemas, and ~0.72 of a short session's input.

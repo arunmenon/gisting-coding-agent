@@ -4,7 +4,7 @@ Hi,
 
 Sharing the outcome of a short research program on "gisting" for coding agents: compressing the large fixed preamble (behavioural rules + tool schemas) that a coding agent re-sends to the model on every step, by replacing it with a handful of learned "gist" tokens trained with the base model frozen.
 
-Quick context: the idea isn't ours. Shopify published an engineering report on gisting, applying it to their own production coding agent and reporting substantial serving savings (shopify.engineering/gisting). What we set out to test is whether it **transfers** to a different setup — a preamble that's overwhelmingly tool schemas, on a model we host ourselves — and, just as importantly, what holds up under scrutiny and what doesn't.
+This follows Shopify's engineering report on gisting (shopify.engineering/gisting), which applied the technique to their production coding agent and reported substantial serving savings. We set out to test whether it **transfers** to a different setup — a preamble that's overwhelmingly tool schemas, on a model we host ourselves — and what holds up under scrutiny.
 
 Two parts below — where everything is, and what we found.
 

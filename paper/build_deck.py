@@ -75,6 +75,27 @@ ul.clean.good li::before{background:var(--good)} ul.clean.warn li::before{backgr
 .count b{color:var(--petrol)}
 svg text{font-family:var(--mono)}
 .hint{position:fixed;right:16px;top:14px;font-family:var(--mono);font-size:.7rem;color:var(--ink2);opacity:.6;z-index:20}
+/* slide-native visuals (presentation scale) */
+.compbar{display:flex;height:96px;border-radius:14px;overflow:hidden;margin:1.6rem 0 1.2rem;border:1px solid var(--line)}
+.compseg{display:flex;flex-direction:column;justify-content:center;padding:0 22px;color:#fff}
+.compseg .cs{font-weight:600;font-size:1.05rem} .compseg .ct{font-family:var(--mono);font-size:.82rem;opacity:.85;margin-top:3px}
+.flow{display:flex;align-items:stretch;gap:6px;margin:1.6rem 0 1.1rem}
+.step{flex:1;background:var(--bg2);border:1px solid var(--line);border-radius:16px;padding:26px 24px}
+.step .n{font-family:var(--mono);color:var(--petrol);font-size:.82rem;letter-spacing:.14em}
+.step h3{font-family:var(--serif);font-weight:600;font-size:1.4rem;margin:.4rem 0 .5rem;color:#fff}
+.step p{color:var(--ink2);font-size:1.02rem;line-height:1.4;margin:0}
+.arrow{display:flex;align-items:center;color:var(--petrol);font-size:1.9rem;font-weight:600}
+.ba{display:grid;grid-template-columns:auto 1fr;gap:22px 22px;align-items:center;margin:1.6rem 0 1rem}
+.baflow{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.pill{background:var(--bg2);border:1px solid var(--line);border-radius:12px;padding:16px 20px;font-family:var(--mono);font-size:1.02rem;color:var(--ink)}
+.pill.plum{border-color:#5a3f6e;color:var(--plum)} .pill.bad{border-color:#6e3a3a;color:#e79191} .pill.ok{border-color:#2c5040;color:var(--good)}
+.plus{color:var(--ink2);font-size:1.3rem} .parrow{color:var(--petrol);font-size:1.7rem;font-weight:600}
+.tag.big{font-size:.9rem;padding:8px 16px}
+.pipe{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:1.6rem 0 1.2rem}
+.pnode{background:var(--bg2);border:1px solid var(--line);border-radius:14px;padding:20px 22px;font-weight:600;font-size:1.08rem;text-align:center;min-width:120px}
+.pnode span{display:block}
+.safety{background:rgba(224,138,76,.09);border:1px solid #5a4a2a;border-radius:14px;padding:16px 20px;font-family:var(--mono);font-size:.92rem;color:var(--ink2);margin-top:.4rem}
+.safety b{color:var(--copper);font-weight:600}
 """
 
 def fig(key):
@@ -120,34 +141,30 @@ slide('''
 slide('''
 <div class="eyebrow">The tax, measured</div>
 <h2>Most of every turn is machine-readable boilerplate</h2>
-<div class="figrow">
-  <div class="figcard"><img alt="Static span composition" src="%s"></div>
-  <div>
-    <div style="display:flex;gap:30px;flex-wrap:wrap">
-      <div><div class="bignum copper">17.5&ndash;21k</div><div class="unit">fixed tokens per turn</div></div>
-      <div><div class="bignum copper">&gt;90%%</div><div class="unit">is tool schemas, not rules</div></div>
-      <div><div class="bignum petrol">0.72</div><div class="unit">of a short session&rsquo;s input</div></div>
-    </div>
-    <p class="caption">Recovered from real logged sessions: the byte-identical span across sessions, split from the per-session values (paths, git status, date) that must stay raw.</p>
-  </div>
-</div>''' % fig("span"))
+<div class="compbar">
+  <div class="compseg" style="flex:0 0 78%;background:var(--petrol2)"><div class="cs">Tool schemas</div><div class="ct">~16,000 tokens &middot; &gt;90% of the block</div></div>
+  <div class="compseg" style="flex:0 0 9%;background:var(--copper)"><div class="cs" style="font-size:.9rem">Rules</div><div class="ct" style="font-size:.72rem">~1.3k</div></div>
+  <div class="compseg" style="flex:0 0 13%;background:#2b3a41"><div class="cs" style="font-size:.9rem">Per-session</div><div class="ct" style="font-size:.72rem">kept raw</div></div>
+</div>
+<div style="display:flex;gap:48px;flex-wrap:wrap;margin-top:1.4rem">
+  <div><div class="bignum copper">17.5&ndash;21k</div><div class="unit">fixed tokens per turn</div></div>
+  <div><div class="bignum copper">&gt;90%%</div><div class="unit">is tool schemas, not rules</div></div>
+  <div><div class="bignum petrol">0.72</div><div class="unit">of a short session&rsquo;s input</div></div>
+</div>
+<p class="caption">The same block, byte-for-byte, on every turn. Per-session values (paths, git status, date) are split out and kept raw.</p>''')
 
 # ---- 5 THE IDEA ----
 slide('''
 <div class="eyebrow">The lever</div>
 <h2>Teach the model a shorthand for the boilerplate</h2>
-<div class="figrow">
-  <div class="figcard"><img alt="Gisting method" src="%s"></div>
-  <div>
-    <ul class="clean plum">
-      <li><b>Grow the vocabulary</b> with gist tokens, seeded from the block they replace.</li>
-      <li><b>Self-distillation:</b> the model matches its own behaviour with the short gist vs. the full block.</li>
-      <li><b>All base weights frozen</b> &mdash; only the new embedding rows are trained.</li>
-      <li><b>Proxy-only deployment:</b> no change to the client or the inference engine.</li>
-    </ul>
-    <p class="caption">The only trained object is a small embedding tensor. Cheap to produce, cheap to serve.</p>
-  </div>
-</div>''' % fig("method"))
+<div class="flow">
+  <div class="step"><div class="n">01</div><h3>Grow the vocabulary</h3><p>Add a few thousand new &ldquo;gist&rdquo; tokens, seeded from the block they replace.</p></div>
+  <div class="arrow">&rarr;</div>
+  <div class="step"><div class="n">02</div><h3>Self-distil</h3><p>The model matches its own behaviour &mdash; short gist vs. full block. <b style="color:var(--plum)">All base weights frozen</b>; only the new rows train.</p></div>
+  <div class="arrow">&rarr;</div>
+  <div class="step"><div class="n">03</div><h3>Serve via a proxy</h3><p>The proxy swaps the span for gist tokens. <b>No change to the client or the engine.</b></p></div>
+</div>
+<p class="caption">The only trained object is a small embedding tensor &mdash; cheap to produce, cheap to serve.</p>''')
 
 # ---- 6 PARITY ----
 slide('''
@@ -166,17 +183,14 @@ slide('''
 slide('''
 <div class="eyebrow">Proof &middot; credibility</div>
 <h2>The failure that mattered &mdash; and the fix</h2>
-<div class="figrow">
-  <div class="figcard"><img alt="Verbatim-content failure and fix" src="%s"></div>
-  <div>
-    <p class="lead">A working-directory path with a <b>session id</b> was mistaken for fixed text and folded into the gist &mdash; so the model wrote results to invented directories.</p>
-    <ul class="clean copper" style="margin-top:1rem">
-      <li>Keep session-specific values <b>raw</b> by pattern.</li>
-      <li>Score recovers <b>11/16 &rarr; 16/16</b> at 8:1 (11/15 &rarr; 15/15 excluding one defective probe).</li>
-    </ul>
-    <p class="caption">This is the productionization gotcha every deployment will hit &mdash; and evidence we were looking hard, not cherry-picking.</p>
-  </div>
-</div>''' % fig("defect"))
+<div class="ba">
+  <div><span class="tag warn big">BEFORE</span></div>
+  <div class="baflow"><span class="pill plum">gist: rules + &hellip;/&lt;session-id&gt;/</span><span class="parrow">&rarr;</span><span class="pill bad">writes to an invented directory &#10007;</span></div>
+  <div><span class="tag good big">AFTER</span></div>
+  <div class="baflow"><span class="pill plum">gist: rules</span><span class="plus">+</span><span class="pill">raw: session path, date, model</span><span class="parrow">&rarr;</span><span class="pill ok">writes to the right place &#10003;</span></div>
+</div>
+<p class="lead" style="margin-top:1.5rem">Keeping session-specific values <b>raw</b> restored the score <b style="color:var(--good)">11/16 &rarr; 16/16</b> at 8:1.</p>
+<p class="caption">The productionization gotcha every deployment will hit &mdash; and evidence we were looking hard, not cherry-picking.</p>''')
 
 # ---- 8 PAYOFF (SVG chart) ----
 def bars():
@@ -225,16 +239,16 @@ slide('''
 slide('''
 <div class="eyebrow">The capability</div>
 <h2>We built the lab, not just the result</h2>
-<div class="figrow">
-  <div class="figcard"><img alt="Automated experiment loop" src="%s"></div>
-  <div>
-    <p class="lead">An unattended, cost-guarded loop: <b>provision a GPU &rarr; train &rarr; serve &rarr; evaluate &rarr; destroy</b>, then the next recipe.</p>
-    <ul class="clean" style="margin-top:1rem">
-      <li>Spend-safety is <b>structural</b>: idle watchdog, ledger, sync-before-destroy, global deadline.</li>
-      <li>Makes the <b>next</b> model cheap to try &mdash; the capability outlasts this study.</li>
-    </ul>
-  </div>
-</div>''' % fig("loop"))
+<div class="pipe">
+  <div class="pnode">Provision GPU</div><div class="parrow">&rarr;</div>
+  <div class="pnode">Train</div><div class="parrow">&rarr;</div>
+  <div class="pnode">Serve</div><div class="parrow">&rarr;</div>
+  <div class="pnode">Evaluate<span class="mono" style="font-size:.72rem;color:var(--ink2);font-weight:400">verify every swap</span></div><div class="parrow">&rarr;</div>
+  <div class="pnode">Destroy</div><div class="parrow" style="color:var(--copper)">&#8635;</div>
+  <div class="pnode" style="border-style:dashed;color:var(--ink2)">next recipe</div>
+</div>
+<div class="safety">SPEND-SAFETY &middot; structural &nbsp;&mdash;&nbsp; <b>idle watchdog</b> &middot; <b>ledger at creation</b> &middot; <b>sync-before-destroy</b> &middot; <b>global deadline</b></div>
+<p class="caption">One detached controller drives every recipe end to end, unattended. Makes the <b>next</b> model cheap to try &mdash; the capability outlasts this study.</p>''')
 
 # ---- 11 LEDGER ----
 slide('''

@@ -106,27 +106,33 @@ for i,(k,c,body,ln) in enumerate(c3):
 
 # ---------------- 4 THE TAX ----------------
 s=slide(); eyebrow(s,"The tax, measured"); title(s,"Most of every turn is machine-readable boilerplate")
-ph=pic(s,FIG+"/fig_span.png",0.7,2.15,7.2)
-bx=8.4
-def bignum(y,num,ncol,unit):
-    first(tb(s,bx,y,4.2,0.7),num,30,ncol,bold=True,font=MONO)
-    first(tb(s,bx,y+0.62,4.2,0.5),unit,12,INK2,font=MONO)
-bignum(2.15,"17.5–21k",COPPER,"fixed tokens per turn")
-bignum(3.35,">90%",COPPER,"is tool schemas, not rules")
-bignum(4.55,"0.72",PETROL,"of a short session’s input")
-first(tb(s,bx,5.5,4.2,1.4),"Recovered from real logged sessions: the span that is byte-identical across sessions, split from per-session values (paths, git status, date) that stay raw.",12,INK2,spacing=1.2)
+by,bh,total=2.5,1.15,11.9; cx=0.7
+for name,sub,frac,col in [("Tool schemas","~16,000 tokens  ·  >90% of the block",0.78,PETROL2),("Rules","~1.3k",0.09,COPPER),("Per-session","kept raw",0.13,RGBColor(0x2b,0x3a,0x41))]:
+    w=total*frac; rrect(s,cx,by,w-0.03,bh,fill=col,line=None,shape=MSO_SHAPE.RECTANGLE)
+    tf=tb(s,cx+0.18,by,w-0.36,bh,anchor=MSO_ANCHOR.MIDDLE)
+    first(tf,name,14 if frac>0.2 else 11,WHITE,bold=True,after=2)
+    addpara(tf,sub,10 if frac>0.2 else 8.5,WHITE)
+    cx+=w
+ny=4.25
+for i,(n,c,u) in enumerate([("17.5–21k",COPPER,"fixed tokens per turn"),(">90%",COPPER,"is tool schemas, not rules"),("0.72",PETROL,"of a short session’s input")]):
+    first(tb(s,0.7+i*4.0,ny,3.8,0.7),n,30,c,bold=True,font=MONO)
+    first(tb(s,0.7+i*4.0,ny+0.62,3.8,0.5),u,12,INK2,font=MONO)
+first(tb(s,0.7,5.7,11.9,0.6),"The same block, byte-for-byte, on every turn. Per-session values (paths, git status, date) are split out and kept raw.",13,INK2)
 
 # ---------------- 5 THE IDEA ----------------
 s=slide(); eyebrow(s,"The lever"); title(s,"Teach the model a shorthand for the boilerplate")
-pic(s,FIG+"/fig2_method.png",0.7,2.15,7.4)
-bx=8.6; tf=tb(s,bx,2.2,4.0,4.6)
-pts=["Grow the vocabulary with gist tokens, seeded from the block they replace.",
-     "Self-distillation: the model matches its own behaviour, short gist vs. full block.",
-     "All base weights frozen — only the new embedding rows are trained.",
-     "Proxy-only deployment: no change to the client or the inference engine."]
-first(tf,"▪  "+pts[0],15,INK,spacing=1.15,after=10)
-for p in pts[1:]: addpara(tf,"▪  "+p,15,INK,spacing=1.15,after=10)
-addpara(tf,"The only trained object is a small embedding tensor. Cheap to produce, cheap to serve.",12.5,INK2,spacing=1.2)
+steps=[("01","Grow the vocabulary","Add a few thousand new “gist” tokens, seeded from the block they replace."),
+       ("02","Self-distil","The model matches its own behaviour — short gist vs. full block. All base weights frozen; only the new rows train."),
+       ("03","Serve via a proxy","The proxy swaps the span for gist tokens. No change to the client or the engine.")]
+sw,gap,y,h=3.7,0.35,2.7,3.2
+for i,(n,t,b) in enumerate(steps):
+    l=0.7+i*(sw+gap); rrect(s,l,y,sw,h,fill=BG2,line=LINE)
+    tf=tb(s,l+0.32,y+0.32,sw-0.64,h-0.64)
+    first(tf,n,12,PETROL,bold=True,font=MONO,after=6)
+    addpara(tf,t,20,WHITE,bold=True,font=HEAD,after=10)
+    addpara(tf,b,14,INK2,spacing=1.2)
+    if i<2: first(tb(s,l+sw-0.02,y+h/2-0.35,gap+0.1,0.7,anchor=MSO_ANCHOR.MIDDLE),"→",26,PETROL,bold=True,align=PP_ALIGN.CENTER)
+first(tb(s,0.7,6.15,11.9,0.6),"The only trained object is a small embedding tensor — cheap to produce, cheap to serve.",13,INK2)
 
 # ---------------- 6 PARITY ----------------
 s=slide(); eyebrow(s,"Proof · parity"); title(s,"The short prompt matched the full prompt")
@@ -142,12 +148,24 @@ first(tb(s,0.85,5.78,4.4,0.4),"single run · small, partly-reused suite",12,WARN
 
 # ---------------- 7 FAILURE ----------------
 s=slide(); eyebrow(s,"Proof · credibility"); title(s,"The failure that mattered — and the fix")
-pic(s,FIG+"/fig5_defect.png",0.7,2.15,7.2)
-bx=8.4; tf=tb(s,bx,2.2,4.2,4.6)
-first(tf,"A working-directory path with a session id was mistaken for fixed text and folded into the gist — so the model wrote results to invented directories.",15.5,INK,spacing=1.2,after=12)
-addpara(tf,"▪  Keep session-specific values raw by pattern.",14.5,INK,spacing=1.15,after=6)
-addpara(tf,"▪  Score recovers 11/16 → 16/16 at 8:1 (11/15 → 15/15 excluding one defective probe).",14.5,INK,spacing=1.15,after=12)
-addpara(tf,"The productionization gotcha every deployment will hit — and evidence we were looking hard, not cherry-picking.",12,INK2,spacing=1.2)
+def pill(l,t,w,txt,tc,lc,h=0.82):
+    rrect(s,l,t,w,h,fill=BG2,line=lc); tf=tb(s,l+0.2,t,w-0.4,h,anchor=MSO_ANCHOR.MIDDLE)
+    first(tf,txt,13,tc,font=MONO,spacing=1.05)
+def arrow(l,t,ch="→",c=PETROL,w=0.5,h=0.82):
+    first(tb(s,l,t,w,h,anchor=MSO_ANCHOR.MIDDLE),ch,20,c,bold=True,align=PP_ALIGN.CENTER)
+PLUMLN=RGBColor(0x5a,0x3f,0x6e); BADLN=RGBColor(0x6e,0x3a,0x3a); OKLN=RGBColor(0x2c,0x50,0x40)
+first(tb(s,0.7,2.55,1.4,0.5),"BEFORE",13,WARN,bold=True,font=MONO)
+pill(2.2,2.4,4.3,"gist: rules + …/<session-id>/",PLUM,PLUMLN)
+arrow(6.6,2.4)
+pill(7.2,2.4,5.1,"writes to an invented directory   ×",RGBColor(0xe7,0x91,0x91),BADLN)
+first(tb(s,0.7,3.75,1.4,0.5),"AFTER",13,GOOD,bold=True,font=MONO)
+pill(2.2,3.6,2.3,"gist: rules",PLUM,PLUMLN)
+arrow(4.55,3.6,"+",INK2,0.4)
+pill(5.0,3.6,3.4,"raw: session path, date, model",INK,LINE)
+arrow(8.5,3.6)
+pill(9.1,3.6,3.2,"writes correctly   ✓",GOOD,OKLN)
+first(tb(s,0.7,4.95,11.9,0.8),"Keeping session-specific values raw restored the score 11/16 → 16/16 at 8:1.",18,INK,spacing=1.2)
+first(tb(s,0.7,5.95,11.9,0.6),"The productionization gotcha every deployment will hit — and evidence we were looking hard, not cherry-picking.",13,INK2)
 
 # ---------------- 8 PAYOFF (native chart) ----------------
 s=slide(); eyebrow(s,"The payoff"); title(s,"The saving shows up as capacity under load")
@@ -182,11 +200,17 @@ first(tb(s,0.7,5.9,11.6,0.9),"■ full-attention layers (where a shorter prompt 
 
 # ---------------- 10 THE LAB ----------------
 s=slide(); eyebrow(s,"The capability"); title(s,"We built the lab, not just the result")
-pic(s,FIG+"/fig_loop.png",0.7,2.3,8.0)
-bx=9.1; tf=tb(s,bx,2.3,3.6,4.4)
-first(tf,"An unattended, cost-guarded loop: provision a GPU → train → serve → evaluate → destroy, then the next recipe.",15.5,INK,spacing=1.2,after=12)
-addpara(tf,"▪  Spend-safety is structural: idle watchdog, ledger, sync-before-destroy, global deadline.",14,INK,spacing=1.15,after=8)
-addpara(tf,"▪  Makes the next model cheap to try — the capability outlasts this study.",14,INK,spacing=1.15)
+y,h=2.8,1.05; cx=0.7
+nodes=[("Provision GPU",2.0),("Train",1.35),("Serve",1.35),("Evaluate",1.7),("Destroy",1.5)]
+for i,(n,w) in enumerate(nodes):
+    rrect(s,cx,y,w,h,fill=BG2,line=LINE); tf=tb(s,cx,y,w,h,anchor=MSO_ANCHOR.MIDDLE); first(tf,n,14,WHITE,bold=True,align=PP_ALIGN.CENTER)
+    cx+=w
+    ch,cc=("→",PETROL) if i<len(nodes)-1 else ("↺",COPPER)
+    first(tb(s,cx,y,0.55,h,anchor=MSO_ANCHOR.MIDDLE),ch,20,cc,bold=True,align=PP_ALIGN.CENTER); cx+=0.55
+rrect(s,cx,y,1.7,h,fill=None,line=RGBColor(0x3a,0x4a,0x51)); tf=tb(s,cx,y,1.7,h,anchor=MSO_ANCHOR.MIDDLE); first(tf,"next recipe",13,INK2,align=PP_ALIGN.CENTER)
+rrect(s,0.7,4.35,11.9,0.95,fill=RGBColor(0x22,0x1a,0x11),line=RGBColor(0x5a,0x4a,0x2a))
+first(tb(s,0.95,4.35,11.4,0.95,anchor=MSO_ANCHOR.MIDDLE),"SPEND-SAFETY · structural  —  idle watchdog · ledger at creation · sync-before-destroy · global deadline",13,COPPER,font=MONO)
+first(tb(s,0.7,5.6,11.9,0.8),"One detached controller drives every recipe end to end, unattended. Makes the next model cheap to try — the capability outlasts this study.",14,INK2,spacing=1.2)
 
 # ---------------- 11 LEDGER ----------------
 s=slide(); eyebrow(s,"Honest ledger"); title(s,"What’s proven, what isn’t")

@@ -106,7 +106,7 @@ svg text{font-family:var(--mono)}
 <div class="eyebrow">Bottom line up front</div>
 <h2>The answer in four lines</h2>
 <div class="grid4" style="margin-top:1.2rem">
-  <div class="card copper"><div class="k">The tax</div><div class="v">Every turn re-sends <b>~17.5&ndash;21k</b> fixed tokens, over <b>90% tool schemas</b> &mdash; about <b>0.72</b> of a short session.</div></div>
+  <div class="card copper"><div class="k">The tax</div><div class="v">At every step, the coding agent (Claude Code) re-sends the same fixed preamble to the model &mdash; <b>~17.5&ndash;21k</b> tokens, over <b>90% tool schemas</b>, about <b>0.72</b> of a short session.</div></div>
   <div class="card plum"><div class="k">The lever</div><div class="v">Replace it with a few thousand <b>learned tokens</b>. Base model frozen; deployed in a <b>proxy</b>, no client or engine change.</div></div>
   <div class="card"><div class="k">The payoff</div><div class="v"><b>~16% more throughput</b> at eight concurrent sessions &mdash; <b>capacity per GPU</b>, not faster single replies.</div></div>
   <div class="card warn"><div class="k">The caveat</div><div class="v">A <b>development study</b>: the lever is real; the dollar-per-session number is <b>not proven yet</b>.</div></div>
@@ -132,7 +132,7 @@ svg text{font-family:var(--mono)}
   <div><div class="bignum copper">&gt;90%%</div><div class="unit">is tool schemas, not rules</div></div>
   <div><div class="bignum petrol">0.72</div><div class="unit">of a short session&rsquo;s input</div></div>
 </div>
-<p class="caption">The same block, byte-for-byte, on every turn. Per-session values (paths, git status, date) are split out and kept raw.</p></section><section class="slide">
+<p class="caption">The coding-agent harness prepends the same block, byte-for-byte, on every model call. Per-session values (paths, git status, date) are split out and kept raw.</p></section><section class="slide">
 <div class="eyebrow">The lever</div>
 <h2>Teach the model a shorthand for the boilerplate</h2>
 <div class="flow">

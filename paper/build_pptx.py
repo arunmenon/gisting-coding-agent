@@ -84,7 +84,7 @@ addpara(tf,"Claude Code → proxy → vLLM → Qwen3.8-27B (hybrid attention) ·
 # ---------------- 2 BLUF ----------------
 s=slide(); eyebrow(s,"Bottom line up front"); title(s,"The answer in four lines")
 cw,gap=2.85,0.2; x0=0.7; y=2.1; ch=3.9
-cards=[("The tax",COPPER,"Every turn re-sends ~17.5–21k fixed tokens, over 90% tool schemas — about 0.72 of a short session."),
+cards=[("The tax",COPPER,"At every step, the coding agent (Claude Code) re-sends the same fixed preamble to the model — ~17.5–21k tokens, over 90% tool schemas, about 0.72 of a short session."),
        ("The lever",PLUM,"Replace it with a few thousand learned tokens. Base model frozen; deployed in a proxy, no client or engine change."),
        ("The payoff",PETROL,"~16% more throughput at eight concurrent sessions — capacity per GPU, not faster single replies."),
        ("The caveat",WARN,"A development study: the lever is real; the dollar-per-session number is not proven yet.")]
@@ -117,7 +117,7 @@ ny=4.25
 for i,(n,c,u) in enumerate([("17.5–21k",COPPER,"fixed tokens per turn"),(">90%",COPPER,"is tool schemas, not rules"),("0.72",PETROL,"of a short session’s input")]):
     first(tb(s,0.7+i*4.0,ny,3.8,0.7),n,30,c,bold=True,font=MONO)
     first(tb(s,0.7+i*4.0,ny+0.62,3.8,0.5),u,12,INK2,font=MONO)
-first(tb(s,0.7,5.7,11.9,0.6),"The same block, byte-for-byte, on every turn. Per-session values (paths, git status, date) are split out and kept raw.",13,INK2)
+first(tb(s,0.7,5.7,11.9,0.6),"The coding-agent harness prepends the same block, byte-for-byte, on every model call. Per-session values (paths, git status, date) are split out and kept raw.",13,INK2)
 
 # ---------------- 5 THE IDEA ----------------
 s=slide(); eyebrow(s,"The lever"); title(s,"Teach the model a shorthand for the boilerplate")

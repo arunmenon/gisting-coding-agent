@@ -21,11 +21,21 @@ meeting the SLO.
 | ID | Objective | Method | Key output | ~GPU-h |
 |----|-----------|--------|-----------|--------|
 | B0 | Harness + smoke | closed-loop + open-loop load driver, corrected TTFT; smoke on cheapest box | validated harness (client vs engine counters agree) | 1-2 |
+| BT | vLLM serving tuning | on the target GPU, find a strong serving config (gpu-mem-util, max-num-seqs, max-model-len, chunked prefill / max-num-batched-tokens, prefix caching, KV dtype); pick by throughput at fixed p95 SLO | documented tuned config, applied IDENTICALLY to both arms | 2-3 |
 | B1 | Saturation & capacity curve | caching ON; sweep concurrency 1..saturation; full/8:1/16:1; 3 repeats | throughput(conc) curve, p50/p95 E2E/TTFT/TPOT, max sessions @ SLO | 5-7 |
 | B2 | KV-cache capacity ceiling | deep-context workload; measure max concurrent seqs before preemption, KV blocks/seq, prefix-hit rate | why capacity rises: fewer prompt tokens -> more sessions fit | 2 |
 | B3 | Realistic open-loop load | Poisson arrivals at rising RPS; prompt/output length mix from logged sessions | max sustainable RPS @ SLO (goodput), tail latency under burst | 3 |
 | B4 | Prefix-cache ablation | full vs gist, caching ON vs OFF, a few concurrencies | incremental gain of gist over prefix caching alone | 2 |
 | B5 | 2nd GPU class / cost norm | repeat B1 core on a cheaper class (L40S / A100-80G) | sessions-per-GPU per hardware-hour (cost per session) | 4 |
+
+vLLM config (BT) is due diligence: we do NOT report numbers on a suboptimal server.
+We tune on the target GPU and use the SAME tuned config for both arms, so any gap is
+the prompt, not the setup. Parameters considered: --gpu-memory-utilization (as high as
+stable), --max-num-seqs (as high as the recurrent-state cache blocks allow; the paper hit
+a 64 cap), --max-model-len (sized to the workload, not wastefully large), chunked prefill
+and --max-num-batched-tokens, --enable-prefix-caching, and --kv-cache-dtype (fp8 only if
+it passes a quality check). The chosen config and the reason for each value are recorded
+in the journey log.
 
 Workload: replay pre-rendered request payloads (one file per arm) so serving is
 measured directly; full-arm payloads carry the ~24k-token prompt, gist-arm payloads

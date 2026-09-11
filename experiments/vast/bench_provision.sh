@@ -11,15 +11,21 @@ LABEL="${LABEL:-j10-bench}"; DISK="${DISK:-160}"; DEADLINE_H="${DEADLINE_H:-8}";
 JDIR="${JDIR:-$JDIR}"; LEDGER_LABEL="${LEDGER_LABEL:-J10 bench}"; GPU_LABEL="${GPU_LABEL:-H100 NVL}"
 CHAIN_ENV="${CHAIN_ENV:-}"        # e.g. FIXED_CFG=40960,256,0.92,16384 B1_LADDER='1 2 4 8 16 32 64 128' B1_REPEATS=2 RUN_B3=0
 SMOKE="${SMOKE:-0}"              # 1: ship + launch a trivial chain on a cheap box, verify milestones, destroy. Tests the provisioning path.
+IMAGE="${IMAGE:-vllm/vllm-openai:v0.28.0}"; [ "$SMOKE" = 1 ] && IMAGE="${SMOKE_IMAGE:-pytorch/pytorch:2.3.1-cuda12.1-cudnn8-runtime}"   # smoke: small image -> fast boot
+[ "$SMOKE" = 1 ] && LAUNCH_DEADLINE_MIN="${LAUNCH_DEADLINE_MIN:-35}"
 mkdir -p $JDIR/results
-GPU_QUERY="${GPU_QUERY:-gpu_name=H100_NVL num_gpus=1 verified=true rentable=true reliability>0.98 disk_space>150 inet_down>500}"
+GPU_QUERY="${GPU_QUERY:-gpu_name=H100_NVL num_gpus=1 verified=true rentable=true reliability>0.98 disk_space>150 inet_down>500 direct_port_count>0}"  # direct port: the ssh proxy can deny a valid key
 S="-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectTimeout=20"
 RSH=vast/rsh.sh; LAUNCH_DEADLINE_MIN="${LAUNCH_DEADLINE_MIN:-25}"
 STATEF=$JDIR/provision_state; : > $STATEF
 ms() { echo "$(date -u +%FT%TZ) $1" | tee -a $STATEF $JDIR/log.md; }   # milestone: visible immediately
 abort() {  # stall/failure after creation: destroy the box so a stuck provision is a bounded cost, not an open meter
   ms "ABORT: $1 -> destroying instance ${IID:-?}"
-  [ -n "${IID:-}" ] && { $PY -c "from vastai import VastAI; VastAI(api_key='$KEY').destroy_instance(id=$IID)"; sed -i '' "s/| $LEDGER_LABEL | $IID | \(.*\) | (running) | (running) |/| $LEDGER_LABEL | $IID | \1 | aborted | ~\$$(python3 -c "print(round((\$(date +%s)-$T_CREATE)/3600*${PRICE:-2.64},2))") |/" ledger.md; }
+  if [ -n "${IID:-}" ]; then
+    $PY -c "from vastai import VastAI; VastAI(api_key='$KEY').destroy_instance(id=$IID)"
+    HRS=$(python3 -c "print(round(($(date +%s)-${T_CREATE:-$(date +%s)})/3600,2))"); COST=$(python3 -c "print(round($HRS*${PRICE:-0},2))")
+    sed -i '' "s/| $LEDGER_LABEL | $IID | \(.*\) | (running) | (running) |/| $LEDGER_LABEL | $IID | \1 | aborted ${HRS}h | \$$COST |/" ledger.md
+  fi
   sleep 5; $PY -c "from vastai import VastAI; import sys; v=VastAI(api_key='$KEY'); sys.exit(1 if any(i['id']==$IID for i in v.show_instances()) else 0)" && ms "destroy verified" || ms "WARNING: instance $IID still listed after destroy; destroy it manually"
   exit 1
 }
@@ -43,7 +49,7 @@ from vastai import VastAI; v=VastAI(api_key='$KEY'); o=[x for x in v.search_offe
 print('offer',o['id'],o['gpu_name'],o['gpu_ram'],'MB','\$%.2f/h'%o['dph_total'],'disk',int(o['disk_space']),'G inet',int(o['inet_down']),'rel',round(o['reliability2'],3),o['geolocation'])"
 
 # --- create + ledger ---
-OUT=$($VAST create instance $OFFER --image vllm/vllm-openai:v0.28.0 --disk $DISK --ssh --direct --label $LABEL --raw 2>&1)
+OUT=$($VAST create instance $OFFER --image $IMAGE --disk $DISK --ssh --direct --label $LABEL --raw 2>&1)
 IID=$(echo "$OUT" | $PY -c "import sys,json; print(json.loads(sys.stdin.read()).get('new_contract',''))" 2>/dev/null)
 [ -n "$IID" ] || { echo "create failed: $OUT"; exit 1; }
 T_CREATE=$(date +%s)

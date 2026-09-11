@@ -10,13 +10,14 @@ TRIES="${RSH_TRIES:-8}"; PAUSE="${RSH_PAUSE:-15}"
 case "${1:-}" in
   pick)
     IID=$2; PY=$(dirname "$0")/../.venv/bin/python3; KEY=$(cat ~/.vast_api_key)
-    for i in $(seq 1 40); do
-      read DH DP PH PP <<< "$($PY -c "
+    for i in $(seq 1 60); do   # up to 30 min: hosts pulling a large image can take >20 min to become reachable
+      read DH DP PH PP ST <<< "$($PY -c "
 from vastai import VastAI; v=VastAI(api_key='$KEY'); i=[x for x in v.show_instances() if x['id']==$IID]
-if not i: print('- - - -')
+if not i: print('- - - - gone')
 else:
     x=i[0]; pm=(x.get('ports') or {}).get('22/tcp') or []
-    print((x.get('public_ipaddr') or '-'), (pm[0]['HostPort'] if pm else '-'), (x.get('ssh_host') or '-'), (x.get('ssh_port') or '-'))")"
+    print((x.get('public_ipaddr') or '-'), (pm[0]['HostPort'] if pm else '-'), (x.get('ssh_host') or '-'), (x.get('ssh_port') or '-'), (x.get('actual_status') or '?')+':'+str(x.get('status_msg') or '')[:40].replace(' ','_'))")"
+      [ $((i % 4)) -eq 1 ] && echo "  [rsh] pick try $i/60 direct=$DH:$DP proxy=$PH:$PP status=$ST" >&2
       for ep in "$DH $DP" "$PH $PP"; do set -- $ep; [ "$1" != "-" ] && [ "$2" != "-" ] && ssh "${O[@]}" -p "$2" "root@$1" 'echo ready' 2>/dev/null | grep -q ready && { echo "$1 $2"; exit 0; }; done
       sleep 30
     done; echo "no endpoint answered for $IID" >&2; exit 1 ;;

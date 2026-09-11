@@ -18,3 +18,4 @@ Checklist (experiment-journey protocol):
 2026-09-11T08:07:14Z proxy ssh (ssh7:15734) denied publickey persistently; provisioner killed; switching to DIRECT 87.116.91.146:11377 (key verified matches registered)
 2026-09-11T08:12:05Z shipped via direct endpoint (zsh $S word-split bug fixed with array); chain + watchdog launched on 50565734
 2026-09-11T08:43:58Z BT_done: tuned config len40960 seqs256 util0.92 batched16384 (score 68.0 rpm @c32 gist8)
+2026-09-11T12:18:26Z B5 attempt 1: instance 50587237 denied ssh key on direct+proxy 20+ min after running; destroyed; host excluded

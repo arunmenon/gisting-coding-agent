@@ -10,7 +10,15 @@ KEY=$(cat ~/.vast_api_key)
 LABEL="${LABEL:-j10-bench}"; DISK="${DISK:-160}"; DEADLINE_H="${DEADLINE_H:-8}"; IDLE_MIN="${IDLE_MIN:-45}"
 GPU_QUERY="${GPU_QUERY:-gpu_name=H100_NVL num_gpus=1 verified=true rentable=true reliability>0.98 disk_space>150 inet_down>500}"
 S="-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectTimeout=20"
-try() { for i in $(seq 1 30); do "$@" 2>/dev/null && return 0; sleep 30; done; return 1; }
+RSH=vast/rsh.sh; LAUNCH_DEADLINE_MIN="${LAUNCH_DEADLINE_MIN:-25}"
+STATEF=journeys/j10-bench/provision_state; : > $STATEF
+ms() { echo "$(date -u +%FT%TZ) $1" | tee -a $STATEF journeys/j10-bench/log.md; }   # milestone: visible immediately
+abort() {  # stall/failure after creation: destroy the box so a stuck provision is a bounded cost, not an open meter
+  ms "ABORT: $1 -> destroying instance ${IID:-?}"
+  [ -n "${IID:-}" ] && { $VAST destroy instance $IID >/dev/null 2>&1; sed -i '' "s/| J10 bench | $IID | \(.*\) | (running) | (running) |/| J10 bench | $IID | \1 | aborted | ~\$$(python3 -c "print(round((\$(date +%s)-$T_CREATE)/3600*${PRICE:-2.64},2))") |/" ledger.md; }
+  exit 1
+}
+check_deadline() { [ $(( ($(date +%s)-T_CREATE)/60 )) -ge "$LAUNCH_DEADLINE_MIN" ] && abort "launch deadline ${LAUNCH_DEADLINE_MIN}m exceeded during: $1"; }
 
 # --- credit gate ---
 CREDIT=$($PY -c "from vastai import VastAI; print(VastAI(api_key='$KEY').show_user()['credit'])")
@@ -33,40 +41,30 @@ print('offer',o['id'],o['gpu_name'],o['gpu_ram'],'MB','\$%.2f/h'%o['dph_total'],
 OUT=$($VAST create instance $OFFER --image vllm/vllm-openai:v0.28.0 --disk $DISK --ssh --direct --label $LABEL --raw 2>&1)
 IID=$(echo "$OUT" | $PY -c "import sys,json; print(json.loads(sys.stdin.read()).get('new_contract',''))" 2>/dev/null)
 [ -n "$IID" ] || { echo "create failed: $OUT"; exit 1; }
+T_CREATE=$(date +%s)
 PRICE=$($PY -c "from vastai import VastAI; v=VastAI(api_key='$KEY'); print([x for x in v.search_offers(query='$GPU_QUERY',order='dph_total',limit=5) if x['id']==$OFFER][0]['dph_total'])" 2>/dev/null || echo "?")
 echo "| $(date -u +%F) | J10 bench | $IID | H100 NVL @ \$$PRICE/hr | (running) | (running) |" >> ledger.md
 echo "$(date -u +%FT%TZ) created instance $IID (offer $OFFER, \$$PRICE/hr) label=$LABEL" | tee -a journeys/j10-bench/log.md
 echo "$IID" > journeys/j10-bench/instance_id
 
-# --- wait for ssh ---
-for i in $(seq 1 40); do
-  read H P <<< "$($PY -c "
-from vastai import VastAI; v=VastAI(api_key='$KEY'); i=[x for x in v.show_instances() if x['id']==$IID]
-if not i: print(' ')
-else:
-    x=i[0]; pm=(x.get('ports') or {}).get('22/tcp') or []
-    # direct endpoint (public ip + mapped port 22) is more reliable than the ssh proxy
-    if x.get('public_ipaddr') and pm: print(x['public_ipaddr']+' '+str(pm[0]['HostPort']))
-    else: print((x.get('ssh_host') or '')+' '+str(x.get('ssh_port') or ''))")"
-  [ -n "$H" ] && [ -n "$P" ] && ssh $S -p $P root@$H 'echo ready' 2>/dev/null | grep -q ready && break
-  sleep 30
-done
-[ -n "${H:-}" ] && [ -n "${P:-}" ] || { echo "ssh never came up for $IID"; exit 1; }
-echo "$(date -u +%FT%TZ) ssh up: $H:$P" | tee -a journeys/j10-bench/log.md
-echo "$H $P" > journeys/j10-bench/ssh
+# --- wait for ssh: first endpoint that answers (direct, then proxy) ---
+ms "waiting for ssh on $IID"
+EP=$($RSH pick $IID) || abort "no ssh endpoint answered"
+read H P <<< "$EP"; check_deadline "ssh wait"
+ms "ssh up: $H:$P"; echo "$H $P" > journeys/j10-bench/ssh
 
-# --- ship files ---
-try ssh $S -p $P root@$H 'mkdir -p /root/gist /root/corpus /root/bench_results && echo ok' | grep -q ok || { echo "mkdir failed"; exit 1; }
-try scp $S -P $P vast/bench_chain.sh vast/serve_bench.sh vast/supervise_bench.sh vast/apply_gist_delta_bench.sh vast/idle_watchdog.sh \
-     gist/mask_gist_logits.py gist/out/chat_template_gist.jinja bench/loadgen.py root@$H:/root/ || { echo "scp scripts failed"; exit 1; }
-try scp $S -P $P gist/span.py gist/segments.py gist/prepare_checkpoint.py gist/export_rows.py gist/dataset.py root@$H:/root/gist/ || { echo "scp gist failed"; exit 1; }
-try scp $S -P $P -r gist/out_r8v2 gist/out_r16 root@$H:/root/gist/ || { echo "scp maps failed"; exit 1; }
-try scp $S -P $P loop/ratios/r8v2/gist_rows.pt root@$H:/root/gist_rows_r8v2.pt || { echo "scp rows r8v2 failed"; exit 1; }
-try scp $S -P $P loop/ratios/r16/gist_rows.pt  root@$H:/root/gist_rows_r16.pt  || { echo "scp rows r16 failed"; exit 1; }
-try scp $S -P $P bench/corpus/reqs_*.jsonl bench/corpus/corpus_meta.json root@$H:/root/corpus/ || { echo "scp corpus failed"; exit 1; }
-# vast key for the watchdog (mode 600, never logged)
-try scp $S -P $P ~/.vast_api_key root@$H:/root/.vast_key && try ssh $S -p $P root@$H "chmod 600 /root/.vast_key; chmod +x /root/*.sh; echo keyok" | grep -q keyok || { echo "key install failed"; exit 1; }
+# --- ship files (each step is a milestone; failures are printed, not swallowed) ---
+$RSH run $H $P 'mkdir -p /root/gist /root/corpus /root/bench_results' || abort "mkdir"; ms "shipping scripts"
+$RSH put $H $P vast/bench_chain.sh vast/serve_bench.sh vast/supervise_bench.sh vast/apply_gist_delta_bench.sh vast/idle_watchdog.sh gist/mask_gist_logits.py gist/out/chat_template_gist.jinja bench/loadgen.py /root/ || abort "scp scripts"
+$RSH put $H $P gist/span.py gist/segments.py gist/prepare_checkpoint.py gist/export_rows.py gist/dataset.py /root/gist/ || abort "scp gist"
+$RSH put $H $P gist/out_r8v2 gist/out_r16 /root/gist/ || abort "scp maps"; check_deadline "ship maps"
+$RSH put $H $P loop/ratios/r8v2/gist_rows.pt /root/gist_rows_r8v2.pt || abort "scp rows r8v2"
+$RSH put $H $P loop/ratios/r16/gist_rows.pt /root/gist_rows_r16.pt || abort "scp rows r16"; ms "shipping corpus"
+$RSH put $H $P bench/corpus/reqs_*.jsonl bench/corpus/corpus_meta.json /root/corpus/ || abort "scp corpus"; check_deadline "ship corpus"
+$RSH put $H $P ~/.vast_api_key /root/.vast_key && $RSH run $H $P 'chmod 600 /root/.vast_key; chmod +x /root/*.sh' || abort "key install"
+ms "shipped; launching chain"
 
 # --- launch chain + watchdog ---
-try ssh $S -p $P root@$H "DEADLINE_H=$DEADLINE_H nohup setsid bash /root/bench_chain.sh > /root/chain.log 2>&1 < /dev/null & IDLE_MIN=$IDLE_MIN nohup setsid bash /root/idle_watchdog.sh $IID > /root/watchdog.log 2>&1 < /dev/null & sleep 3; tail -2 /root/STATE; pgrep -f 'idle_[w]atchdog' | head -1 | xargs echo watchdog_pid" | tee -a journeys/j10-bench/log.md
-echo "$(date -u +%FT%TZ) chain + watchdog launched on $IID" | tee -a journeys/j10-bench/log.md
+$RSH run $H $P "DEADLINE_H=$DEADLINE_H nohup setsid bash /root/bench_chain.sh > /root/chain.log 2>&1 < /dev/null & IDLE_MIN=$IDLE_MIN nohup setsid bash /root/idle_watchdog.sh $IID > /root/watchdog.log 2>&1 < /dev/null & sleep 4; tail -2 /root/STATE" || abort "launch"
+$RSH run $H $P "pgrep -f 'bench_[c]hain' >/dev/null && pgrep -f 'idle_[w]atchdog' >/dev/null" || abort "chain or watchdog not running after launch"
+ms "LAUNCHED chain + watchdog on $IID ($H:$P) after $(( ($(date +%s)-T_CREATE)/60 ))m"

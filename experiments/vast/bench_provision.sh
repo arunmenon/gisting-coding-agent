@@ -19,7 +19,8 @@ STATEF=$JDIR/provision_state; : > $STATEF
 ms() { echo "$(date -u +%FT%TZ) $1" | tee -a $STATEF $JDIR/log.md; }   # milestone: visible immediately
 abort() {  # stall/failure after creation: destroy the box so a stuck provision is a bounded cost, not an open meter
   ms "ABORT: $1 -> destroying instance ${IID:-?}"
-  [ -n "${IID:-}" ] && { $VAST destroy instance $IID >/dev/null 2>&1; sed -i '' "s/| $LEDGER_LABEL | $IID | \(.*\) | (running) | (running) |/| $LEDGER_LABEL | $IID | \1 | aborted | ~\$$(python3 -c "print(round((\$(date +%s)-$T_CREATE)/3600*${PRICE:-2.64},2))") |/" ledger.md; }
+  [ -n "${IID:-}" ] && { $PY -c "from vastai import VastAI; VastAI(api_key='$KEY').destroy_instance(id=$IID)"; sed -i '' "s/| $LEDGER_LABEL | $IID | \(.*\) | (running) | (running) |/| $LEDGER_LABEL | $IID | \1 | aborted | ~\$$(python3 -c "print(round((\$(date +%s)-$T_CREATE)/3600*${PRICE:-2.64},2))") |/" ledger.md; }
+  sleep 5; $PY -c "from vastai import VastAI; import sys; v=VastAI(api_key='$KEY'); sys.exit(1 if any(i['id']==$IID for i in v.show_instances()) else 0)" && ms "destroy verified" || ms "WARNING: instance $IID still listed after destroy; destroy it manually"
   exit 1
 }
 check_deadline() { [ $(( ($(date +%s)-T_CREATE)/60 )) -ge "$LAUNCH_DEADLINE_MIN" ] && abort "launch deadline ${LAUNCH_DEADLINE_MIN}m exceeded during: $1"; }
@@ -74,6 +75,6 @@ $RSH run $H $P "pgrep -f 'bench_[c]hain' >/dev/null && pgrep -f 'idle_[w]atchdog
 ms "LAUNCHED chain + watchdog on $IID ($H:$P) after $(( ($(date +%s)-T_CREATE)/60 ))m"
 if [ "$SMOKE" = 1 ]; then
   sleep 40; $RSH run $H $P 'cat /root/STATE' | grep -q BENCH_DONE && ms "SMOKE OK: provisioning path verified end to end" || ms "SMOKE FAILED: no BENCH_DONE marker"
-  $VAST destroy instance $IID >/dev/null 2>&1 && ms "smoke box $IID destroyed"
+  $PY -c "from vastai import VastAI; VastAI(api_key='$KEY').destroy_instance(id=$IID)" && ms "smoke box $IID destroyed"
   sed -i '' "s/| $LEDGER_LABEL | $IID | \(.*\) | (running) | (running) |/| $LEDGER_LABEL | $IID | \1 | smoke | ~\$0.05 |/" ledger.md
 fi

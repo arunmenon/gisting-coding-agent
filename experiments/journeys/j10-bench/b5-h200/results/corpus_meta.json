@@ -1,0 +1,23 @@
+{
+ "k_sessions": 24,
+ "seed": 7,
+ "max_prompt_tokens": 36000,
+ "eligible_sessions": {
+  "r8v2": 111,
+  "r16": 111
+ },
+ "requests": {
+  "full": 198,
+  "gist8": 198,
+  "gist16": 198,
+  "full16": 198
+ },
+ "prompt_tokens_median": {
+  "full": 26169,
+  "gist8": 10998,
+  "gist16": 9733
+ },
+ "prompt_tokens_max": {
+  "full": 35953
+ }
+}

@@ -20,3 +20,4 @@ Checklist (experiment-journey protocol):
 2026-09-11T08:43:58Z BT_done: tuned config len40960 seqs256 util0.92 batched16384 (score 68.0 rpm @c32 gist8)
 2026-09-11T12:18:26Z B5 attempt 1: instance 50587237 denied ssh key on direct+proxy 20+ min after running; destroyed; host excluded
 2026-09-11T12:25:27Z B5 launched manually on 50588749 (H200 NVL, host 214845, .65/hr) after provisioner exit 2
+2026-09-11T13:52:21Z H200 B5 BENCH_DONE 13:47Z; results synced (44 files); instance 50588749 destroyed (verified); 1.56h ~$5.91

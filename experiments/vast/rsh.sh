@@ -17,8 +17,9 @@ if not i: print('- - - - gone')
 else:
     x=i[0]; pm=(x.get('ports') or {}).get('22/tcp') or []
     print((x.get('public_ipaddr') or '-'), (pm[0]['HostPort'] if pm else '-'), (x.get('ssh_host') or '-'), (x.get('ssh_port') or '-'), (x.get('actual_status') or '?')+':'+str(x.get('status_msg') or '')[:40].replace(' ','_'))")"
+      DH=${DH:--}; DP=${DP:--}; PH=${PH:--}; PP=${PP:--}; ST=${ST:-api_hiccup}   # a blank poll (API hiccup) must retry, not crash under set -u
       [ $((i % 4)) -eq 1 ] && echo "  [rsh] pick try $i/60 direct=$DH:$DP proxy=$PH:$PP status=$ST" >&2
-      for ep in "$DH $DP" "$PH $PP"; do set -- $ep; [ "$1" != "-" ] && [ "$2" != "-" ] && ssh "${O[@]}" -p "$2" "root@$1" 'echo ready' 2>/dev/null | grep -q ready && { echo "$1 $2"; exit 0; }; done
+      for ep in "$DH $DP" "$PH $PP"; do set -- $ep; h=${1:--}; pp=${2:--}; [ "$h" != "-" ] && [ "$pp" != "-" ] && ssh "${O[@]}" -p "$pp" "root@$h" 'echo ready' 2>/dev/null | grep -q ready && { echo "$h $pp"; exit 0; }; done
       sleep 30
     done; echo "no endpoint answered for $IID" >&2; exit 1 ;;
   run)  H=$2; P=$3; shift 3; n=1; while ! ssh "${O[@]}" -p "$P" "root@$H" "$@"; do echo "  [rsh] run attempt $n/$TRIES failed" >&2; [ $n -ge $TRIES ] && exit 1; n=$((n+1)); sleep $PAUSE; done ;;

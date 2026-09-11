@@ -29,13 +29,13 @@ CREDIT=$($PY -c "from vastai import VastAI; print(VastAI(api_key='$KEY').show_us
 echo "credit: \$$CREDIT"; $PY -c "import sys; sys.exit(0 if float('$CREDIT')>=(5 if '$SMOKE'=='1' else 30) else 1)" || { echo "credit below est+reserve, refusing to provision"; exit 1; }
 
 # --- pick offer ---
-OFFER=$($PY - <<PY
+read OFFER PRICE <<< "$($PY - <<PY
 from vastai import VastAI
 v=VastAI(api_key="$KEY")
 o=v.search_offers(query="$GPU_QUERY", order="dph_total", limit=1)
-print(o[0]["id"] if o else "")
+print((str(o[0]["id"])+" "+str(round(o[0]["dph_total"],2))) if o else " ")
 PY
-)
+)"
 [ -n "$OFFER" ] || { echo "no offer for: $GPU_QUERY"; exit 1; }
 $PY -c "
 from vastai import VastAI; v=VastAI(api_key='$KEY'); o=[x for x in v.search_offers(query='$GPU_QUERY',order='dph_total',limit=5) if x['id']==$OFFER][0]
@@ -46,7 +46,6 @@ OUT=$($VAST create instance $OFFER --image vllm/vllm-openai:v0.28.0 --disk $DISK
 IID=$(echo "$OUT" | $PY -c "import sys,json; print(json.loads(sys.stdin.read()).get('new_contract',''))" 2>/dev/null)
 [ -n "$IID" ] || { echo "create failed: $OUT"; exit 1; }
 T_CREATE=$(date +%s)
-PRICE=$($PY -c "from vastai import VastAI; v=VastAI(api_key='$KEY'); print([x for x in v.search_offers(query='$GPU_QUERY',order='dph_total',limit=5) if x['id']==$OFFER][0]['dph_total'])" 2>/dev/null || echo "?")
 echo "| $(date -u +%F) | $LEDGER_LABEL | $IID | $GPU_LABEL @ \$$PRICE/hr | (running) | (running) |" >> ledger.md
 echo "$(date -u +%FT%TZ) created instance $IID (offer $OFFER, \$$PRICE/hr) label=$LABEL" | tee -a $JDIR/log.md
 echo "$IID" > $JDIR/instance_id

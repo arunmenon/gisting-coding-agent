@@ -42,3 +42,5 @@ Note: instance 49274914 (1x RTX 3060, vastai/kvm ubuntu_terminal, $0.071/hr, run
 | 2026-09-11 | J10 bench | 50565734 | H100 NVL @ $2.64/hr | (running) | (running) |
 | 2026-09-11 | J10 smoke | 50582435 | GTX 1070 (smoke, never booted) @ $0.10/hr | 0.4 | $0.04 |
 | 2026-09-11 | J10 smoke2 | 50584495 | smoke @ $0.05/hr (no direct port; never reachable) | 0.4 | $0.02 |
+| 2026-09-11 | J10 smoke3 | 50586500 | smoke @ $0.05/hr | smoke | ~$0.05 |
+| 2026-09-11 | J10 B5 H200 | 50587237 | H200 NVL @ $3.6/hr | (running) | (running) |

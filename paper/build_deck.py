@@ -121,7 +121,7 @@ slide('''
 <div class="grid4" style="margin-top:1.2rem">
   <div class="card copper"><div class="k">The tax</div><div class="v">At every step, the coding agent (Claude Code) re-sends the same fixed preamble to the model: <b>~17.5&ndash;21k</b> tokens, over <b>90% tool schemas</b>, about <b>0.72</b> of a short session.</div></div>
   <div class="card plum"><div class="k">The lever</div><div class="v">Replace it with a few thousand <b>learned tokens</b>. Base model frozen; deployed in a <b>proxy</b>, no client or engine change.</div></div>
-  <div class="card"><div class="k">The payoff</div><div class="v"><b>~16% more throughput</b> at eight concurrent sessions: <b>capacity per GPU</b>, not faster single replies.</div></div>
+  <div class="card"><div class="k">The payoff</div><div class="v"><b>2x the request rate</b> within the latency SLO and <b>+44% peak throughput</b> on the same GPU (tuned server, 3 repeats). A <b>cost lever</b>: a cheaper GPU with gist matched a pricier one per dollar.</div></div>
   <div class="card warn"><div class="k">The caveat</div><div class="v">A <b>development study</b>: the lever is real; the dollar-per-session number is <b>not proven yet</b>.</div></div>
 </div>
 <p class="caption">You can stop here. The rest is the evidence, the catch, and what it would take to bank the saving.</p>''')
@@ -132,7 +132,7 @@ slide('''
 <h2>Why this is a total-cost question</h2>
 <p class="lead" style="margin-bottom:1.4rem">For a self-hosted agent, serving cost is driven by <b>how many tokens the model reads per turn</b>, which caps <b>how many sessions a GPU can carry</b>. Three cost drivers; gisting acts on the first.</p>
 <div class="grid3">
-  <div class="card" style="border-color:var(--petrol2)"><div class="k" style="color:var(--petrol)">GPU capacity &nbsp;&larr; gisting acts here</div><div class="v">Token-bound. Fewer input tokens per turn &rarr; more concurrent sessions per GPU before latency degrades.</div></div>
+  <div class="card" style="border-color:var(--petrol2)"><div class="k" style="color:var(--petrol)">GPU capacity &nbsp;&larr; gisting acts here</div><div class="v">Token-bound. Fewer input tokens per turn &rarr; each session finishes sooner &rarr; more load per GPU before latency degrades. <b>Measured: 2x at the SLO.</b></div></div>
   <div class="card"><div class="k" style="color:var(--ink2)">Engineering</div><div class="v">One-time: build the proxy, the template, and the training loop. The loop is reusable across models.</div></div>
   <div class="card"><div class="k" style="color:var(--ink2)">Risk</div><div class="v">Compressed rules are harder to audit; benefit is model-dependent. Managed, not eliminated.</div></div>
 </div>''')
@@ -180,48 +180,62 @@ slide('''
 <p style="margin-top:1rem"><span class="tag warn">single run &middot; small, partly-reused suite</span></p>''')
 
 
-# ---- 8 PAYOFF (SVG chart) ----
-def bars():
-    groups=[("c=1",6.9,7.2,"+5%"),("c=4",16.4,18.9,"+15%"),("c=8",20.0,23.2,"+16%")]
-    W,H=680,340; padL,padB,padT=54,54,40; ymax=26
-    plotH=H-padB-padT; plotW=W-padL-20
-    gw=plotW/len(groups); bw=gw*0.24
-    out=['<svg viewBox="0 0 %d %d" width="100%%" role="img" aria-label="Throughput full prompt versus gist by concurrency">'%(W,H)]
-    # baseline
-    out.append('<line x1="%d" y1="%d" x2="%d" y2="%d" stroke="#2b3a41" stroke-width="1.5"/>'%(padL,H-padB,W-10,H-padB))
-    for i,(lab,fu,gi,dl) in enumerate(groups):
-        cx=padL+gw*i+gw*0.5
-        for j,(val,col) in enumerate([(fu,'#4a5a60'),(gi,'#3fb0c6')]):
-            bh=val/ymax*plotH; x=cx-bw*1.05+j*(bw+8); y=H-padB-bh
-            out.append('<rect x="%.1f" y="%.1f" width="%.1f" height="%.1f" rx="3" fill="%s"/>'%(x,y,bw,bh,col))
-            out.append('<text x="%.1f" y="%.1f" fill="#cfe0e3" font-size="13" text-anchor="middle">%.1f</text>'%(x+bw/2,y-7,val))
-        # delta above gist
-        gbh=gi/ymax*plotH
-        out.append('<text x="%.1f" y="%.1f" fill="#57c08a" font-size="14" font-weight="600" text-anchor="middle">%s</text>'%(cx+bw*0.5+4,H-padB-gbh-26,dl))
-        out.append('<text x="%.1f" y="%d" fill="#9fb2b6" font-size="14" text-anchor="middle">%s</text>'%(cx,H-padB+24,lab))
-    out.append('<text x="%d" y="22" fill="#9fb2b6" font-size="13">requests / minute &nbsp;&middot;&nbsp; higher is better</text>'%padL)
-    out.append('</svg>')
-    return "".join(out)
+# ---- 8 PAYOFF (SVG curve, measured) ----
+def curve():
+    cs=["1","2","4","8","16","32","48","64"]
+    full=[13.1,22.7,36.9,34.7,42.7,42.7,32.0,29.3]; gist=[14.7,25.3,42.7,48.0,59.3,61.3,52.7,41.3]
+    W,H=680,340; L,B,T=54,54,40; ymax=70; pw=W-L-24; ph=H-B-T
+    X=lambda i: L+i*pw/(len(cs)-1); Y=lambda v: H-B-v/ymax*ph
+    o=['<svg viewBox="0 0 %d %d" width="100%%" role="img" aria-label="Throughput versus concurrent sessions, full prompt versus gist">'%(W,H)]
+    o.append('<line x1="%d" y1="%d" x2="%d" y2="%d" stroke="#2b3a41" stroke-width="1.5"/>'%(L,H-B,W-16,H-B))
+    for yv in (14,28,42,56,70): o.append('<text x="%d" y="%.1f" fill="#6f8085" font-size="11" text-anchor="end">%d</text>'%(L-8,Y(yv)+4,yv))
+    for name,vals,col in (("full prompt",full,"#8a9aa0"),("gist 8:1",gist,"#c39be0")):
+        pts=" ".join("%.1f,%.1f"%(X(i),Y(v)) for i,v in enumerate(vals))
+        o.append('<polyline points="%s" fill="none" stroke="%s" stroke-width="4" stroke-linejoin="round"/>'%(pts,col))
+        for i,v in enumerate(vals): o.append('<circle cx="%.1f" cy="%.1f" r="5" fill="%s"/>'%(X(i),Y(v),col))
+    o.append('<text x="%.1f" y="%.1f" fill="#c39be0" font-size="14" font-weight="600">61.3  (+44%%)</text>'%(X(5)+10,Y(61.3)-10))
+    o.append('<text x="%.1f" y="%.1f" fill="#cfe0e3" font-size="13">42.7</text>'%(X(4)-14,Y(42.7)+22))
+    o.append('<text x="%.1f" y="%.1f" fill="#e79191" font-size="12">full collapses (KV 100%%)</text>'%(X(6)-70,Y(32.0)+28))
+    for i,l in enumerate(cs): o.append('<text x="%.1f" y="%d" fill="#9fb2b6" font-size="13" text-anchor="middle">%s</text>'%(X(i),H-B+22,l))
+    o.append('<text x="%d" y="22" fill="#9fb2b6" font-size="13">requests / minute vs concurrent sessions  ·  tuned server, 3 repeats (spread within marker)</text>'%L)
+    o.append('</svg>'); return "".join(o)
 slide('''
-<div class="eyebrow">The payoff</div>
+<div class="eyebrow">The payoff (measured)</div>
 <h2>The saving shows up as capacity under load</h2>
 <div class="figrow">
   <div>%s</div>
   <div>
-    <p class="lead">Throughput rises with concurrency, and the gain <b>grows</b> as the service gets busier. A single reply is barely faster.</p>
-    <div style="margin-top:1rem"><span class="tag" style="color:var(--petrol);border-color:var(--petrol2)">full prompt</span> <span class="tag" style="color:#3fb0c6;border-color:var(--petrol2)">gist</span></div>
-    <p class="caption">For a shared internal agent service, this is <b>sessions per GPU</b>, the number that sets cost. One replay; direction, not precision.</p>
+    <div style="display:flex;gap:34px;flex-wrap:wrap;margin-bottom:.8rem">
+      <div><div class="bignum plum">2x</div><div class="unit">request rate within the latency SLO<br>(18 &rarr; 36 req/min, random arrivals)</div></div>
+      <div><div class="bignum petrol">+44%%</div><div class="unit">peak throughput, same GPU<br>(42.7 &rarr; 61.3 req/min)</div></div>
+    </div>
+    <p class="lead">The advantage <b>grows with load</b> (1.12x at 1 session &rarr; 1.65x at 48) and is <b>incremental over prefix caching</b>: 2&ndash;4x larger when caching can't help.</p>
+    <div style="margin-top:.8rem"><span class="tag" style="color:#8a9aa0">full prompt</span> <span class="tag" style="color:#c39be0;border-color:#5a3f6e">gist 8:1</span> <span class="tag">H100 NVL 95 GB &middot; 201 runs &middot; 0 failures</span></div>
   </div>
-</div>''' % bars())
+</div>''' % curve())
 
 # ---- 9 WHY CAPACITY NOT SPEED ----
 layers="".join('<i class="on"></i>' if k<16 else '<i></i>' for k in range(64))
 slide('''
 <div class="eyebrow">The catch &middot; architecture</div>
 <h2>Why it&rsquo;s capacity, not speed</h2>
-<p class="lead">This model uses full attention in only <b>16 of its 64 layers</b>. A shorter prompt saves decode work only there, so the win is more sessions in parallel, not a faster individual answer.</p>
+<p class="lead">This model uses full attention in only <b>16 of its 64 layers</b>, and the number of sessions it can hold at once is set by a <b>fixed per-session state</b>, not by prompt length. So a shorter prompt does not fit many more sessions; it makes <b>each session finish sooner</b>. The win is throughput under load, not a faster single answer.</p>
 <div class="layers">%s</div>
-<p class="caption"><span style="color:var(--petrol)">&#9632;</span> full-attention layers (benefit) &nbsp;&nbsp; <span style="color:#3a4a51">&#9632;</span> linear-attention layers (fixed-size state). The benefit is <b>architecture-dependent</b>: a different model shifts it.</p>''' % layers)
+<p class="caption"><span style="color:var(--petrol)">&#9632;</span> full-attention layers &nbsp;&nbsp; <span style="color:#3a4a51">&#9632;</span> linear-attention layers (fixed-size state). Measured: at the resident-session ceiling both arms hold the same number of sessions; the gist just turns them over faster (H200: 85 vs 50 req/min at 100 resident).</p>''' % layers)
+
+# ---- 9b THE COST LEVER (new) ----
+slide('''
+<div class="eyebrow">The cost lever</div>
+<h2>Gisting lets a cheaper GPU match a pricier one</h2>
+<div style="display:flex;gap:40px;flex-wrap:wrap;margin:1.2rem 0 1rem">
+  <div><div class="bignum" style="color:#8a9aa0">16.2</div><div class="unit">H100 &middot; full prompt</div></div>
+  <div><div class="bignum plum">23.2</div><div class="unit">H100 &middot; gist 8:1</div></div>
+  <div><div class="bignum petrol">22.5</div><div class="unit">H200 &middot; full prompt</div></div>
+  <div><div class="bignum" style="color:#8a9aa0">22.0</div><div class="unit">H200 &middot; gist 8:1</div></div>
+</div>
+<p class="caption" style="margin-top:0">peak requests per minute, per dollar-hour of GPU rental (spot prices on the day of the run)</p>
+<p class="lead" style="margin-top:1.2rem">On the bigger H200 (143 GB), gist&rsquo;s peak gain <b>vanished at normal load</b> (&minus;2%) and appeared only under pressure (3.1x at 128 sessions). On the H100 (95 GB) it was <b>+44%</b>. The benefit is proportional to <b>how memory-constrained the hardware is relative to the prompt</b>.</p>
+<p class="caption">Read it as a cost lever, not a speed lever: gist on the cheaper card delivers the expensive card&rsquo;s throughput per dollar. Where prompts don&rsquo;t share prefixes (no cache help), gist&rsquo;s 2&ndash;4x advantage holds on any card.</p>''')
 
 # ---- 10 THE LAB ----
 slide('''
@@ -247,15 +261,15 @@ slide('''
     <ul class="clean good" style="margin:0">
       <li>Equal task scores on our suites, every ratio.</li>
       <li>Half-to-two-thirds fewer tokens read per turn.</li>
-      <li>Throughput rises under load; the fix removes the path failure.</li>
-      <li>The tooling works end to end.</li>
+      <li><b>2x load within SLO, +44% peak</b> on a tuned server, 3 repeats, 0 failures.</li>
+      <li>Incremental over prefix caching (2&ndash;4x without it); mechanism measured.</li>
+      <li>Throughput per dollar on two GPU classes; the fix removes the path failure.</li>
     </ul>
   </div>
   <div class="card warn"><div class="k">Not yet</div>
     <ul class="clean warn" style="margin:0">
       <li>Generalisation on unseen, held-out work.</li>
-      <li>A saturation test &rarr; a real sessions-per-GPU / $ number.</li>
-      <li>The <b>cause</b> of the serving gain (a hypothesis, not proven).</li>
+      <li>Per-hardware tuning (the H200 ran an H100-tuned config; one regression at 16 sessions).</li>
       <li>Rare-tool reach (left unscored by harness faults).</li>
       <li>Audit guarantees that compressed rules still bind.</li>
     </ul>
@@ -269,17 +283,17 @@ slide('''
 <h2>From &ldquo;real lever&rdquo; to a number you can budget</h2>
 <div class="grid3" style="margin-top:1rem">
   <div class="card"><div class="k">1 &middot; Validate</div><div class="v">A held-out eval with paired, repeated runs. Answers: is the parity real beyond our own tasks?</div></div>
-  <div class="card"><div class="k">2 &middot; Quantify</div><div class="v">A saturation test under sustained load. Converts &ldquo;throughput direction&rdquo; into <b>sessions per GPU</b> and a cost per session.</div></div>
+  <div class="card"><div class="k">2 &middot; Tune per hardware</div><div class="v">Re-tune the server for each GPU class and re-measure; the capacity number is now measured on the H100, and the H200 showed one regression from an H100-tuned config.</div></div>
   <div class="card"><div class="k">3 &middot; Pilot</div><div class="v">A guarded rollout with explicit rule-audit and write-target checks at the serving boundary.</div></div>
 </div>
-<p class="caption">Bounded effort: a single GPU over days, not a new research program; the loop and serving path already exist.</p>''')
+<p class="caption">Bounded effort: a single GPU over days, not a new research program. The capacity number is measured; what remains is proof on work we did not design.</p>''')
 
 # ---- 13 DECISION ----
 slide('''
 <div class="eyebrow">Decision</div>
 <h2>The lever is real and cheap to prototype</h2>
-<p class="big-verdict">Fund a short validation (eval&nbsp;+&nbsp;saturation) before any production commitment.</p>
-<p class="lead" style="margin-top:1.3rem">The tooling exists, the risk is contained, and the upside is <b>GPU capacity that compounds under load</b>. What&rsquo;s missing is a validated number, and that is days of work away, not months.</p>
+<p class="big-verdict">The capacity number is measured. Fund the held-out validation and a guarded pilot.</p>
+<p class="lead" style="margin-top:1.3rem">The tooling exists, the risk is contained, and the upside is measured: <b>2x the load within SLO on the same GPU</b>, or the same throughput per dollar from a cheaper GPU. What&rsquo;s missing is proof on unseen work, and that is days of work away, not months.</p>
 <div class="stack" style="margin-top:1.6rem">GitHub: arunmenon/gisting-coding-agent &middot; weights &amp; data on Hugging Face (private)</div>''')
 
 # ---- APPENDIX: THE FAILURE ----

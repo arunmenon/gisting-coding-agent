@@ -11,7 +11,7 @@ Checklist (experiment-journey protocol):
 [x] 8. Monitored to BENCH_DONE 16:02Z (167 runs, 0 fails); results synced per milestone
 [x] 9. Results in journeys/j10-bench/results/ (H100) and b5-h200/results/ (H200)
 [x] 10. H100 50565734 destroyed (verified) 8.76h $23.13; H200 50588749 destroyed 1.56h $5.91; ledger closed
-[ ] 11. journey.md written
+[x] 11. journey.md written 2026-09-11
 
 2026-09-11T07:29:06Z created instance 50565734 (offer 24548924, $?/hr) label=j10-bench
 2026-09-11T07:52:25Z ssh up: ssh7.vast.ai:15734

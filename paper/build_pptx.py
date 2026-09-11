@@ -86,7 +86,7 @@ s=slide(); eyebrow(s,"Bottom line up front"); title(s,"The answer in four lines"
 cw,gap=2.85,0.2; x0=0.7; y=2.1; ch=3.9
 cards=[("The tax",COPPER,"At every step, the coding agent (Claude Code) re-sends the same fixed preamble to the model: ~17.5–21k tokens, over 90% tool schemas, about 0.72 of a short session."),
        ("The lever",PLUM,"Replace it with a few thousand learned tokens. Base model frozen; deployed in a proxy, no client or engine change."),
-       ("The payoff",PETROL,"~16% more throughput at eight concurrent sessions: capacity per GPU, not faster single replies."),
+       ("The payoff",PETROL,"2x the request rate within the latency SLO and +44% peak throughput on the same GPU (tuned server, 3 repeats). A cost lever: a cheaper GPU with gist matched a pricier one per dollar."),
        ("The caveat",WARN,"A development study: the lever is real; the dollar-per-session number is not proven yet.")]
 for i,(k,c,body) in enumerate(cards):
     card(s,x0+i*(cw+gap),y,cw,ch,k,c,lambda tf,b=body:first(tf,b,15,INK,spacing=1.15))
@@ -96,7 +96,7 @@ first(tb(s,0.7,6.25,11.9,0.6),"You can stop here. The rest is the evidence, the 
 s=slide(); eyebrow(s,"The cost lens"); title(s,"Why this is a total-cost question")
 first(tb(s,0.7,2.0,11.6,1.0),"For a self-hosted agent, serving cost is driven by how many tokens the model reads per turn, which caps how many sessions a GPU can carry. Three cost drivers; gisting acts on the first.",17,INK2,spacing=1.2)
 cw=3.75; y=3.4; ch=2.9
-c3=[("GPU capacity  ← gisting acts here",PETROL,"Token-bound. Fewer input tokens per turn → more concurrent sessions per GPU before latency degrades.",PETROL2),
+c3=[("GPU capacity  ← gisting acts here",PETROL,"Token-bound. Fewer input tokens per turn → each session finishes sooner → more load per GPU before latency degrades. Measured: 2x at the SLO.",PETROL2),
     ("Engineering",INK2,"One-time: build the proxy, the template, and the training loop. The loop is reusable across models.",LINE),
     ("Risk",INK2,"Compressed rules are harder to audit; the benefit is model-dependent. Managed, not eliminated.",LINE)]
 for i,(k,c,body,ln) in enumerate(c3):
@@ -146,36 +146,41 @@ first(tb(s,0.7,4.1,11.4,1.3),"Every compression ratio and the full prompt scored
 rrect(s,0.7,5.7,4.6,0.55,fill=None,line=RGBColor(0x5a,0x4a,0x24),lw=1.0)
 first(tb(s,0.85,5.78,4.4,0.4),"single run · small, partly-reused suite",12,WARN,font=MONO)
 
-# ---------------- 8 PAYOFF (native chart) ----------------
-s=slide(); eyebrow(s,"The payoff"); title(s,"The saving shows up as capacity under load")
-cd=CategoryChartData(); cd.categories=["c=1","c=4","c=8"]
-cd.add_series("full prompt",(6.9,16.4,20.0)); cd.add_series("gist",(7.2,18.9,23.2))
-gf=s.shapes.add_chart(XL_CHART_TYPE.COLUMN_CLUSTERED,Inches(0.7),Inches(2.1),Inches(7.4),Inches(4.6),cd)
-ch=gf.chart; ch.has_title=True; ch.chart_title.text_frame.text="requests / minute  (higher is better)"
+# ---------------- 8 PAYOFF (native line chart, measured) ----------------
+s=slide(); eyebrow(s,"The payoff (measured)"); title(s,"The saving shows up as capacity under load")
+cd=CategoryChartData(); cd.categories=["1","2","4","8","16","32","48","64"]
+cd.add_series("full prompt",(13.1,22.7,36.9,34.7,42.7,42.7,32.0,29.3)); cd.add_series("gist 8:1",(14.7,25.3,42.7,48.0,59.3,61.3,52.7,41.3))
+gf=s.shapes.add_chart(XL_CHART_TYPE.LINE_MARKERS,Inches(0.7),Inches(2.1),Inches(7.4),Inches(4.6),cd)
+ch=gf.chart; ch.has_title=True; ch.chart_title.text_frame.text="requests / minute vs concurrent sessions  (H100 NVL, tuned server, 3 repeats)"
 for r in ch.chart_title.text_frame.paragraphs[0].runs: r.font.size=Pt(12); r.font.color.rgb=INK2; r.font.name=MONO; r.font.bold=False
-ch.has_legend=True; ch.legend.position=XL_LEGEND_POSITION.TOP; ch.legend.include_in_layout=False
-ch.legend.font.color.rgb=INK2; ch.legend.font.size=Pt(12)
+ch.has_legend=True; ch.legend.position=XL_LEGEND_POSITION.TOP; ch.legend.include_in_layout=False; ch.legend.font.color.rgb=INK2; ch.legend.font.size=Pt(12)
 ser=ch.plots[0].series
-ser[0].format.fill.solid(); ser[0].format.fill.fore_color.rgb=SLATE
-ser[1].format.fill.solid(); ser[1].format.fill.fore_color.rgb=PETROL
-ch.plots[0].has_data_labels=True; ch.plots[0].data_labels.font.size=Pt(11); ch.plots[0].data_labels.font.color.rgb=INK
+ser[0].format.line.color.rgb=SLATE; ser[0].format.line.width=Pt(3); ser[1].format.line.color.rgb=PLUM; ser[1].format.line.width=Pt(3)
 for ax in (ch.category_axis,ch.value_axis):
     ax.tick_labels.font.color.rgb=INK2; ax.tick_labels.font.size=Pt(12); ax.format.line.color.rgb=LINE
 ch.value_axis.has_major_gridlines=True; ch.value_axis.major_gridlines.format.line.color.rgb=RGBColor(0x1b,0x26,0x2b)
-tf=tb(s,8.4,2.4,4.2,4.0)
-first(tf,"Throughput rises with concurrency, and the gain grows as the service gets busier. A single reply is barely faster.",16,INK,spacing=1.2,after=14)
-addpara(tf,"For a shared internal agent service, this is sessions per GPU, the number that sets cost.",14,INK2,spacing=1.2,after=10)
-addpara(tf,"One replay; direction, not precision.",12,INK2,font=MONO)
+tf=tb(s,8.4,2.2,4.3,4.4)
+first(tf,"2x",30,PLUM,bold=True,font=MONO,after=2); addpara(tf,"request rate within the latency SLO (18 → 36 req/min, random arrivals)",12,INK2,font=MONO,after=12)
+addpara(tf,"+44%",30,PETROL,bold=True,font=MONO,after=2); addpara(tf,"peak throughput, same GPU (42.7 → 61.3 req/min)",12,INK2,font=MONO,after=14)
+addpara(tf,"The advantage grows with load (1.12x at 1 session → 1.65x at 48) and is incremental over prefix caching: 2–4x larger when caching can't help. 201 runs, 0 failures.",14,INK,spacing=1.2)
 
 # ---------------- 9 WHY CAPACITY ----------------
 s=slide(); eyebrow(s,"The catch · architecture"); title(s,"Why it’s capacity, not speed")
-first(tb(s,0.7,2.0,11.6,1.1),"This model uses full attention in only 16 of its 64 layers. A shorter prompt saves decode work only there, so the win is more sessions in parallel, not a faster individual answer.",17,INK2,spacing=1.2)
+first(tb(s,0.7,2.0,11.6,1.1),"This model uses full attention in only 16 of its 64 layers, and the number of sessions it can hold at once is set by a fixed per-session state, not by prompt length. A shorter prompt does not fit many more sessions; it makes each session finish sooner. The win is throughput under load, not a faster single answer.",17,INK2,spacing=1.2)
 gx,gy,cell,gp=0.7,3.5,0.42,0.1
 for k in range(64):
     col=k%16; row=k//16
     c=PETROL if k<16 else RGBColor(0x24,0x30,0x36)
     rrect(s,gx+col*(cell+gp),gy+row*(cell+gp),cell,cell,fill=c,line=None,shape=MSO_SHAPE.ROUNDED_RECTANGLE)
-first(tb(s,0.7,5.9,11.6,0.9),"■ full-attention layers (where a shorter prompt helps)      ■ linear-attention layers (fixed-size state).  The benefit is architecture-dependent: a different model shifts it.",12.5,INK2,spacing=1.2)
+first(tb(s,0.7,5.9,11.6,0.9),"■ full-attention layers      ■ linear-attention layers (fixed-size state).  Measured: at the resident-session ceiling both arms hold the same number of sessions; the gist turns them over faster (H200: 85 vs 50 req/min at 100 resident).",12.5,INK2,spacing=1.2)
+
+# ---------------- 9b THE COST LEVER ----------------
+s=slide(); eyebrow(s,"The cost lever"); title(s,"Gisting lets a cheaper GPU match a pricier one")
+for i,(n,c,u) in enumerate([("16.2",SLATE,"H100 · full prompt"),("23.2",PLUM,"H100 · gist 8:1"),("22.5",PETROL,"H200 · full prompt"),("22.0",SLATE,"H200 · gist 8:1")]):
+    first(tb(s,0.7+i*3.0,2.2,2.8,0.8),n,34,c,bold=True,font=MONO); first(tb(s,0.7+i*3.0,2.95,2.8,0.5),u,12,INK2,font=MONO)
+first(tb(s,0.7,3.55,11.9,0.5),"peak requests per minute, per dollar-hour of GPU rental (spot prices on the day of the run)",12,INK2,font=MONO)
+first(tb(s,0.7,4.2,11.9,1.4),"On the bigger H200 (143 GB), gist's peak gain vanished at normal load (-2%) and appeared only under pressure (3.1x at 128 sessions). On the H100 (95 GB) it was +44%. The benefit is proportional to how memory-constrained the hardware is relative to the prompt.",17,INK,spacing=1.25)
+first(tb(s,0.7,5.8,11.9,1.0),"Read it as a cost lever, not a speed lever: gist on the cheaper card delivers the expensive card's throughput per dollar. Where prompts don't share prefixes (no cache help), gist's 2–4x advantage holds on any card.",13,INK2,spacing=1.2)
 
 # ---------------- 10 THE LAB ----------------
 s=slide(); eyebrow(s,"The capability"); title(s,"We built the lab, not just the result")
@@ -193,8 +198,8 @@ first(tb(s,0.7,5.6,11.9,0.8),"One detached controller drives every recipe end to
 
 # ---------------- 11 LEDGER ----------------
 s=slide(); eyebrow(s,"Honest ledger"); title(s,"What’s proven, what isn’t")
-proven=["Equal task scores on our suites, every ratio.","Half-to-two-thirds fewer tokens read per turn.","Throughput rises under load; the fix removes the path failure.","The tooling works end to end."]
-notyet=["Generalisation on unseen, held-out work.","A saturation test → a real sessions-per-GPU / $ number.","The cause of the serving gain (a hypothesis).","Rare-tool reach (left unscored by harness faults).","Audit guarantees that compressed rules still bind."]
+proven=["Equal task scores on our suites, every ratio.","Half-to-two-thirds fewer tokens read per turn.","2x load within SLO, +44% peak on a tuned server, 3 repeats, 0 failures.","Incremental over prefix caching (2–4x without it); mechanism measured.","Throughput per dollar on two GPU classes; the fix removes the path failure."]
+notyet=["Generalisation on unseen, held-out work.","Per-hardware tuning (the H200 ran an H100-tuned config; one regression at 16 sessions).","Rare-tool reach (left unscored by harness faults).","Audit guarantees that compressed rules still bind."]
 def col(l,kicker,kc,items,linec):
     rrect(s,l,2.15,5.75,4.35,fill=BG2,line=linec,lw=1.0)
     tf=tb(s,l+0.3,2.4,5.15,3.9); first(tf,kicker.upper(),12,kc,bold=True,font=MONO,after=10)
@@ -206,17 +211,17 @@ first(tb(s,0.7,6.65,11.9,0.5),"An independent adversarial review of the whole pr
 # ---------------- 12 THE ASK ----------------
 s=slide(); eyebrow(s,"The ask"); title(s,"From “real lever” to a number you can budget")
 asks=[("1 · Validate","A held-out eval with paired, repeated runs. Is the parity real beyond our own tasks?"),
-      ("2 · Quantify","A saturation test under sustained load. Converts “throughput direction” into sessions per GPU and a cost per session."),
+      ("2 · Tune per hardware","Re-tune the server for each GPU class and re-measure; the capacity number is now measured on the H100, and the H200 showed one regression from an H100-tuned config."),
       ("3 · Pilot","A guarded rollout with explicit rule-audit and write-target checks at the serving boundary.")]
 cw=3.75
 for i,(k,body) in enumerate(asks):
     card(s,0.7+i*(cw+0.2),2.2,cw,3.4,k,PETROL,lambda tf,b=body:first(tf,b,15,INK,spacing=1.2))
-first(tb(s,0.7,6.0,11.9,0.7),"Bounded effort: a single GPU over days, not a new research program; the loop and serving path already exist.",13,INK2)
+first(tb(s,0.7,6.0,11.9,0.7),"Bounded effort: a single GPU over days, not a new research program. The capacity number is measured; what remains is proof on work we did not design.",13,INK2)
 
 # ---------------- 13 DECISION ----------------
 s=slide(); eyebrow(s,"Decision"); title(s,"The lever is real and cheap to prototype")
-first(tb(s,0.7,2.3,10.5,1.6),"Fund a short validation (eval + saturation) before any production commitment.",30,WHITE,bold=True,font=HEAD,spacing=1.1)
-first(tb(s,0.7,4.2,11.2,1.4),"The tooling exists, the risk is contained, and the upside is GPU capacity that compounds under load. What’s missing is a validated number, and that is days of work away, not months.",17,INK2,spacing=1.25)
+first(tb(s,0.7,2.3,10.5,1.6),"The capacity number is measured. Fund the held-out validation and a guarded pilot.",30,WHITE,bold=True,font=HEAD,spacing=1.1)
+first(tb(s,0.7,4.2,11.2,1.4),"The tooling exists, the risk is contained, and the upside is measured: 2x the load within SLO on the same GPU, or the same throughput per dollar from a cheaper GPU. What’s missing is proof on unseen work, and that is days of work away, not months.",17,INK2,spacing=1.25)
 first(tb(s,0.7,6.2,11.9,0.5),"GitHub: arunmenon/gisting-coding-agent  ·  weights & data on Hugging Face (private)",12,PETROL,font=MONO)
 
 # ---------------- APPENDIX: THE FAILURE ----------------

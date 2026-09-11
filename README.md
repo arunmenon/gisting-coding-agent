@@ -21,7 +21,8 @@ and unscored results plainly and incorporates an independent adversarial review.
 - The static preamble is ~17.5k–21k tokens, over 90% tool schemas, and ~0.72 of a short session's input.
 - A one-epoch, embedding-only gist matched the full prompt 12/12 on an easy suite at every ratio 2:1–16:1 (single runs).
 - Failure and fix: session-specific values folded into the gist broke path tasks; keeping them raw restored an 8:1 gist from 11/16 to 16/16.
-- On this hybrid-attention model the serving benefit is **throughput under load** (~16% more requests/min at 8 concurrent sessions), not faster single replies.
+- Serving (tuned server, repeated runs, H100 NVL): **2x the request rate within the latency SLO and +44% peak throughput**; incremental over prefix caching (2-4x without it); the resident-session ceiling is the recurrent-state cache, so the gist wins by turnover, not by fitting more sessions.
+- The gain is proportional to hardware headroom: near zero at normal load on an H200 (143 GB), so gisting is a **cost lever**: H100+gist matched H200+full on throughput per dollar. Benchmark code and results under `experiments/bench/` and `experiments/journeys/j10-bench/`.
 
 ## Source
 - `experiments/gist/` — span analysis, checkpoint growth, distillation training.

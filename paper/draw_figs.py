@@ -310,3 +310,49 @@ for lab,w in items:
 text(d,40,sb+128,"Idempotent per instance via state files: a dropped SSH connection resumes the run, it does not repeat it.",col=INK2,sz=12)
 save(im,"figloop.png"); os.replace(D+"/figloop.png",D+"/fig_loop.png")
 print("drew fig_loop v2")
+
+# ---------------- FIG 9 SERVING (J10 benchmark: curve + open-loop SLO) ----------------
+def linepanel(d,x0,y0,w,h,title,xs,series,ymax,xlabels,ylab,note=None,hlines=()):
+    text(d,x0,y0-34,title,sz=15,b=True)
+    base=y0+h; hbaseline(d,x0,y0,w,h)
+    n=len(xs); step=w/(n-1) if n>1 else w
+    def X(i): return x0+i*step
+    def Y(v): return base-(min(v,ymax)/ymax)*h
+    for k,(yv,col,lab) in enumerate(hlines):
+        dline(d,x0,x0+w,Y(yv),col); text(d,x0+w-160,Y(yv)-20 if k==0 else Y(yv)+6,lab,col=col,sz=11,b=True)
+    for name,col,vals,dash in series:
+        pts=[(X(i)*S,Y(v)*S) for i,v in enumerate(vals)]
+        if dash:
+            for i in range(len(pts)-1):
+                x1,y1=pts[i]; x2,y2=pts[i+1]; segs=8
+                for k in range(0,segs,2):
+                    a=k/segs; b=(k+1)/segs; d.line([x1+(x2-x1)*a,y1+(y2-y1)*a,x1+(x2-x1)*b,y1+(y2-y1)*b],fill=col,width=3*S)
+        else: d.line(pts,fill=col,width=4*S)
+        for (px,py),v in zip(pts,vals):
+            r=5*S; d.ellipse([px-r,py-r,px+r,py+r],fill=col)
+            if v>ymax: d.text((px-10*S,py-22*S),"^",fill=col,font=font(12,True))
+    for i,l in enumerate(xlabels):
+        f=font(12,True); tw=d.textlength(l,font=f); d.text((X(i)*S-tw/2,(base+8)*S),l,fill=INK,font=f)
+    for yv in range(0,int(ymax)+1,int(ymax/5)):
+        d.text(((x0-34)*S,(Y(yv)-7)*S),str(yv),fill=INK2,font=font(11))
+    text(d,x0,base+30,ylab,col=INK2,sz=11)
+    if note: text(d,x0,y0-12,note,col=INK2,sz=11)
+    # legend
+    lx=x0+8; ly=y0+8
+    for name,col,_,_ in series:
+        d.line([lx*S,(ly+7)*S,(lx+24)*S,(ly+7)*S],fill=col,width=4*S); d.text(((lx+30)*S,ly*S),name,fill=INK,font=font(12,True)); lx+=30+int(d.textlength(name,font=font(12,True))/S)+22
+im,d=canvas(1700,600)
+text(d,40,28,"Serving benchmark on a tuned server (H100 NVL 95 GB), full prompt vs gist",sz=19,b=True)
+text(d,40,56,"Same server configuration for both arms; 198 turn-ordered requests per arm; fixed 200-token outputs. Left: 3 repeats (spread within marker size). Right: 2 repeats.",col=INK2,sz=12)
+cs=["1","2","4","8","16","32","48","64"]
+linepanel(d,110,140,640,300,"Closed loop: throughput vs concurrent sessions (requests / min)",cs,
+  [("full prompt",GREY,[13.1,22.7,36.9,34.7,42.7,42.7,32.0,29.3],False),("gist 8:1",PLUM,[14.7,25.3,42.7,48.0,59.3,61.3,52.7,41.3],False),("gist 16:1",PETROL,[14.0,24.0,40.0,42.7,53.3,54.0,44.0,36.7],True)],
+  70,cs,"concurrent sessions  |  full prompt collapses beyond 32 (KV cache 100%); gist 8:1 peaks at 32, +44%")
+ol=["9","18","27","36","54","72"]
+linepanel(d,960,140,640,300,"Open loop: p95 end-to-end latency vs offered load (seconds)",ol,
+  [("full prompt",GREY,[7.3,8.4,8.7,10.4,23.4,79.5],False),("gist 8:1",PLUM,[5.0,6.7,6.7,7.7,16.6,26.5],False)],
+  30,ol,"offered requests / min (Poisson arrivals)  |  within the 2x SLO: full up to ~18, gist up to ~36",
+  hlines=[(8.5,GREY,"SLO full 8.5s"),(8.0,PLUM,"SLO gist 8.0s")])
+text(d,40,548,"Capacity depends on hardware headroom: on an H200 NVL (143 GB, same config) the peak gain was -2% at normal load and appeared only under pressure (3.1x at 128 sessions). Throughput per $/h: H100 full 16.2, H100 gist 23.2, H200 full 22.5.",col=INK2,sz=12)
+save(im,"fig7serving.png"); os.replace(D+"/fig7serving.png",D+"/fig7_serving.png")
+print("drew fig7_serving")

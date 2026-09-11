@@ -41,25 +41,39 @@ def main():
         concs=sorted(by[arm])
         base=[s["e2e_p50"] for s in by[arm].get(1,[])]  # c=1 median E2E (unloaded)
         base_med=st.mean([x for x in base if x]) if base else None
-        slo = base_med*2 if base_med else None
-        rows=[]; cap=None; peak_rpm=0
+        rows=[]; plateau=0; plateau_c=None
         for c in concs:
             ss=by[arm][c]
             tp=mean_std([s["throughput_rpm"] for s in ss])
             p95=mean_std([s["e2e_p95"] for s in ss])
             ttft=mean_std([s["ttft_p95"] for s in ss])
-            rows.append({"concurrency":c,"n":len(ss),"rpm":tp,"e2e_p95":p95,"ttft_p95":ttft})
-            if slo and p95[0] is not None and p95[0]<=slo:
-                cap=c; peak_rpm=max(peak_rpm, tp[0] or 0)
+            kv=mean_std([(s.get("engine") or {}).get("kv_usage_max") for s in ss])
+            rows.append({"concurrency":c,"n":len(ss),"rpm":tp,"e2e_p95":p95,"ttft_p95":ttft,"kv_max":kv})
+            if tp[0] and tp[0]>plateau: plateau=tp[0]; plateau_c=c
+        # capacity at several latency tolerances: highest c whose mean p95 E2E <= k x (c=1 median)
+        caps={}
+        for k in (2,3,4,6):
+            slo=base_med*k if base_med else None; cap=None; rpm_at=None
+            for r in rows:
+                if slo and r["e2e_p95"][0] is not None and r["e2e_p95"][0]<=slo: cap=r["concurrency"]; rpm_at=r["rpm"][0]
+            caps[f"{k}x"]={"slo_p95_s":round(slo,2) if slo else None,"sessions":cap,"rpm":rpm_at}
         report[arm]={"c1_median_e2e":round(base_med,3) if base_med else None,
-                     "slo_p95_e2e":round(slo,3) if slo else None,
-                     "capacity_sessions_at_slo":cap,
-                     "peak_rpm_within_slo":round(peak_rpm,2) if peak_rpm else None,
+                     "capacity_at_slo":caps,
+                     "peak_rpm":round(plateau,2),"peak_rpm_at_c":plateau_c,
                      "curve":rows}
     # capacity lift full -> gist
-    if "full" in report and "gist" in report:
-        cf=report["full"]["capacity_sessions_at_slo"]; cg=report["gist"]["capacity_sessions_at_slo"]
-        if cf and cg: report["capacity_lift_gist_vs_full"]=f"{cf} -> {cg} sessions ({round((cg/cf-1)*100)}%)"
+    pair=[(a,b) for a,b in (("full","gist8"),("full16","gist16")) if a in report and b in report]
+    for a,b in pair:
+        lift={}
+        for k,ca in report[a]["capacity_at_slo"].items():
+            cb=report[b]["capacity_at_slo"][k]
+            if ca["sessions"] and cb["sessions"]: lift[k]=f"{ca['sessions']} -> {cb['sessions']} sessions ({round((cb['sessions']/ca['sessions']-1)*100):+d}%)"
+        pa,pb=report[a]["peak_rpm"],report[b]["peak_rpm"]
+        ratio={}
+        for r in report[a]["curve"]:
+            m=[x for x in report[b]["curve"] if x["concurrency"]==r["concurrency"]]
+            if m and r["rpm"][0] and m[0]["rpm"][0]: ratio[r["concurrency"]]=round(m[0]["rpm"][0]/r["rpm"][0],2)
+        report[f"lift_{b}_vs_{a}"]={"capacity_at_slo":lift,"peak_rpm":f"{pa} -> {pb} ({round((pb/pa-1)*100):+d}%)" if pa else None,"rpm_ratio_by_concurrency":ratio}
     print(json.dumps(report,indent=2))
     json.dump(report,open(os.path.join(d,"capacity_report.json"),"w"),indent=2)
 

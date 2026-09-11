@@ -44,3 +44,7 @@ eval-r2/
 experiments/logs/
 experiments/analysis/__pycache__/
 *.log
+
+# provisioning/console logs (may contain tracebacks with secrets)
+experiments/journeys/**/*.out
+experiments/journeys/**/provision_state

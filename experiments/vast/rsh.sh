@@ -12,7 +12,7 @@ case "${1:-}" in
     IID=$2; PY=$(dirname "$0")/../.venv/bin/python3; KEY=$(cat ~/.vast_api_key)
     for i in $(seq 1 60); do   # up to 30 min: hosts pulling a large image can take >20 min to become reachable
       read DH DP PH PP ST <<< "$($PY -c "
-from vastai import VastAI; v=VastAI(api_key='$KEY'); i=[x for x in v.show_instances() if x['id']==$IID]
+from vastai import VastAI; v=VastAI(api_key=open(__import__('os').path.expanduser('~/.vast_api_key')).read().strip()); i=[x for x in v.show_instances() if x['id']==$IID]
 if not i: print('- - - - gone')
 else:
     x=i[0]; pm=(x.get('ports') or {}).get('22/tcp') or []

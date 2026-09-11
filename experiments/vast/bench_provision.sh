@@ -22,30 +22,30 @@ ms() { echo "$(date -u +%FT%TZ) $1" | tee -a $STATEF $JDIR/log.md; }   # milesto
 abort() {  # stall/failure after creation: destroy the box so a stuck provision is a bounded cost, not an open meter
   ms "ABORT: $1 -> destroying instance ${IID:-?}"
   if [ -n "${IID:-}" ]; then
-    $PY -c "from vastai import VastAI; VastAI(api_key='$KEY').destroy_instance(id=$IID)"
+    $PY -c "from vastai import VastAI; VastAI(api_key=open(__import__('os').path.expanduser('~/.vast_api_key')).read().strip()).destroy_instance(id=$IID)"
     HRS=$(python3 -c "print(round(($(date +%s)-${T_CREATE:-$(date +%s)})/3600,2))"); COST=$(python3 -c "print(round($HRS*${PRICE:-0},2))")
     sed -i '' "s/| $LEDGER_LABEL | $IID | \(.*\) | (running) | (running) |/| $LEDGER_LABEL | $IID | \1 | aborted ${HRS}h | \$$COST |/" ledger.md
   fi
-  sleep 5; $PY -c "from vastai import VastAI; import sys; v=VastAI(api_key='$KEY'); sys.exit(1 if any(i['id']==$IID for i in v.show_instances()) else 0)" && ms "destroy verified" || ms "WARNING: instance $IID still listed after destroy; destroy it manually"
+  sleep 5; $PY -c "from vastai import VastAI; import sys; v=VastAI(api_key=open(__import__('os').path.expanduser('~/.vast_api_key')).read().strip()); sys.exit(1 if any(i['id']==$IID for i in v.show_instances()) else 0)" && ms "destroy verified" || ms "WARNING: instance $IID still listed after destroy; destroy it manually"
   exit 1
 }
 check_deadline() { [ $(( ($(date +%s)-T_CREATE)/60 )) -ge "$LAUNCH_DEADLINE_MIN" ] && abort "launch deadline ${LAUNCH_DEADLINE_MIN}m exceeded during: $1"; }
 
 # --- credit gate ---
-CREDIT=$($PY -c "from vastai import VastAI; print(VastAI(api_key='$KEY').show_user()['credit'])")
+CREDIT=$($PY -c "from vastai import VastAI; print(VastAI(api_key=open(__import__('os').path.expanduser('~/.vast_api_key')).read().strip()).show_user()['credit'])")
 echo "credit: \$$CREDIT"; $PY -c "import sys; sys.exit(0 if float('$CREDIT')>=(5 if '$SMOKE'=='1' else 30) else 1)" || { echo "credit below est+reserve, refusing to provision"; exit 1; }
 
 # --- pick offer ---
 read OFFER PRICE <<< "$($PY - <<PY
 from vastai import VastAI
-v=VastAI(api_key="$KEY")
+v=VastAI(api_key=open(__import__("os").path.expanduser("~/.vast_api_key")).read().strip())
 o=v.search_offers(query="$GPU_QUERY", order="dph_total", limit=1)
 print((str(o[0]["id"])+" "+str(round(o[0]["dph_total"],2))) if o else " ")
 PY
 )"
 [ -n "$OFFER" ] || { echo "no offer for: $GPU_QUERY"; exit 1; }
 $PY -c "
-from vastai import VastAI; v=VastAI(api_key='$KEY'); o=[x for x in v.search_offers(query='$GPU_QUERY',order='dph_total',limit=5) if x['id']==$OFFER][0]
+from vastai import VastAI; v=VastAI(api_key=open(__import__('os').path.expanduser('~/.vast_api_key')).read().strip()); o=[x for x in v.search_offers(query='$GPU_QUERY',order='dph_total',limit=5) if x['id']==$OFFER][0]
 print('offer',o['id'],o['gpu_name'],o['gpu_ram'],'MB','\$%.2f/h'%o['dph_total'],'disk',int(o['disk_space']),'G inet',int(o['inet_down']),'rel',round(o['reliability2'],3),o['geolocation'])"
 
 # --- create + ledger ---
@@ -81,6 +81,6 @@ $RSH run $H $P "pgrep -f 'bench_[c]hain' >/dev/null && pgrep -f 'idle_[w]atchdog
 ms "LAUNCHED chain + watchdog on $IID ($H:$P) after $(( ($(date +%s)-T_CREATE)/60 ))m"
 if [ "$SMOKE" = 1 ]; then
   sleep 40; $RSH run $H $P 'cat /root/STATE' | grep -q BENCH_DONE && ms "SMOKE OK: provisioning path verified end to end" || ms "SMOKE FAILED: no BENCH_DONE marker"
-  $PY -c "from vastai import VastAI; VastAI(api_key='$KEY').destroy_instance(id=$IID)" && ms "smoke box $IID destroyed"
+  $PY -c "from vastai import VastAI; VastAI(api_key=open(__import__('os').path.expanduser('~/.vast_api_key')).read().strip()).destroy_instance(id=$IID)" && ms "smoke box $IID destroyed"
   sed -i '' "s/| $LEDGER_LABEL | $IID | \(.*\) | (running) | (running) |/| $LEDGER_LABEL | $IID | \1 | smoke | ~\$0.05 |/" ledger.md
 fi

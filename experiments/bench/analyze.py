@@ -22,6 +22,7 @@ def load(d):
         except Exception: continue
         if s.get("mode")!="closed": continue
         if "arm" not in s or s.get("concurrency") is None: continue
+        if TAG and s.get("tag")!=TAG: continue
         runs.append(s)
     return runs
 
@@ -30,8 +31,11 @@ def mean_std(xs):
     if not xs: return (None,None)
     return (round(st.mean(xs),3), round(st.pstdev(xs),3) if len(xs)>1 else 0.0)
 
+TAG="B1"
 def main():
+    global TAG
     d=sys.argv[1] if len(sys.argv)>1 else "."
+    if len(sys.argv)>2: TAG=sys.argv[2]   # experiment tag to analyze (default B1); pass "" for all
     runs=load(d)
     if not runs: sys.exit("no closed-loop run summaries with arm+concurrency in "+d)
     by=defaultdict(lambda: defaultdict(list))  # arm -> conc -> [summary]

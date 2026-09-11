@@ -7,7 +7,7 @@ Checklist (experiment-journey protocol):
 [x] 4. Offer 24548924: H100 NVL 95GB, $2.64/hr, Bulgaria, rel .995
 [x] 5. Instance 50565734 created 07:29Z; ledger row written
 [x] 6. Chain + watchdog launched 08:12Z via DIRECT endpoint 87.116.91.146:11377 (proxy ssh7:15734 denied publickey)
-[ ] 7. B0 smoke green before walking away
+[x] 7. B0_smoke_ok 08:23Z on paper baseline config (len131072 seqs64 util0.80 batched4096)
 [ ] 8. Monitored; results synced incrementally
 [ ] 9. Results in journeys/j10-bench/results/
 [ ] 10. Instance destroyed; ledger closed

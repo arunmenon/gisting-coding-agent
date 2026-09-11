@@ -13,3 +13,6 @@ Checklist (experiment-journey protocol):
 [ ] 10. Instance destroyed; ledger closed
 [ ] 11. journey.md written
 
+2026-09-11T07:29:06Z created instance 50565734 (offer 24548924, $?/hr) label=j10-bench
+2026-09-11T07:52:25Z ssh up: ssh7.vast.ai:15734
+2026-09-11T08:07:14Z proxy ssh (ssh7:15734) denied publickey persistently; provisioner killed; switching to DIRECT 87.116.91.146:11377 (key verified matches registered)

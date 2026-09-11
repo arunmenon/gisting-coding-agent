@@ -30,7 +30,7 @@ from vastai import VastAI; v=VastAI(api_key='$KEY'); o=[x for x in v.search_offe
 print('offer',o['id'],o['gpu_name'],o['gpu_ram'],'MB','\$%.2f/h'%o['dph_total'],'disk',int(o['disk_space']),'G inet',int(o['inet_down']),'rel',round(o['reliability2'],3),o['geolocation'])"
 
 # --- create + ledger ---
-OUT=$($VAST create instance $OFFER --image vllm/vllm-openai:v0.28.0 --disk $DISK --ssh --direct --label $LABEL --raw 2>&1 | sed "s/$KEY/REDACTED/g")
+OUT=$($VAST create instance $OFFER --image vllm/vllm-openai:v0.28.0 --disk $DISK --ssh --direct --label $LABEL --raw 2>&1)
 IID=$(echo "$OUT" | $PY -c "import sys,json; print(json.loads(sys.stdin.read()).get('new_contract',''))" 2>/dev/null)
 [ -n "$IID" ] || { echo "create failed: $OUT"; exit 1; }
 PRICE=$($PY -c "from vastai import VastAI; v=VastAI(api_key='$KEY'); print([x for x in v.search_offers(query='$GPU_QUERY',order='dph_total',limit=5) if x['id']==$OFFER][0]['dph_total'])" 2>/dev/null || echo "?")
@@ -40,7 +40,14 @@ echo "$IID" > journeys/j10-bench/instance_id
 
 # --- wait for ssh ---
 for i in $(seq 1 40); do
-  read H P <<< "$($PY -c "from vastai import VastAI; v=VastAI(api_key='$KEY'); i=[x for x in v.show_instances() if x['id']==$IID]; print((i[0].get('ssh_host') or '')+' '+str(i[0].get('ssh_port') or '') if i else ' ')")"
+  read H P <<< "$($PY -c "
+from vastai import VastAI; v=VastAI(api_key='$KEY'); i=[x for x in v.show_instances() if x['id']==$IID]
+if not i: print(' ')
+else:
+    x=i[0]; pm=(x.get('ports') or {}).get('22/tcp') or []
+    # direct endpoint (public ip + mapped port 22) is more reliable than the ssh proxy
+    if x.get('public_ipaddr') and pm: print(x['public_ipaddr']+' '+str(pm[0]['HostPort']))
+    else: print((x.get('ssh_host') or '')+' '+str(x.get('ssh_port') or ''))")"
   [ -n "$H" ] && [ -n "$P" ] && ssh $S -p $P root@$H 'echo ready' 2>/dev/null | grep -q ready && break
   sleep 30
 done
@@ -58,7 +65,7 @@ try scp $S -P $P loop/ratios/r8v2/gist_rows.pt root@$H:/root/gist_rows_r8v2.pt |
 try scp $S -P $P loop/ratios/r16/gist_rows.pt  root@$H:/root/gist_rows_r16.pt  || { echo "scp rows r16 failed"; exit 1; }
 try scp $S -P $P bench/corpus/reqs_*.jsonl bench/corpus/corpus_meta.json root@$H:/root/corpus/ || { echo "scp corpus failed"; exit 1; }
 # vast key for the watchdog (mode 600, never logged)
-try ssh $S -p $P root@$H "umask 077; printf '%s' '$KEY' > /root/.vast_key; chmod 600 /root/.vast_key; chmod +x /root/*.sh; echo keyok" | grep -q keyok || { echo "key install failed"; exit 1; }
+try scp $S -P $P ~/.vast_api_key root@$H:/root/.vast_key && try ssh $S -p $P root@$H "chmod 600 /root/.vast_key; chmod +x /root/*.sh; echo keyok" | grep -q keyok || { echo "key install failed"; exit 1; }
 
 # --- launch chain + watchdog ---
 try ssh $S -p $P root@$H "DEADLINE_H=$DEADLINE_H nohup setsid bash /root/bench_chain.sh > /root/chain.log 2>&1 < /dev/null & IDLE_MIN=$IDLE_MIN nohup setsid bash /root/idle_watchdog.sh $IID > /root/watchdog.log 2>&1 < /dev/null & sleep 3; tail -2 /root/STATE; pgrep -f 'idle_[w]atchdog' | head -1 | xargs echo watchdog_pid" | tee -a journeys/j10-bench/log.md

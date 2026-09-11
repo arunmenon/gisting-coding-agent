@@ -7,6 +7,9 @@ mark() { echo "$(date -u +%FT%TZ) $1" | tee -a /root/STATE; }
 R=/root/bench_results; mkdir -p $R; touch /root/CHAIN_RUNNING; trap 'rm -f /root/CHAIN_RUNNING' EXIT
 LG="python3 /root/loadgen.py --url http://127.0.0.1:8000"
 DEADLINE_H="${DEADLINE_H:-8}"; T0=$(date +%s)
+# trim knobs (B5 / cheaper reruns): FIXED_CFG="LEN,SEQS,UTIL,BATCHED" skips BT; B1_LADDER/B1_REPEATS override; RUN_*=0 skips a block
+FIXED_CFG="${FIXED_CFG:-}"; B1_LADDER="${B1_LADDER:-}"; B1_REPEATS="${B1_REPEATS:-3}"
+RUN_B0BASE="${RUN_B0BASE:-1}"; RUN_B2="${RUN_B2:-1}"; RUN_B3="${RUN_B3:-1}"; RUN_B4="${RUN_B4:-1}"; RUN_GIST16="${RUN_GIST16:-1}"
 over_deadline() { [ $(( ($(date +%s)-T0)/3600 )) -ge "$DEADLINE_H" ]; }
 healthy() { curl -s -m 20 localhost:8000/v1/models -o /dev/null -w "%{http_code}" | grep -q 200; }
 wait_health() { for i in $(seq 1 90); do healthy && return 0; [ -f /root/SERVE_FAILED ] && return 1; sleep 10; done; return 1; }
@@ -58,14 +61,17 @@ for f in glob.glob("/root/bench_results/B0smoke_*.json"):
 print("smoke ok")
 PY
 mark "B0_smoke_ok"
-prewarm reqs_gist8.jsonl; run gist8 reqs_gist8.jsonl B0base closed 8 1 90
-prewarm reqs_full.jsonl;  run full  reqs_full.jsonl  B0base closed 8 1 90
-mark "B0_done (paper-config reference at c=8 recorded)"
+if [ "$RUN_B0BASE" = 1 ]; then
+  prewarm reqs_gist8.jsonl; run gist8 reqs_gist8.jsonl B0base closed 8 1 90
+  prewarm reqs_full.jsonl;  run full  reqs_full.jsonl  B0base closed 8 1 90
+fi
+mark "B0_done"
 
 # ---- BT: serving-config tuning (same config will be used for BOTH arms) ----
 # candidates: LEN SEQS UTIL BATCHED   (fp8 KV excluded: needs a quality check first)
 CANDS="40960,64,0.90,8192 40960,128,0.90,8192 40960,256,0.92,16384 40960,128,0.92,16384"
 BEST=""; BEST_SCORE=0
+[ -n "$FIXED_CFG" ] && { BEST="$FIXED_CFG"; BEST_SCORE=1; CANDS=""; mark "BT skipped, fixed config $FIXED_CFG"; }
 for c in $CANDS; do
   over_deadline && { mark "DEADLINE during BT"; break; }
   IFS=, read LEN SEQS UTIL BAT <<< "$c"
@@ -84,9 +90,10 @@ mark "BT_done best=len:$LEN,seqs:$SEQS,util:$UTIL,batched:$BAT (score=$BEST_SCOR
 
 # ---- B1: saturation & capacity curve, full vs gist8, 3 repeats, balanced arm order ----
 LADDER="1 2 4 8 16 32 48 64"; [ "$SEQS" -ge 128 ] && LADDER="$LADDER 96 128"; [ "$SEQS" -ge 256 ] && LADDER="$LADDER 192 256"
+[ -n "$B1_LADDER" ] && LADDER="$B1_LADDER"
 echo "$LADDER" > $R/ladder.txt
 start_server $LEN $SEQS $UTIL $BAT 1 || { mark "B1_FAILED server"; exit 1; }
-for rep in 1 2 3; do
+for rep in $(seq 1 $B1_REPEATS); do
   over_deadline && { mark "DEADLINE during B1"; break; }
   if [ $((rep % 2)) -eq 1 ]; then ARMS="full gist8"; else ARMS="gist8 full"; fi
   for arm in $ARMS; do
@@ -99,7 +106,7 @@ done
 mark "B1_done"
 
 # ---- B2: KV-cache ceiling (max concurrent sequences, kv usage, preemptions) ----
-for arm in full gist8; do
+[ "$RUN_B2" = 1 ] && for arm in full gist8; do
   over_deadline && { mark "DEADLINE during B2"; break; }
   req=$([ $arm = full ] && echo reqs_full.jsonl || echo reqs_gist8.jsonl)
   prewarm $req; run $arm $req B2 closed $SEQS 1 120 --sample-every 2
@@ -107,7 +114,7 @@ done
 mark "B2_done"
 
 # ---- B3: open-loop Poisson arrivals, rising RPS, 2 repeats ----
-for rep in 1 2; do
+[ "$RUN_B3" = 1 ] && for rep in 1 2; do
   over_deadline && { mark "DEADLINE during B3"; break; }
   for arm in full gist8; do
     req=$([ $arm = full ] && echo reqs_full.jsonl || echo reqs_gist8.jsonl)
@@ -118,7 +125,7 @@ done
 mark "B3_done"
 
 # ---- B4: prefix-cache OFF ablation (cache-ON values come from B1) ----
-if ! over_deadline; then
+if [ "$RUN_B4" = 1 ] && ! over_deadline; then
   if start_server $LEN $SEQS $UTIL $BAT 0; then
     for rep in 1 2; do for arm in full gist8; do
       req=$([ $arm = full ] && echo reqs_full.jsonl || echo reqs_gist8.jsonl)
@@ -129,7 +136,7 @@ if ! over_deadline; then
 fi
 
 # ---- 16:1 arm on its own checkpoint (same tuned config) ----
-if ! over_deadline; then
+if [ "$RUN_GIST16" = 1 ] && ! over_deadline; then
   stop_server
   if build_ckpt out_r16 /root/gist_rows_r16.pt /root/qwen3.8-27b-gist16 && start_server $LEN $SEQS $UTIL $BAT 1 /root/qwen3.8-27b-gist16; then
     for rep in 1 2; do

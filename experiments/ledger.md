@@ -47,3 +47,4 @@ State verified stopped with intended_status stopped and no queued restart. The 4
 | 2026-09-11 | J10 smoke3 | 50586500 | smoke @ $0.05/hr | smoke | ~$0.05 |
 | 2026-09-11 | J10 B5 H200 | 50587237 | H200 NVL @ $3.6/hr | aborted 0.35h (host denied key) | $1.37 |
 | 2026-09-11 | J10 B5 H200 | 50588749 | H200 NVL @ $3.65/hr | 1.56 | $5.91 |
+| 2026-09-15 | J11 conn | 51097059 | H200 NVL @ $3.89/hr | aborted 0.12h | $0.47 |

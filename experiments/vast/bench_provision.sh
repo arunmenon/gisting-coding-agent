@@ -79,7 +79,18 @@ ms "shipped; launching chain"
 # --- launch chain + watchdog ---
 if [ "$SMOKE" = 1 ]; then $RSH run $H $P "printf '#!/bin/bash\necho \$(date -u +%%FT%%TZ) chain_start >> /root/STATE; sleep 30; echo \$(date -u +%%FT%%TZ) BENCH_DONE >> /root/STATE\n' > /root/$(basename $CHAIN_SRC)"; fi
 $RSH run $H $P "$CHAIN_ENV DEADLINE_H=$DEADLINE_H nohup setsid bash /root/$(basename $CHAIN_SRC) > /root/chain.log 2>&1 < /dev/null & IDLE_MIN=$IDLE_MIN nohup setsid bash /root/idle_watchdog.sh $IID > /root/watchdog.log 2>&1 < /dev/null & sleep 4; tail -2 /root/STATE" || abort "launch"
-$RSH run $H $P "pgrep -f 'bench_[c]hain' >/dev/null && pgrep -f 'idle_[w]atchdog' >/dev/null" || abort "chain or watchdog not running after launch"
+# Liveness: trust the chain's own marker file, not a process name. pgrep on the
+# chain was hardcoded to bench_chain and destroyed a healthy box running a
+# different CHAIN_SRC (2026-09-15). Booleans are returned as printed tokens so
+# rsh does not retry a legitimately false check as if it were a dropped link.
+ok=0
+for i in 1 2 3 4 5 6 7 8; do
+  S=$($RSH run $H $P 'cat /root/STATE 2>/dev/null; echo STATE_READ_OK' 2>/dev/null)
+  echo "$S" | grep -q "chain_start" && { ok=1; break; }
+  sleep 10
+done
+[ "$ok" = 1 ] || abort "chain never wrote a chain_start marker to /root/STATE"
+$RSH run $H $P "pgrep -f 'idle_[w]atchdog' >/dev/null && echo WD_OK || echo WD_MISSING" | grep -q WD_OK || abort "idle watchdog not running after launch"
 ms "LAUNCHED chain + watchdog on $IID ($H:$P) after $(( ($(date +%s)-T_CREATE)/60 ))m"
 if [ "$SMOKE" = 1 ]; then
   sleep 40; $RSH run $H $P 'cat /root/STATE' | grep -q BENCH_DONE && ms "SMOKE OK: provisioning path verified end to end" || ms "SMOKE FAILED: no BENCH_DONE marker"

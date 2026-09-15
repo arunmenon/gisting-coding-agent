@@ -1,0 +1,2 @@
+2026-09-15T08:08:01Z conn_chain_start deadline=3h cfg=40960,256,0.92,16384 concs='128 256' conns='100 512' dur=180s
+2026-09-15T08:08:03Z download_attempt_1

@@ -48,3 +48,4 @@ State verified stopped with intended_status stopped and no queued restart. The 4
 | 2026-09-11 | J10 B5 H200 | 50587237 | H200 NVL @ $3.6/hr | aborted 0.35h (host denied key) | $1.37 |
 | 2026-09-11 | J10 B5 H200 | 50588749 | H200 NVL @ $3.65/hr | 1.56 | $5.91 |
 | 2026-09-15 | J11 conn | 51097059 | H200 NVL @ $3.89/hr | aborted 0.12h | $0.47 |
+| 2026-09-15 | J11 conn r2 | 51099475 | H200 NVL @ $3.97/hr | 1.03 (08:38Z to 09:40Z) | $4.09 |

@@ -9,14 +9,14 @@ concurrency 128 and 256, client cap set explicitly to 100 (reproduces the confou
 and 512 (removes it). 180 s measurement, 30 s warm-up, 8 runs.
 
 ```
-[ ] 1. loadgen conn-limit fix committed (default unlimited, cap recorded per run)
-[ ] 2. provisioner takes CHAIN_SRC + MIN_CREDIT
-[ ] 3. offer selected, instance created, ledger row written
-[ ] 4. chain launched, checkpoint built, server up
-[ ] 5. B6 runs complete
-[ ] 6. results synced
-[ ] 7. instance destroyed, ledger closed
-[ ] 8. journey.md written
+[x] 1. loadgen conn-limit fix committed (default unlimited, cap recorded per run)
+[x] 2. provisioner takes CHAIN_SRC + MIN_CREDIT
+[x] 3. offer selected, instance created, ledger row written
+[x] 4. chain launched, checkpoint built, server up
+[x] 5. B6 runs complete
+[x] 6. results synced
+[x] 7. instance destroyed, ledger closed
+[x] 8. journey.md written
 ```
 
 ## Operations log
@@ -44,3 +44,10 @@ Fix: liveness is now established from the chain's own `chain_start` marker in /r
 polled for up to 80s, which is what actually matters and is chain-name independent. The
 watchdog check returns a printed token (WD_OK / WD_MISSING) so a false result is not retried
 as a dropped link. Cost of the defect: $0.47 and one relaunch.
+2026-09-15T08:38:05Z created instance 51099475 (offer 48497455, $3.97/hr) label=j11-conn-r2
+2026-09-15T08:38:05Z waiting for ssh on 51099475
+2026-09-15T08:41:22Z ssh up: ssh3.vast.ai:19474
+2026-09-15T08:41:26Z shipping scripts
+2026-09-15T08:42:58Z shipping corpus
+2026-09-15T08:43:46Z shipped; launching chain
+2026-09-15T08:44:04Z LAUNCHED chain + watchdog on 51099475 (ssh3.vast.ai:19474) after 5m

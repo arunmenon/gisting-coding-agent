@@ -1,0 +1,15 @@
+2026-09-11T12:24:48Z chain_start deadline=4h
+2026-09-11T12:24:52Z download_attempt_1
+2026-09-11T12:26:09Z ckpt_built out_r8v2 -> /root/qwen3.8-27b-gist (wrote 2171 gist rows into /root/qwen3.8-27b-gist/model-00003-of-00018.safetensors | mean row change 0.8264 (max 1.3579) | row norm before 0.467 after 0.960)
+2026-09-11T12:28:41Z server_up len=131072 seqs=64 util=0.80 batched=4096 prefix=1 ckpt=qwen3.8-27b-gist
+2026-09-11T12:30:15Z B0_smoke_ok
+2026-09-11T12:30:15Z B0_done
+2026-09-11T12:30:15Z BT skipped, fixed config 40960,256,0.92,16384
+2026-09-11T12:30:15Z BT_done best=len:40960,seqs:256,util:0.92,batched:16384 (score=1)
+2026-09-11T12:32:18Z server_up len=40960 seqs=256 util=0.92 batched=16384 prefix=1 ckpt=qwen3.8-27b-gist
+2026-09-11T13:04:59Z B1_repeat_1_done
+2026-09-11T13:37:13Z B1_repeat_2_done
+2026-09-11T13:37:13Z B1_done
+2026-09-11T13:46:57Z B2_done
+2026-09-11T13:46:57Z B3_done
+2026-09-11T13:47:09Z BENCH_DONE

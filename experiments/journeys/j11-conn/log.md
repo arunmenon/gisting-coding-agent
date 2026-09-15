@@ -272,6 +272,6 @@ instances remain.
 [x] 8.  journey.md written                                                          dc5063d
 [x] 9.  provisioning incident recorded and fixed                                    a0abd5f
 [x] 10. remediation work order issued to the reviewer  reviews/findings-20260915-j11-remediation.md
-[ ] 11. write-ups corrected (paper, deck, pptx, docx, cto-note, email-note, README)
+[x] 11. write-ups corrected (paper, deck, pptx, docx, cto-note, email-note, README)  Codex pass + SD caption fix
 [ ] 12. requester has seen the entry
 ```

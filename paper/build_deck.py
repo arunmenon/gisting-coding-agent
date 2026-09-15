@@ -1,5 +1,8 @@
 import json
-figs = json.load(open("paper_figs/figs.json"))
+from pathlib import Path
+
+HERE = Path(__file__).resolve().parent
+figs = json.load(open(HERE / "paper_figs/figs.json"))
 
 CSS = """
 :root{
@@ -121,7 +124,7 @@ slide('''
 <div class="grid4" style="margin-top:1.2rem">
   <div class="card copper"><div class="k">The tax</div><div class="v">At every step, the coding agent (Claude Code) re-sends the same fixed preamble to the model: <b>~17.5&ndash;21k</b> tokens, over <b>90% tool schemas</b>, about <b>0.72</b> of a short session.</div></div>
   <div class="card plum"><div class="k">The lever</div><div class="v">Replace it with a few thousand <b>learned tokens</b>. Base model frozen; deployed in a <b>proxy</b>, no client or engine change.</div></div>
-  <div class="card"><div class="k">The payoff</div><div class="v"><b>2x the request rate</b> within the latency SLO and <b>+44% peak throughput</b> on the same GPU (tuned server, 3 repeats). A <b>cost lever</b>: a cheaper GPU with gist matched a pricier one per dollar.</div></div>
+  <div class="card"><div class="k">The measurement</div><div class="v">H100 finite-window replay: <b>2x the target rate</b> passing the latency criterion and <b>+44% observed peak throughput</b>. Mechanism and deployment savings remain unestablished.</div></div>
   <div class="card warn"><div class="k">The caveat</div><div class="v">A <b>development study</b>: the lever is real; the dollar-per-session number is <b>not proven yet</b>.</div></div>
 </div>
 <p class="caption">You can stop here. The rest is the evidence, the catch, and what it would take to bank the saving.</p>''')
@@ -132,7 +135,7 @@ slide('''
 <h2>Why this is a total-cost question</h2>
 <p class="lead" style="margin-bottom:1.4rem">For a self-hosted agent, serving cost is driven by <b>how many tokens the model reads per turn</b>, which caps <b>how many sessions a GPU can carry</b>. Three cost drivers; gisting acts on the first.</p>
 <div class="grid3">
-  <div class="card" style="border-color:var(--petrol2)"><div class="k" style="color:var(--petrol)">GPU capacity &nbsp;&larr; gisting acts here</div><div class="v">Token-bound. Fewer input tokens per turn &rarr; each session finishes sooner &rarr; more load per GPU before latency degrades. <b>Measured: 2x at the SLO.</b></div></div>
+  <div class="card" style="border-color:var(--petrol2)"><div class="k" style="color:var(--petrol)">GPU capacity &nbsp;&larr; gisting acts here</div><div class="v">Shorter prompts change the work the server performs. The cause and deployment value of the measured difference remain open. <b>Replay: 2x the target rate passed the chosen criterion.</b></div></div>
   <div class="card"><div class="k" style="color:var(--ink2)">Engineering</div><div class="v">One-time: build the proxy, the template, and the training loop. The loop is reusable across models.</div></div>
   <div class="card"><div class="k" style="color:var(--ink2)">Risk</div><div class="v">Compressed rules are harder to audit; benefit is model-dependent. Managed, not eliminated.</div></div>
 </div>''')
@@ -201,41 +204,41 @@ def curve():
     o.append('</svg>'); return "".join(o)
 slide('''
 <div class="eyebrow">The payoff (measured)</div>
-<h2>The saving shows up as capacity under load</h2>
+<h2>Finite-window serving measurements</h2>
 <div class="figrow">
   <div>%s</div>
   <div>
     <div style="display:flex;gap:34px;flex-wrap:wrap;margin-bottom:.8rem">
-      <div><div class="bignum plum">2x</div><div class="unit">request rate within the latency SLO<br>(18 &rarr; 36 req/min, random arrivals)</div></div>
+      <div><div class="bignum plum">2x</div><div class="unit">target rate passing the latency criterion<br>(18 &rarr; 36 req/min, random arrivals)</div></div>
       <div><div class="bignum petrol">+44%%</div><div class="unit">peak throughput, same GPU<br>(42.7 &rarr; 61.3 req/min)</div></div>
     </div>
     <p class="lead">The advantage <b>grows with load</b> (1.12x at 1 session &rarr; 1.65x at 48) and is <b>incremental over prefix caching</b>: 2&ndash;4x larger when caching can't help.</p>
-    <div style="margin-top:.8rem"><span class="tag" style="color:#8a9aa0">full prompt</span> <span class="tag" style="color:#c39be0;border-color:#5a3f6e">gist 8:1</span> <span class="tag">H100 NVL 95 GB &middot; 201 runs &middot; 0 failures</span></div>
+    <div style="margin-top:.8rem"><span class="tag" style="color:#8a9aa0">full prompt</span> <span class="tag" style="color:#c39be0;border-color:#5a3f6e">gist 8:1</span> <span class="tag">J10: 202 runs across both GPUs &middot; 0 request errors</span></div>
   </div>
 </div>''' % curve())
 
 # ---- 9 WHY CAPACITY NOT SPEED ----
 layers="".join('<i class="on"></i>' if k<16 else '<i></i>' for k in range(64))
 slide('''
-<div class="eyebrow">The catch &middot; architecture</div>
-<h2>Why it&rsquo;s capacity, not speed</h2>
-<p class="lead">This model uses full attention in only <b>16 of its 64 layers</b>, and the number of sessions it can hold at once is set by a <b>fixed per-session state</b>, not by prompt length. So a shorter prompt does not fit many more sessions; it makes <b>each session finish sooner</b>. The win is throughput under load, not a faster single answer.</p>
+<div class="eyebrow">Correction &middot; J11</div>
+<h2>The residency explanation was wrong</h2>
+<p class="lead">External review found a 100-connection limit in our load generator. J11 removed it and measured 123 to 137 simultaneous requests on the H200. We withdrew the hardware-ceiling explanation. The cause of the throughput difference remains under investigation.</p>
 <div class="layers">%s</div>
-<p class="caption"><span style="color:var(--petrol)">&#9632;</span> full-attention layers &nbsp;&nbsp; <span style="color:#3a4a51">&#9632;</span> linear-attention layers (fixed-size state). Measured: at the resident-session ceiling both arms hold the same number of sessions; the gist just turns them over faster (H200: 85 vs 50 req/min at 100 resident).</p>''' % layers)
+<p class="caption" style="max-width:90ch">Architecture: 16 full-attention layers and 48 linear-attention layers. This diagram does not establish a residency mechanism. J11 measured 137 gist versus 126 full at 256 offered requests, with nearly full cache. Lifting the cap reduced throughput in three of four comparisons. One run per condition; no quality test.</p>''' % layers)
 
 # ---- 9b THE COST LEVER (new) ----
 slide('''
-<div class="eyebrow">The cost lever</div>
-<h2>Gisting lets a cheaper GPU match a pricier one</h2>
+<div class="eyebrow">Corrected cost comparison</div>
+<h2>Similar replay output per rental dollar</h2>
 <div style="display:flex;gap:40px;flex-wrap:wrap;margin:1.2rem 0 1rem">
-  <div><div class="bignum" style="color:#8a9aa0">16.2</div><div class="unit">H100 &middot; full prompt</div></div>
-  <div><div class="bignum plum">23.2</div><div class="unit">H100 &middot; gist 8:1</div></div>
-  <div><div class="bignum petrol">22.5</div><div class="unit">H200 &middot; full prompt</div></div>
-  <div><div class="bignum" style="color:#8a9aa0">22.0</div><div class="unit">H200 &middot; gist 8:1</div></div>
+  <div><div class="bignum" style="color:#8a9aa0">16.16</div><div class="unit">H100 &middot; full prompt</div></div>
+  <div><div class="bignum plum">23.23</div><div class="unit">H100 &middot; gist 8:1</div></div>
+  <div><div class="bignum petrol">23.38</div><div class="unit">H200 &middot; full prompt</div></div>
+  <div><div class="bignum" style="color:#8a9aa0">22.83</div><div class="unit">H200 &middot; gist 8:1</div></div>
 </div>
-<p class="caption" style="margin-top:0">peak requests per minute, per dollar-hour of GPU rental (spot prices on the day of the run)</p>
-<p class="lead" style="margin-top:1.2rem">On the bigger H200 (143 GB), gist&rsquo;s peak gain <b>vanished at normal load</b> (&minus;2%) and appeared only under pressure (3.1x at 128 sessions). On the H100 (95 GB) it was <b>+44%</b>. The benefit is proportional to <b>how memory-constrained the hardware is relative to the prompt</b>.</p>
-<p class="caption">Read it as a cost lever, not a speed lever: gist on the cheaper card delivers the expensive card&rsquo;s throughput per dollar. Where prompts don&rsquo;t share prefixes (no cache help), gist&rsquo;s 2&ndash;4x advantage holds on any card.</p>''')
+<p class="caption" style="margin-top:0">peak replay req/min per ($/h), quoted prices: H100 $2.64/h; H200 $3.65/h</p>
+<p class="lead" style="margin-top:1.2rem">H200 with the full prompt gives <b>23.38</b>, slightly above H100 with gist at <b>23.23</b>. Earlier figures mixed quoted and effective prices. <b>Cheaper-card substitution is not established.</b></p>
+<p class="caption">These peaks are finite-window replay measurements, with unequal hardware tuning and no quality test at load. Prefix-cache hit rates also differ: full 0.791 to 0.840, gist 0.580 to 0.626 in J11. The higher cached fraction favours full on that metric; its effect on the comparison was not controlled.</p>''')
 
 # ---- 10 THE LAB ----
 slide('''
@@ -261,14 +264,14 @@ slide('''
     <ul class="clean good" style="margin:0">
       <li>Equal task scores on our suites, every ratio.</li>
       <li>Half-to-two-thirds fewer tokens read per turn.</li>
-      <li><b>2x load within SLO, +44% peak</b> on a tuned server, 3 repeats, 0 failures.</li>
-      <li>Incremental over prefix caching (2&ndash;4x without it); mechanism measured.</li>
-      <li>Throughput per dollar on two GPU classes; the fix removes the path failure.</li>
+      <li>Finite-window H100 replay: <b>2x target rate, +44% observed peak</b>.</li>
+      <li>Cache-off advantage observed on H100; mechanism unestablished.</li>
+      <li>Quoted-price comparison corrected; J11 withdraws the H200 ceiling explanation.</li>
     </ul>
   </div>
   <div class="card warn"><div class="k">Not yet</div>
     <ul class="clean warn" style="margin:0">
-      <li>Generalisation on unseen, held-out work.</li>
+      <li>Generalisation, sustained capacity and savings on unseen work.</li>
       <li>Per-hardware tuning (the H200 ran an H100-tuned config; one regression at 16 sessions).</li>
       <li>Rare-tool reach (left unscored by harness faults).</li>
       <li>Audit guarantees that compressed rules still bind.</li>
@@ -283,17 +286,17 @@ slide('''
 <h2>From &ldquo;real lever&rdquo; to a number you can budget</h2>
 <div class="grid3" style="margin-top:1rem">
   <div class="card"><div class="k">1 &middot; Validate</div><div class="v">A held-out eval with paired, repeated runs. Answers: is the parity real beyond our own tasks?</div></div>
-  <div class="card"><div class="k">2 &middot; Tune per hardware</div><div class="v">Re-tune the server for each GPU class and re-measure; the capacity number is now measured on the H100, and the H200 showed one regression from an H100-tuned config.</div></div>
+  <div class="card"><div class="k">2 &middot; Tune per hardware</div><div class="v">Tune both prompt versions on each GPU and re-measure with explicit admission limits. The current results are finite-window replay observations.</div></div>
   <div class="card"><div class="k">3 &middot; Pilot</div><div class="v">A guarded rollout with explicit rule-audit and write-target checks at the serving boundary.</div></div>
 </div>
-<p class="caption">Bounded effort: a single GPU over days, not a new research program. The capacity number is measured; what remains is proof on work we did not design.</p>''')
+<p class="caption">Validate quality and sustained performance before a pilot. J11 corrects one instrument defect; the other review findings remain open.</p>''')
 
 # ---- 13 DECISION ----
 slide('''
 <div class="eyebrow">Decision</div>
-<h2>The lever is real and cheap to prototype</h2>
-<p class="big-verdict">The capacity number is measured. Fund the held-out validation and a guarded pilot.</p>
-<p class="lead" style="margin-top:1.3rem">The tooling exists, the risk is contained, and the upside is measured: <b>2x the load within SLO on the same GPU</b>, or the same throughput per dollar from a cheaper GPU. What&rsquo;s missing is proof on unseen work, and that is days of work away, not months.</p>
+<h2>Validate the deployment case</h2>
+<p class="big-verdict">Fund validation of quality, sustained performance and cost before a guarded pilot.</p>
+<p class="lead" style="margin-top:1.3rem">H100 replay recorded <b>2x the target rate passing the latency criterion and +44% observed peak throughput</b>. J11 withdrew the residency explanation. The corrected cost comparison does not establish cheaper-card substitution. Those open questions determine the next experiment.</p>
 <div class="stack" style="margin-top:1.6rem">GitHub: arunmenon/gisting-coding-agent &middot; weights &amp; data on Hugging Face (private)</div>''')
 
 # ---- APPENDIX: THE FAILURE ----
@@ -337,5 +340,6 @@ html = ('<title>Gisting: the capacity lever</title>\n'
  '<div class="deck">'+''.join(S)+'</div>'
  '<div class="rail"><div class="count" id="count">01 / 13</div><div class="dots" id="dots"></div></div>'
  '<script>'+JS+'</script>')
-open("gisting-cto-deck.html","w").write(html)
+(HERE / "gisting-cto-deck.html").write_text(html)
+(HERE.parent / "Gisting-CTO-deck.html").write_text(html)
 print("wrote gisting-cto-deck.html", len(html)//1024, "KB | slides", len(S))

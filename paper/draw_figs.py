@@ -1,6 +1,8 @@
 from PIL import Image, ImageDraw, ImageFont
-import math, os
-D = "/private/tmp/claude-501/-Users-arunmenon-projects-gisting/82deba89-c9a1-41e0-9e61-ec090b34e902/scratchpad/paper_figs"
+import math, os, sys, json, base64
+from pathlib import Path
+D = str(Path(__file__).resolve().parent / "paper_figs")
+SERVING_ONLY = "--serving-only" in sys.argv
 S = 2  # supersample for crisp downscaled output
 
 INK=(31,36,48); INK2=(96,102,112); WHITE=(255,255,255); PAPER=(255,255,255)
@@ -61,6 +63,8 @@ def text(d,x,y,s,col=INK,sz=14,b=False):
     d.text((x*S,y*S),s,fill=col,font=font(sz,b))
 
 def save(im,name):
+    if SERVING_ONLY and name != "fig7_serving.png":
+        return
     im=im.resize((im.width//S,im.height//S),Image.LANCZOS); im.save(D+"/"+name);
 
 # ---------------- FIG 1 SYSTEM ----------------
@@ -126,7 +130,7 @@ text(d,835,314,"both the cached teacher and the student feed the loss;",col=INK2
 text(d,835,334,"training becomes a student-only pass. Top-32 retains",col=INK2,sz=13)
 text(d,835,354,"~0.999 of teacher mass; the target is KL from this",col=INK2,sz=13)
 text(d,835,374,"truncated, renormalised teacher (tail not validated).",col=INK2,sz=13)
-save(im,"fig3cache.png"); os.replace(D+"/fig3cache.png",D+"/fig4_cache.png")
+save(im,"fig4_cache.png")
 
 # ---------------- FIG SPAN ----------------
 im,d=canvas(1700,580)
@@ -161,7 +165,7 @@ arrow(d,1050,178,1050,246)
 step(4,760,250,560,66,"count via engine tokenizer  ->  span = 17,540 tokens",PETROL,PETROL_F)
 arrow(d,1050,318,1050,372)
 rbox(d,720,376,640,74,"integrated share = static tokens x turns / total input tokens\n(reported per session; Figure 7)",SLATE,SLATE_F,tsz=13)
-save(im,"figspan.png"); os.replace(D+"/figspan.png",D+"/fig_span.png")
+save(im,"fig_span.png")
 
 # ---------------- FIG ARMS ----------------
 im,d=canvas(1560,560)
@@ -180,7 +184,7 @@ arrow(d,1279,318,1279,392)
 rbox(d,1064,396,430,84,"same programmatic checker\n->  score",NEUT,WHITE,tsz=15)
 text(d,40,512,"Both arms share the weights and the checker, so a gap isolates the span swap from any weight change; single-run gaps may still",col=INK2,sz=13)
 text(d,40,532,"come from generation or grader variability. Sub-agent child sessions run unswapped on the full prompt.",col=INK2,sz=13)
-save(im,"figarms.png"); os.replace(D+"/figarms.png",D+"/fig_arms.png")
+save(im,"fig_arms.png")
 
 # ---------------- FIG DEFECT ----------------
 im,d=canvas(1560,470)
@@ -196,7 +200,7 @@ rbox(d,292,286,470,64,"raw:  cwd, UUID, date, model name",NEUT,WHITE,tsz=14)
 arrow(d,766,318,900,318)
 text(d,912,292,"Write path  =",sz=14,b=True); text(d,912,318,".../scratchpad/<UUID>/work/s1/",col=PETROL,sz=14); text(d,912,340,"(correct)",col=PETROL,sz=12)
 text(d,40,410,"Hard suite at 8:1: 11/16 -> 16/16 (11/15 -> 15/15 excluding one defective delete probe; full prompt 15/15 in both). One rerun, one residual wrong-path event. ~196 session-specific tokens kept raw.",col=INK2,sz=13)
-save(im,"figdefect.png"); os.replace(D+"/figdefect.png",D+"/fig5_defect.png")
+save(im,"fig5_defect.png")
 
 print("redrawn polished:", [f for f in ("fig1_system","fig2_method","fig4_cache","fig_span","fig_arms","fig5_defect")])
 
@@ -249,7 +253,7 @@ for i,(v,lab) in enumerate(zip(shares,labels)):
     d.text(((bx+bw/2)*S-tw/2,(base-bh-18)*S),s,fill=INK,font=f)
     tw=d.textlength(lab,font=font(12,True)); d.text(((bx+bw/2)*S-tw/2,(base+8)*S),lab,fill=INK,font=font(12,True))
 text(d,x0,base+34,"Every session clears the 0.25 screening heuristic (not an economic break-even). Median 0.73; share falls within longer sessions as context grows.",col=INK2,sz=12)
-save(im,"figshare.png"); os.replace(D+"/figshare.png",D+"/fig3_share.png")
+save(im,"fig3_share.png")
 
 # ---------------- FIG 8 LATENCY (3 panels incl. E2E) ----------------
 im,d=canvas(1680,540)
@@ -264,7 +268,7 @@ panel(d,640,170,420,260,"Median end-to-end latency (s)","lower is better",gl,
       [("full",GREY,[8.23,12.96,14.95]),("gist",PLUM,[7.97,11.47,13.14])],17,f1)
 panel(d,1190,170,420,260,"p90 time-to-first-token (s)","lower is better",gl,
       [("full",GREY,[2.69,8.96,12.72]),("gist",PLUM,[2.37,5.46,11.52])],15,f1)
-save(im,"figlatency.png"); os.replace(D+"/figlatency.png",D+"/fig6_latency.png")
+save(im,"fig6_latency.png")
 print("redrew data charts: fig3_share, fig6_latency")
 
 # ---------------- FIG LOOP (the lab) ----------------
@@ -308,7 +312,7 @@ for lab,w in items:
     rbox(d,ix,iy,w,58,lab,COPPER,WHITE,tsz=12,shadow=False); ix+=w+30
 # idempotency note below the band
 text(d,40,sb+128,"Idempotent per instance via state files: a dropped SSH connection resumes the run, it does not repeat it.",col=INK2,sz=12)
-save(im,"figloop.png"); os.replace(D+"/figloop.png",D+"/fig_loop.png")
+save(im,"fig_loop.png")
 print("drew fig_loop v2")
 
 # ---------------- FIG 9 SERVING (J10 benchmark: curve + open-loop SLO) ----------------
@@ -343,16 +347,32 @@ def linepanel(d,x0,y0,w,h,title,xs,series,ymax,xlabels,ylab,note=None,hlines=())
         d.line([lx*S,(ly+7)*S,(lx+24)*S,(ly+7)*S],fill=col,width=4*S); d.text(((lx+30)*S,ly*S),name,fill=INK,font=font(12,True)); lx+=30+int(d.textlength(name,font=font(12,True))/S)+22
 im,d=canvas(1700,600)
 text(d,40,28,"Serving benchmark on a tuned server (H100 NVL 95 GB), full prompt vs gist",sz=19,b=True)
-text(d,40,56,"Same server configuration for both arms; 198 turn-ordered requests per arm; fixed 200-token outputs. Left: 3 repeats (spread within marker size). Right: 2 repeats.",col=INK2,sz=12)
+text(d,40,56,"Finite-window replay, fixed 200-token outputs. Plotted concurrency restricted to 1-64, below the client cap. Mechanism unestablished.",col=INK2,sz=12)
 cs=["1","2","4","8","16","32","48","64"]
 linepanel(d,110,140,640,300,"Closed loop: throughput vs concurrent sessions (requests / min)",cs,
   [("full prompt",GREY,[13.1,22.7,36.9,34.7,42.7,42.7,32.0,29.3],False),("gist 8:1",PLUM,[14.7,25.3,42.7,48.0,59.3,61.3,52.7,41.3],False),("gist 16:1",PETROL,[14.0,24.0,40.0,42.7,53.3,54.0,44.0,36.7],True)],
-  70,cs,"concurrent sessions  |  full prompt collapses beyond 32 (KV cache 100%); gist 8:1 peaks at 32, +44%")
+  70,cs,"concurrent requests  |  observed gist 8:1 peak at 32, +43.75%")
 ol=["9","18","27","36","54","72"]
 linepanel(d,960,140,640,300,"Open loop: p95 end-to-end latency vs offered load (seconds)",ol,
   [("full prompt",GREY,[7.3,8.4,8.7,10.4,23.4,79.5],False),("gist 8:1",PLUM,[5.0,6.7,6.7,7.7,16.6,26.5],False)],
-  30,ol,"offered requests / min (Poisson arrivals)  |  within the 2x SLO: full up to ~18, gist up to ~36",
+  30,ol,"target requests / min  |  chosen 2x criterion: full 18, gist 36",
   hlines=[(8.5,GREY,"SLO full 8.5s"),(8.0,PLUM,"SLO gist 8.0s")])
-text(d,40,548,"Capacity depends on hardware headroom: on an H200 NVL (143 GB, same config) the peak gain was -2% at normal load and appeared only under pressure (3.1x at 128 sessions). Throughput per $/h: H100 full 16.2, H100 gist 23.2, H200 full 22.5.",col=INK2,sz=12)
-save(im,"fig7serving.png"); os.replace(D+"/fig7serving.png",D+"/fig7_serving.png")
+text(d,40,548,"J11 withdrew the H200 hardware-ceiling explanation. Removing the client cap reduced throughput in three of four comparisons; lower-concurrency J10 figures are unaffected by that defect.",col=INK2,sz=12)
+save(im,"fig7_serving.png")
 print("drew fig7_serving")
+
+# Keep the HTML embedding index synchronized with the rendered PNGs.
+figure_files = {
+    "system": "fig1_system.png", "method": "fig2_method.png",
+    "share": "fig3_share.png", "cache": "fig4_cache.png",
+    "defect": "fig5_defect.png", "latency": "fig6_latency.png",
+    "span": "fig_span.png", "arms": "fig_arms.png",
+    "loop": "fig_loop.png", "serving": "fig7_serving.png",
+}
+index_path = Path(D) / "figs.json"
+figures = json.loads(index_path.read_text()) if index_path.exists() else {}
+for key, filename in figure_files.items():
+    if not SERVING_ONLY or key == "serving":
+        figures[key] = "data:image/png;base64," + base64.b64encode((Path(D) / filename).read_bytes()).decode()
+index_path.write_text(json.dumps(figures))
+print("updated figure embedding index")

@@ -1,12 +1,16 @@
 import base64, io, re
+from pathlib import Path
+
+HERE = Path(__file__).resolve().parent
 from bs4 import BeautifulSoup, NavigableString, Tag
 from docx import Document
 from docx.shared import Pt, Inches, RGBColor
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.enum.table import WD_TABLE_ALIGNMENT
+from docx.oxml import OxmlElement
 from PIL import Image
 
-soup = BeautifulSoup(open("gisting-neurips.html").read(), "html.parser")
+soup = BeautifulSoup(open(HERE / "gisting-neurips.html").read(), "html.parser")
 wrap = soup.select_one(".wrap")
 
 doc = Document()
@@ -59,8 +63,13 @@ def emit(node):
         else:
             add_inline(p, node)
     elif name in ("ul","ol"):
-        for li in node.find_all("li", recursive=False):
-            p = doc.add_paragraph(style="List Bullet" if name=="ul" else "List Number")
+        for index, li in enumerate(node.find_all("li", recursive=False), start=1):
+            p = doc.add_paragraph(style="List Bullet" if name=="ul" else "Normal")
+            if name == "ol":
+                # Keep each HTML list independent, including references after contributions.
+                p.paragraph_format.left_indent = Inches(0.25)
+                p.paragraph_format.first_line_indent = Inches(-0.25)
+                p.add_run(f"{index}. ")
             add_inline(p, li)
     elif name == "figure":
         img = node.find("img")
@@ -70,7 +79,8 @@ def emit(node):
             im = Image.open(io.BytesIO(raw)); w,h = im.size
             p = doc.add_paragraph(); p.alignment = WD_ALIGN_PARAGRAPH.CENTER
             run = p.add_run()
-            run.add_picture(io.BytesIO(raw), width=Inches(6.3))
+            run.add_picture(io.BytesIO(raw), width=min(Inches(6.3), doc.sections[-1].page_width - doc.sections[-1].left_margin - doc.sections[-1].right_margin))
+            p.paragraph_format.keep_with_next = True
         cap = node.find("figcaption")
         if cap:
             p = doc.add_paragraph(); add_inline(p, cap)
@@ -95,9 +105,14 @@ def emit_table(tbl):
     rows = tbl.find_all("tr")
     ncol = max(len(r.find_all(["td","th"])) for r in rows)
     t = doc.add_table(rows=0, cols=ncol); t.style = "Light Grid Accent 1"; t.alignment = WD_TABLE_ALIGNMENT.CENTER
-    for r in rows:
+    for index, r in enumerate(rows):
         cells = r.find_all(["td","th"])
-        row = t.add_row().cells
+        table_row = t.add_row()
+        row = table_row.cells
+        properties = table_row._tr.get_or_add_trPr()
+        properties.append(OxmlElement("w:cantSplit"))
+        if index == 0 and all(c.name == "th" for c in cells):
+            properties.append(OxmlElement("w:tblHeader"))
         for i,c in enumerate(cells):
             row[i].text = ""
             p = row[i].paragraphs[0]; rn = p.add_run(c.get_text())
@@ -108,6 +123,8 @@ for node in wrap.children:
     if isinstance(node, Tag):
         emit(node)
 
-out = "/Users/arunmenon/projects/gisting/Gisting-NeurIPS-paper.docx"
+out = HERE.parent / "Gisting-NeurIPS-paper.docx"
 doc.save(out)
-print("saved", out)
+print("saved", out, "| images", len(doc.inline_shapes), "| tables", len(doc.tables))
+assert len(doc.inline_shapes) == len(wrap.select("figure img"))
+assert len(doc.tables) == len(wrap.select("table"))

@@ -7,9 +7,12 @@ from pptx.chart.data import CategoryChartData
 from pptx.enum.chart import XL_CHART_TYPE, XL_LEGEND_POSITION
 from PIL import Image
 import os
+from pathlib import Path
 
-FIG="/private/tmp/claude-501/-Users-arunmenon-projects-gisting/82deba89-c9a1-41e0-9e61-ec090b34e902/scratchpad/paper_figs"
-OUT="/Users/arunmenon/projects/gisting/Gisting-CTO-deck.pptx"
+HERE = Path(__file__).resolve().parent
+
+FIG = str(HERE / "paper_figs")
+OUT = str(HERE.parent / "Gisting-CTO-deck.pptx")
 
 BG=RGBColor(0x0e,0x14,0x17); BG2=RGBColor(0x14,0x1d,0x21); INK=RGBColor(0xee,0xf3,0xf3)
 INK2=RGBColor(0x9f,0xb2,0xb6); LINE=RGBColor(0x25,0x33,0x3a); PETROL=RGBColor(0x3f,0xb0,0xc6)
@@ -86,7 +89,7 @@ s=slide(); eyebrow(s,"Bottom line up front"); title(s,"The answer in four lines"
 cw,gap=2.85,0.2; x0=0.7; y=2.1; ch=3.9
 cards=[("The tax",COPPER,"At every step, the coding agent (Claude Code) re-sends the same fixed preamble to the model: ~17.5–21k tokens, over 90% tool schemas, about 0.72 of a short session."),
        ("The lever",PLUM,"Replace it with a few thousand learned tokens. Base model frozen; deployed in a proxy, no client or engine change."),
-       ("The payoff",PETROL,"2x the request rate within the latency SLO and +44% peak throughput on the same GPU (tuned server, 3 repeats). A cost lever: a cheaper GPU with gist matched a pricier one per dollar."),
+       ("The measurement",PETROL,"H100 finite-window replay: 2x the target rate passing the latency criterion and +44% observed peak throughput. Mechanism and deployment savings remain unestablished."),
        ("The caveat",WARN,"A development study: the lever is real; the dollar-per-session number is not proven yet.")]
 for i,(k,c,body) in enumerate(cards):
     card(s,x0+i*(cw+gap),y,cw,ch,k,c,lambda tf,b=body:first(tf,b,15,INK,spacing=1.15))
@@ -96,7 +99,7 @@ first(tb(s,0.7,6.25,11.9,0.6),"You can stop here. The rest is the evidence, the 
 s=slide(); eyebrow(s,"The cost lens"); title(s,"Why this is a total-cost question")
 first(tb(s,0.7,2.0,11.6,1.0),"For a self-hosted agent, serving cost is driven by how many tokens the model reads per turn, which caps how many sessions a GPU can carry. Three cost drivers; gisting acts on the first.",17,INK2,spacing=1.2)
 cw=3.75; y=3.4; ch=2.9
-c3=[("GPU capacity  ← gisting acts here",PETROL,"Token-bound. Fewer input tokens per turn → each session finishes sooner → more load per GPU before latency degrades. Measured: 2x at the SLO.",PETROL2),
+c3=[("GPU capacity  ← gisting acts here",PETROL,"Shorter prompts change the work the server performs. Mechanism and deployment value remain open. Replay: 2x the target rate passed the chosen criterion.",PETROL2),
     ("Engineering",INK2,"One-time: build the proxy, the template, and the training loop. The loop is reusable across models.",LINE),
     ("Risk",INK2,"Compressed rules are harder to audit; the benefit is model-dependent. Managed, not eliminated.",LINE)]
 for i,(k,c,body,ln) in enumerate(c3):
@@ -147,7 +150,7 @@ rrect(s,0.7,5.7,4.6,0.55,fill=None,line=RGBColor(0x5a,0x4a,0x24),lw=1.0)
 first(tb(s,0.85,5.78,4.4,0.4),"single run · small, partly-reused suite",12,WARN,font=MONO)
 
 # ---------------- 8 PAYOFF (native line chart, measured) ----------------
-s=slide(); eyebrow(s,"The payoff (measured)"); title(s,"The saving shows up as capacity under load")
+s=slide(); eyebrow(s,"The payoff (measured)"); title(s,"Finite-window serving measurements")
 cd=CategoryChartData(); cd.categories=["1","2","4","8","16","32","48","64"]
 cd.add_series("full prompt",(13.1,22.7,36.9,34.7,42.7,42.7,32.0,29.3)); cd.add_series("gist 8:1",(14.7,25.3,42.7,48.0,59.3,61.3,52.7,41.3))
 gf=s.shapes.add_chart(XL_CHART_TYPE.LINE_MARKERS,Inches(0.7),Inches(2.1),Inches(7.4),Inches(4.6),cd)
@@ -160,27 +163,27 @@ for ax in (ch.category_axis,ch.value_axis):
     ax.tick_labels.font.color.rgb=INK2; ax.tick_labels.font.size=Pt(12); ax.format.line.color.rgb=LINE
 ch.value_axis.has_major_gridlines=True; ch.value_axis.major_gridlines.format.line.color.rgb=RGBColor(0x1b,0x26,0x2b)
 tf=tb(s,8.4,2.2,4.3,4.4)
-first(tf,"2x",30,PLUM,bold=True,font=MONO,after=2); addpara(tf,"request rate within the latency SLO (18 → 36 req/min, random arrivals)",12,INK2,font=MONO,after=12)
+first(tf,"2x",30,PLUM,bold=True,font=MONO,after=2); addpara(tf,"target rate passing the latency criterion (18 → 36 req/min)",12,INK2,font=MONO,after=12)
 addpara(tf,"+44%",30,PETROL,bold=True,font=MONO,after=2); addpara(tf,"peak throughput, same GPU (42.7 → 61.3 req/min)",12,INK2,font=MONO,after=14)
-addpara(tf,"The advantage grows with load (1.12x at 1 session → 1.65x at 48) and is incremental over prefix caching: 2–4x larger when caching can't help. 201 runs, 0 failures.",14,INK,spacing=1.2)
+addpara(tf,"The advantage grows with load (1.12x at 1 session → 1.65x at 48) and is incremental over prefix caching: 2–4x larger when caching can't help. J10: 202 runs across both GPUs, 0 request errors.",14,INK,spacing=1.2)
 
 # ---------------- 9 WHY CAPACITY ----------------
-s=slide(); eyebrow(s,"The catch · architecture"); title(s,"Why it’s capacity, not speed")
-first(tb(s,0.7,2.0,11.6,1.1),"This model uses full attention in only 16 of its 64 layers, and the number of sessions it can hold at once is set by a fixed per-session state, not by prompt length. A shorter prompt does not fit many more sessions; it makes each session finish sooner. The win is throughput under load, not a faster single answer.",17,INK2,spacing=1.2)
+s=slide(); eyebrow(s,"Correction · J11"); title(s,"The residency explanation was wrong")
+first(tb(s,0.7,2.0,11.6,1.1),'External review found a 100-connection limit in our load generator. J11 removed it and measured 123 to 137 simultaneous requests on the H200. We withdrew the hardware-ceiling explanation. The cause of the throughput difference remains under investigation.',17,INK2,spacing=1.2)
 gx,gy,cell,gp=0.7,3.5,0.42,0.1
 for k in range(64):
     col=k%16; row=k//16
     c=PETROL if k<16 else RGBColor(0x24,0x30,0x36)
     rrect(s,gx+col*(cell+gp),gy+row*(cell+gp),cell,cell,fill=c,line=None,shape=MSO_SHAPE.ROUNDED_RECTANGLE)
-first(tb(s,0.7,5.9,11.6,0.9),"■ full-attention layers      ■ linear-attention layers (fixed-size state).  Measured: at the resident-session ceiling both arms hold the same number of sessions; the gist turns them over faster (H200: 85 vs 50 req/min at 100 resident).",12.5,INK2,spacing=1.2)
+first(tb(s,0.7,5.8,11.6,1.15),'Architecture: 16 full-attention layers and 48 linear-attention layers. This diagram does not establish a residency mechanism. J11 measured 137 gist versus 126 full at 256 offered requests, with nearly full cache. Lifting the cap reduced throughput in three of four comparisons. One run per condition; no quality test.',12.5,INK2,spacing=1.15)
 
 # ---------------- 9b THE COST LEVER ----------------
-s=slide(); eyebrow(s,"The cost lever"); title(s,"Gisting lets a cheaper GPU match a pricier one")
-for i,(n,c,u) in enumerate([("16.2",SLATE,"H100 · full prompt"),("23.2",PLUM,"H100 · gist 8:1"),("22.5",PETROL,"H200 · full prompt"),("22.0",SLATE,"H200 · gist 8:1")]):
+s=slide(); eyebrow(s,"Corrected cost comparison"); title(s,"Similar replay output per rental dollar")
+for i,(n,c,u) in enumerate([("16.16",SLATE,"H100 · full prompt"),("23.23",PLUM,"H100 · gist 8:1"),("23.38",PETROL,"H200 · full prompt"),("22.83",SLATE,"H200 · gist 8:1")]):
     first(tb(s,0.7+i*3.0,2.2,2.8,0.8),n,34,c,bold=True,font=MONO); first(tb(s,0.7+i*3.0,2.95,2.8,0.5),u,12,INK2,font=MONO)
-first(tb(s,0.7,3.55,11.9,0.5),"peak requests per minute, per dollar-hour of GPU rental (spot prices on the day of the run)",12,INK2,font=MONO)
-first(tb(s,0.7,4.2,11.9,1.4),"On the bigger H200 (143 GB), gist's peak gain vanished at normal load (-2%) and appeared only under pressure (3.1x at 128 sessions). On the H100 (95 GB) it was +44%. The benefit is proportional to how memory-constrained the hardware is relative to the prompt.",17,INK,spacing=1.25)
-first(tb(s,0.7,5.8,11.9,1.0),"Read it as a cost lever, not a speed lever: gist on the cheaper card delivers the expensive card's throughput per dollar. Where prompts don't share prefixes (no cache help), gist's 2–4x advantage holds on any card.",13,INK2,spacing=1.2)
+first(tb(s,0.7,3.55,11.9,0.5),"peak replay req/min per ($/h), quoted prices: H100 $2.64/h; H200 $3.65/h",12,INK2,font=MONO)
+first(tb(s,0.7,4.2,11.9,1.25),"H200 with the full prompt gives 23.38, slightly above H100 with gist at 23.23. Earlier figures mixed quoted and effective prices. Cheaper-card substitution is not established.",17,INK,spacing=1.25)
+first(tb(s,0.7,5.65,11.9,1.2),"These peaks are finite-window replay measurements, with unequal hardware tuning and no quality test at load. Prefix-cache hit rates also differ: full 0.791 to 0.840, gist 0.580 to 0.626 in J11. The higher cached fraction favours full on that metric; its effect on the comparison was not controlled.",13,INK2,spacing=1.15)
 
 # ---------------- 10 THE LAB ----------------
 s=slide(); eyebrow(s,"The capability"); title(s,"We built the lab, not just the result")
@@ -198,8 +201,8 @@ first(tb(s,0.7,5.6,11.9,0.8),"One detached controller drives every recipe end to
 
 # ---------------- 11 LEDGER ----------------
 s=slide(); eyebrow(s,"Honest ledger"); title(s,"What’s proven, what isn’t")
-proven=["Equal task scores on our suites, every ratio.","Half-to-two-thirds fewer tokens read per turn.","2x load within SLO, +44% peak on a tuned server, 3 repeats, 0 failures.","Incremental over prefix caching (2–4x without it); mechanism measured.","Throughput per dollar on two GPU classes; the fix removes the path failure."]
-notyet=["Generalisation on unseen, held-out work.","Per-hardware tuning (the H200 ran an H100-tuned config; one regression at 16 sessions).","Rare-tool reach (left unscored by harness faults).","Audit guarantees that compressed rules still bind."]
+proven=["Equal task scores on our suites, every ratio.","Half-to-two-thirds fewer tokens read per turn.","Finite-window H100 replay: 2x target rate, +44% observed peak.","Cache-off advantage observed on H100; mechanism unestablished.","Quoted-price comparison corrected; J11 withdraws the H200 ceiling explanation."]
+notyet=["Generalisation, sustained capacity and savings on unseen work.","Per-hardware tuning (the H200 ran an H100-tuned config; one regression at 16 sessions).","Rare-tool reach (left unscored by harness faults).","Audit guarantees that compressed rules still bind."]
 def col(l,kicker,kc,items,linec):
     rrect(s,l,2.15,5.75,4.35,fill=BG2,line=linec,lw=1.0)
     tf=tb(s,l+0.3,2.4,5.15,3.9); first(tf,kicker.upper(),12,kc,bold=True,font=MONO,after=10)
@@ -211,17 +214,17 @@ first(tb(s,0.7,6.65,11.9,0.5),"An independent adversarial review of the whole pr
 # ---------------- 12 THE ASK ----------------
 s=slide(); eyebrow(s,"The ask"); title(s,"From “real lever” to a number you can budget")
 asks=[("1 · Validate","A held-out eval with paired, repeated runs. Is the parity real beyond our own tasks?"),
-      ("2 · Tune per hardware","Re-tune the server for each GPU class and re-measure; the capacity number is now measured on the H100, and the H200 showed one regression from an H100-tuned config."),
+      ("2 · Tune per hardware","Tune both prompt versions on each GPU and re-measure with explicit admission limits. The current results are finite-window replay observations."),
       ("3 · Pilot","A guarded rollout with explicit rule-audit and write-target checks at the serving boundary.")]
 cw=3.75
 for i,(k,body) in enumerate(asks):
     card(s,0.7+i*(cw+0.2),2.2,cw,3.4,k,PETROL,lambda tf,b=body:first(tf,b,15,INK,spacing=1.2))
-first(tb(s,0.7,6.0,11.9,0.7),"Bounded effort: a single GPU over days, not a new research program. The capacity number is measured; what remains is proof on work we did not design.",13,INK2)
+first(tb(s,0.7,6.0,11.9,0.7),"Validate quality and sustained performance before a pilot. J11 corrects one instrument defect; the other review findings remain open.",13,INK2)
 
 # ---------------- 13 DECISION ----------------
-s=slide(); eyebrow(s,"Decision"); title(s,"The lever is real and cheap to prototype")
-first(tb(s,0.7,2.3,10.5,1.6),"The capacity number is measured. Fund the held-out validation and a guarded pilot.",30,WHITE,bold=True,font=HEAD,spacing=1.1)
-first(tb(s,0.7,4.2,11.2,1.4),"The tooling exists, the risk is contained, and the upside is measured: 2x the load within SLO on the same GPU, or the same throughput per dollar from a cheaper GPU. What’s missing is proof on unseen work, and that is days of work away, not months.",17,INK2,spacing=1.25)
+s=slide(); eyebrow(s,"Decision"); title(s,"Validate the deployment case")
+first(tb(s,0.7,2.3,10.5,1.6),"Fund validation of quality, sustained performance and cost before a guarded pilot.",30,WHITE,bold=True,font=HEAD,spacing=1.1)
+first(tb(s,0.7,4.2,11.2,1.4),"H100 replay recorded 2x the target rate passing the latency criterion and +44% observed peak throughput. J11 withdrew the residency explanation. The corrected cost comparison does not establish cheaper-card substitution. Those open questions determine the next experiment.",17,INK2,spacing=1.25)
 first(tb(s,0.7,6.2,11.9,0.5),"GitHub: arunmenon/gisting-coding-agent  ·  weights & data on Hugging Face (private)",12,PETROL,font=MONO)
 
 # ---------------- APPENDIX: THE FAILURE ----------------

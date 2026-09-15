@@ -4,7 +4,9 @@
 (none created by this program)
 (none other created by this program)
 
-Note: instance 49274914 (1x RTX 3060, vastai/kvm ubuntu_terminal, $0.071/hr, running since 2026-08-30 15:38Z) pre-dates this program and was NOT created or touched by it. It bills about $1.70/day while it runs.
+Note: instance 49274914 (1x RTX 3060, vastai/kvm ubuntu_terminal, $0.071/hr, running since 2026-08-30 15:38Z) pre-dates this program and was NOT created by it.
+STOPPED 2026-09-15 on the operator's instruction after it was found idle for about 12 days (cpu_util 0.0, gpu_util none), billing about $1.70/day.
+State verified stopped with intended_status stopped and no queued restart. The 40 GB disk is retained and still bills roughly $0.27/day; the box can be restarted if an owner turns up.
 
 | Date | Journey | Instance | GPU | Hours | Cost |
 |------|---------|----------|-----|-------|------|

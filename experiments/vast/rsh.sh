@@ -23,6 +23,7 @@ else:
       sleep 30
     done; echo "no endpoint answered for $IID" >&2; exit 1 ;;
   run)  H=$2; P=$3; shift 3; n=1; while ! ssh "${O[@]}" -p "$P" "root@$H" "$@"; do echo "  [rsh] run attempt $n/$TRIES failed" >&2; [ $n -ge $TRIES ] && exit 1; n=$((n+1)); sleep $PAUSE; done ;;
+  get)  H=$2; P=$3; SRC=$4; DEST=$5; n=1; while ! scp -q "${O[@]}" -P "$P" -r "root@$H:$SRC" "$DEST"; do echo "  [rsh] get attempt $n/$TRIES failed" >&2; [ $n -ge $TRIES ] && exit 1; n=$((n+1)); sleep $PAUSE; done ;;
   put)  H=$2; P=$3; shift 3; n=1; DEST="${@: -1}"; SRC=("${@:1:$#-1}"); while ! scp -q "${O[@]}" -P "$P" -r "${SRC[@]}" "root@$H:$DEST"; do echo "  [rsh] put attempt $n/$TRIES failed" >&2; [ $n -ge $TRIES ] && exit 1; n=$((n+1)); sleep $PAUSE; done ;;
   *) echo "usage: rsh.sh pick|run|put ..." >&2; exit 2 ;;
 esac

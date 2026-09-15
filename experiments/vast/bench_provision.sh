@@ -9,6 +9,8 @@ VAST=.venv/bin/vastai; PY=.venv/bin/python3
 KEY=$(cat ~/.vast_api_key)
 LABEL="${LABEL:-j10-bench}"; DISK="${DISK:-160}"; DEADLINE_H="${DEADLINE_H:-8}"; IDLE_MIN="${IDLE_MIN:-45}"
 JDIR="${JDIR:-$JDIR}"; LEDGER_LABEL="${LEDGER_LABEL:-J10 bench}"; GPU_LABEL="${GPU_LABEL:-H100 NVL}"
+CHAIN_SRC="${CHAIN_SRC:-vast/bench_chain.sh}"   # which on-box chain to ship and run
+MIN_CREDIT="${MIN_CREDIT:-30}"                     # estimated cost + $10 reserve
 CHAIN_ENV="${CHAIN_ENV:-}"        # e.g. FIXED_CFG=40960,256,0.92,16384 B1_LADDER='1 2 4 8 16 32 64 128' B1_REPEATS=2 RUN_B3=0
 SMOKE="${SMOKE:-0}"              # 1: ship + launch a trivial chain on a cheap box, verify milestones, destroy. Tests the provisioning path.
 IMAGE="${IMAGE:-vllm/vllm-openai:v0.28.0}"; [ "$SMOKE" = 1 ] && IMAGE="${SMOKE_IMAGE:-pytorch/pytorch:2.3.1-cuda12.1-cudnn8-runtime}"   # smoke: small image -> fast boot
@@ -33,7 +35,7 @@ check_deadline() { [ $(( ($(date +%s)-T_CREATE)/60 )) -ge "$LAUNCH_DEADLINE_MIN"
 
 # --- credit gate ---
 CREDIT=$($PY -c "from vastai import VastAI; print(VastAI(api_key=open(__import__('os').path.expanduser('~/.vast_api_key')).read().strip()).show_user()['credit'])")
-echo "credit: \$$CREDIT"; $PY -c "import sys; sys.exit(0 if float('$CREDIT')>=(5 if '$SMOKE'=='1' else 30) else 1)" || { echo "credit below est+reserve, refusing to provision"; exit 1; }
+echo "credit: \$$CREDIT"; $PY -c "import sys; sys.exit(0 if float('$CREDIT')>=(5 if '$SMOKE'=='1' else $MIN_CREDIT) else 1)" || { echo "credit below est+reserve, refusing to provision"; exit 1; }
 
 # --- pick offer ---
 read OFFER PRICE <<< "$($PY - <<PY
@@ -65,7 +67,7 @@ ms "ssh up: $H:$P"; echo "$H $P" > $JDIR/ssh
 
 # --- ship files (each step is a milestone; failures are printed, not swallowed) ---
 $RSH run $H $P 'mkdir -p /root/gist /root/corpus /root/bench_results' || abort "mkdir"; ms "shipping scripts"
-$RSH put $H $P vast/bench_chain.sh vast/serve_bench.sh vast/supervise_bench.sh vast/apply_gist_delta_bench.sh vast/idle_watchdog.sh gist/mask_gist_logits.py gist/out/chat_template_gist.jinja bench/loadgen.py /root/ || abort "scp scripts"
+$RSH put $H $P $CHAIN_SRC vast/serve_bench.sh vast/supervise_bench.sh vast/apply_gist_delta_bench.sh vast/idle_watchdog.sh gist/mask_gist_logits.py gist/out/chat_template_gist.jinja bench/loadgen.py /root/ || abort "scp scripts"
 $RSH put $H $P gist/span.py gist/segments.py gist/prepare_checkpoint.py gist/export_rows.py gist/dataset.py /root/gist/ || abort "scp gist"
 $RSH put $H $P gist/out_r8v2 gist/out_r16 /root/gist/ || abort "scp maps"; check_deadline "ship maps"
 $RSH put $H $P loop/ratios/r8v2/gist_rows.pt /root/gist_rows_r8v2.pt || abort "scp rows r8v2"
@@ -75,8 +77,8 @@ $RSH put $H $P ~/.vast_api_key /root/.vast_key && $RSH run $H $P 'chmod 600 /roo
 ms "shipped; launching chain"
 
 # --- launch chain + watchdog ---
-if [ "$SMOKE" = 1 ]; then $RSH run $H $P "printf '#!/bin/bash\necho \$(date -u +%%FT%%TZ) chain_start >> /root/STATE; sleep 30; echo \$(date -u +%%FT%%TZ) BENCH_DONE >> /root/STATE\n' > /root/bench_chain.sh"; fi
-$RSH run $H $P "$CHAIN_ENV DEADLINE_H=$DEADLINE_H nohup setsid bash /root/bench_chain.sh > /root/chain.log 2>&1 < /dev/null & IDLE_MIN=$IDLE_MIN nohup setsid bash /root/idle_watchdog.sh $IID > /root/watchdog.log 2>&1 < /dev/null & sleep 4; tail -2 /root/STATE" || abort "launch"
+if [ "$SMOKE" = 1 ]; then $RSH run $H $P "printf '#!/bin/bash\necho \$(date -u +%%FT%%TZ) chain_start >> /root/STATE; sleep 30; echo \$(date -u +%%FT%%TZ) BENCH_DONE >> /root/STATE\n' > /root/$(basename $CHAIN_SRC)"; fi
+$RSH run $H $P "$CHAIN_ENV DEADLINE_H=$DEADLINE_H nohup setsid bash /root/$(basename $CHAIN_SRC) > /root/chain.log 2>&1 < /dev/null & IDLE_MIN=$IDLE_MIN nohup setsid bash /root/idle_watchdog.sh $IID > /root/watchdog.log 2>&1 < /dev/null & sleep 4; tail -2 /root/STATE" || abort "launch"
 $RSH run $H $P "pgrep -f 'bench_[c]hain' >/dev/null && pgrep -f 'idle_[w]atchdog' >/dev/null" || abort "chain or watchdog not running after launch"
 ms "LAUNCHED chain + watchdog on $IID ($H:$P) after $(( ($(date +%s)-T_CREATE)/60 ))m"
 if [ "$SMOKE" = 1 ]; then

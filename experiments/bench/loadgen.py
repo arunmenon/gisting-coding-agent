@@ -83,10 +83,18 @@ async def sampler(base, every, stop_flag, samples):
         m=metrics(base); m["t"]=time.time(); samples.append(m)
         await asyncio.sleep(every)
 
+def make_session(a):
+    # Explicit connector. aiohttp's default ClientSession caps simultaneous
+    # connections at 100, which silently bounds in-flight requests above that
+    # concurrency and confounds any residency measurement (review F-4-1).
+    # limit=0 means unlimited; --conn-limit sets a deliberate cap for the
+    # experiment that measures the effect of the cap itself.
+    return aiohttp.ClientSession(connector=aiohttp.TCPConnector(limit=a.conn_limit, limit_per_host=a.conn_limit))
+
 async def closed_loop(a, reqs):
     rnd=random.Random(a.seed); results=[]; start=time.perf_counter(); stop=start+a.warmup+a.duration
     idx={"i":0}
-    async with aiohttp.ClientSession() as s:
+    async with make_session(a) as s:
         async def worker():
             while time.perf_counter()<stop:
                 # turn-ordered round-robin so prefix caching sees realistic sharing
@@ -99,7 +107,7 @@ async def closed_loop(a, reqs):
 async def open_loop(a, reqs):
     rnd=random.Random(a.seed); results=[]; tasks=[]; start=time.perf_counter(); stop=start+a.warmup+a.duration
     idx={"i":0}
-    async with aiohttp.ClientSession() as s:
+    async with make_session(a) as s:
         async def fire(r):
             sent=time.perf_counter(); rec=await one_request(s,a.url,a.model,r["prompt"],a.max_tokens)
             rec["sent_rel"]=sent-start; results.append(rec)
@@ -133,7 +141,7 @@ def summarize(results, a, m0, m1, samples):
         eng["kv_usage_max"]=max(kv) if kv else None; eng["kv_usage_mean"]=round(sum(kv)/len(kv),3) if kv else None
     return {"arm":a.arm,"tag":a.tag,"repeat":a.repeat,"mode":a.mode,
         "concurrency":a.concurrency if a.mode=="closed" else None,"rps":a.rps if a.mode=="open" else None,
-        "max_tokens":a.max_tokens,"warmup_s":a.warmup,"duration_s":dur,"requests_file":os.path.basename(a.requests),"ts":time.time(),
+        "max_tokens":a.max_tokens,"conn_limit":a.conn_limit,"warmup_s":a.warmup,"duration_s":dur,"requests_file":os.path.basename(a.requests),"ts":time.time(),
         "requests_total":len(steady),"requests_ok":len(ok),"errors":len(steady)-len(ok),
         "err_kinds":{k:sum(1 for r in steady if r["err"]==k) for k in set(r["err"] for r in steady if r["err"])},
         "throughput_rpm":round(len(ok)/dur*60,2),"out_tokens_per_s":round(sum(r["completion_tokens"] for r in ok)/dur,1),
@@ -152,6 +160,8 @@ def main():
     ap.add_argument("--warmup",type=float,default=15); ap.add_argument("--duration",type=float,default=90)
     ap.add_argument("--max-tokens",type=int,default=200); ap.add_argument("--seed",type=int,default=0)
     ap.add_argument("--sample-every",type=float,default=5.0); ap.add_argument("--out",required=True)
+    # 0 = unlimited (aiohttp's own default of 100 is never used implicitly)
+    ap.add_argument("--conn-limit",type=int,default=0)
     a=ap.parse_args()
     reqs=load_requests(a.requests)
     m0=metrics(a.url); samples=[]; flag={"stop":False}

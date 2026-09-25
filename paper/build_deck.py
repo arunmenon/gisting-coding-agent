@@ -118,10 +118,10 @@ def curve():
     full=[13.1,22.7,36.9,34.7,42.7,42.7,32.0,29.3]; gist=[14.7,25.3,42.7,48.0,59.3,61.3,52.7,41.3]
     W,H=680,340; L,B,T=54,54,40; ymax=70; pw=W-L-24; ph=H-B-T
     X=lambda i: L+i*pw/(len(cs)-1); Y=lambda v: H-B-v/ymax*ph
-    o=['<svg viewBox="0 0 %d %d" width="100%%" role="img" aria-label="Throughput versus concurrent sessions, full prompt versus gist">'%(W,H)]
+    o=['<svg viewBox="0 0 %d %d" width="100%%" role="img" aria-label="Throughput versus concurrent sessions, full prompt versus Steno">'%(W,H)]
     o.append('<line x1="%d" y1="%d" x2="%d" y2="%d" stroke="#2b3a41" stroke-width="1.5"/>'%(L,H-B,W-16,H-B))
     for yv in (14,28,42,56,70): o.append('<text x="%d" y="%.1f" fill="#6f8085" font-size="11" text-anchor="end">%d</text>'%(L-8,Y(yv)+4,yv))
-    for name,vals,col in (("full prompt",full,"#8a9aa0"),("gist 8:1",gist,"#c39be0")):
+    for name,vals,col in (("full prompt",full,"#8a9aa0"),("Steno 8:1",gist,"#c39be0")):
         pts=" ".join("%.1f,%.1f"%(X(i),Y(v)) for i,v in enumerate(vals))
         o.append('<polyline points="%s" fill="none" stroke="%s" stroke-width="4" stroke-linejoin="round"/>'%(pts,col))
         for i,v in enumerate(vals): o.append('<circle cx="%.1f" cy="%.1f" r="5" fill="%s"/>'%(X(i),Y(v),col))
@@ -135,8 +135,8 @@ def curve():
 slide('''
 <div class="title-wrap">
   <div class="eyebrow">Lattice &middot; cost optimization &middot; new pillar</div>
-  <h1>Gisting: cutting the repeated prompt in agent calls</h1>
-  <p class="lead">A learned shorthand for the fixed preamble a coding agent re-sends to the model. Shown on one harness and model pair; the next step tests whether it carries to others.</p>
+  <h1>Steno: learned prompt compression for agent calls</h1>
+  <p class="lead">A learned shorthand for the fixed preamble a coding agent re-sends to the model: the technique Shopify calls gisting. Shown on one harness and model pair; the next step tests whether it carries to others.</p>
   <div class="byline">Arun Menon &middot; arumenon@paypal.com</div>
   <div class="stack">Pair studied: Claude Code &rarr; proxy &rarr; vLLM &rarr; Qwen3.8-27B (open weights, self-hosted)</div>
 </div>''')
@@ -146,7 +146,7 @@ slide('''
 <div class="eyebrow">Bottom line up front</div>
 <h2>The answer in four lines</h2>
 <div class="grid4" style="margin-top:1.2rem">
-  <div class="card"><div class="k">Where it fits</div><div class="v">A new pillar under <b>Lattice</b>, alongside the meta-harness, adaptive routing and model distillation tracks. Gisting shortens the <b>fixed prompt</b> a coding agent re-sends to the model.</div></div>
+  <div class="card"><div class="k">Where it fits</div><div class="v">A new pillar under <b>Lattice</b>, alongside the meta-harness, adaptive routing and model distillation tracks. Steno shortens the <b>fixed prompt</b> a coding agent re-sends to the model.</div></div>
   <div class="card plum"><div class="k">What we showed</div><div class="v">On Claude Code with Qwen at 8:1, input per turn fell from <b>24.3k to 9.4k</b> tokens with scores matching the full prompt on our suites. Short H100 replays: <b>2x the request rate</b> within each arm&rsquo;s latency threshold, <b>+44% peak</b> throughput.</div></div>
   <div class="card warn"><div class="k">What it isn&rsquo;t yet</div><div class="v">One pair, our own task suites, short replay windows. <b>Savings per successful task are not proven</b>, and the mechanism is still open.</div></div>
   <div class="card good"><div class="k">The ask</div><div class="v">Run the same experiment suite on the <b>next harness and distilled-model pair</b>, validate on held-out work, then a guarded pilot.</div></div>
@@ -156,12 +156,12 @@ slide('''
 slide('''
 <div class="eyebrow">Lattice &middot; cost optimization</div>
 <h2>A new pillar under Lattice</h2>
-<p class="lead" style="margin-bottom:1.4rem">Gisting targets serving cost by shortening repeated prompts. Short H100 replays showed higher throughput; <b>savings per successful task are not yet proven</b>.</p>
+<p class="lead" style="margin-bottom:1.4rem">Steno targets serving cost by shortening repeated prompts. Short H100 replays showed higher throughput; <b>savings per successful task are not yet proven</b>.</p>
 <div class="grid4">
   <div class="card"><div class="k">Meta-harness</div></div>
   <div class="card"><div class="k">Adaptive routing</div></div>
   <div class="card"><div class="k">Model distillation</div></div>
-  <div class="card plum" style="border-color:#5a3f6e"><div class="k">Gisting &middot; new</div><div class="v">This deck.</div></div>
+  <div class="card plum" style="border-color:#5a3f6e"><div class="k">Steno &middot; new</div><div class="v">This deck.</div></div>
 </div>''')
 
 # ---- 4 SPAN + RECIPE ----
@@ -178,7 +178,7 @@ slide('''
   <div><div class="bignum petrol">0.72</div><div class="unit">mean share of input across<br>eight logged sessions</div></div>
 </div>
 <div class="grid2" style="margin-top:1.3rem">
-  <div class="card"><div class="k">Recipe used</div><div class="v">Base model frozen. New gist rows trained by self-distillation. A proxy swaps them in for the fixed span.</div></div>
+  <div class="card"><div class="k">Recipe used</div><div class="v">Base model frozen. New token rows trained by self-distillation. A proxy swaps them in for the fixed span.</div></div>
   <div class="card copper"><div class="k">Rerun per pair</div><div class="v">The whole experiment suite, span study first, runs again for <b>each harness and distilled-model pair</b>. Needs a model whose weights we host.</div></div>
 </div>
 <p class="caption">Measured on Claude Code with the Qwen tokenizer only. For each new pair, measure the repeated prompt and check which session-specific values must remain raw.</p>''')
@@ -194,7 +194,7 @@ slide('''
   <div class="chip"><div class="r">16:1</div><div class="s">12 / 12</div></div>
 </div>
 <p class="lead">All four ratios scored <b>12/12 on the easy suite</b>, matching the full prompt. At 8:1, input per turn fell from <b>24.3k to 9.4k</b> tokens. We selected 8:1: the tested 16:1 checkpoint delivered about 61% of its peak-throughput improvement.</p>
-<p class="lead" style="margin-top:.8rem">On the harder suite, keeping session values such as the working path out of the gist, together with retraining, brought 8:1 to <b>16/16</b>, matching the full prompt on the same host. Other run conditions also changed, and one path error remained.</p>
+<p class="lead" style="margin-top:.8rem">On the harder suite, keeping session values such as the working path out of the compressed prompt, together with retraining, brought 8:1 to <b>16/16</b>, matching the full prompt on the same host. Other run conditions also changed, and one path error remained.</p>
 <p style="margin-top:1rem"><span class="tag warn">single runs &middot; small, partly reused suites</span></p>''')
 
 # ---- 6 PAYOFF ----
@@ -208,33 +208,33 @@ slide('''
       <div><div class="bignum plum">2x</div><div class="unit">highest tested arrival rate passing each<br>arm&rsquo;s own latency threshold (18 &rarr; 36 req/min)</div></div>
       <div><div class="bignum petrol">+44%%</div><div class="unit">peak throughput, same H100<br>(42.7 &rarr; 61.3 req/min)</div></div>
     </div>
-    <div style="margin:.2rem 0 .6rem"><span class="tag" style="color:#8a9aa0">full prompt</span> <span class="tag" style="color:#c39be0;border-color:#5a3f6e">gist 8:1</span></div>
+    <div style="margin:.2rem 0 .6rem"><span class="tag" style="color:#8a9aa0">full prompt</span> <span class="tag" style="color:#c39be0;border-color:#5a3f6e">Steno 8:1</span></div>
     <p class="lead">A <b>capacity</b> lever, not a speed lever: a single reply is barely faster.</p>
-    <p class="caption">Threshold: twice each arm&rsquo;s unloaded median latency, about 8.5 s full and 8.0 s gist. Short, fixed-output replays on one GPU class, mean of three repeats; they did not measure task quality at load or isolate prefix-cache effects. On a larger H200 the peak difference was near zero (appendix).</p>
+    <p class="caption">Threshold: twice each arm&rsquo;s unloaded median latency, about 8.5 s full and 8.0 s Steno. Short, fixed-output replays on one GPU class, mean of three repeats; they did not measure task quality at load or isolate prefix-cache effects. On a larger H200 the peak difference was near zero (appendix).</p>
   </div>
 </div>''' % curve())
 
 # ---- 7 SYNERGY ----
 slide('''
 <div class="eyebrow">Synergy within Lattice &middot; proposal</div>
-<h2>Distil first, then gist the distilled model</h2>
+<h2>Distil first, then apply Steno to it</h2>
 <div class="pipe">
   <div class="pnode">Base model</div><div class="parrow">&rarr;</div>
   <div class="pnode">Distil<span class="mono" style="font-size:.72rem;color:var(--ink2);font-weight:400">distillation track</span></div><div class="parrow">&rarr;</div>
   <div class="pnode">Student model</div><div class="parrow">&rarr;</div>
-  <div class="pnode" style="border-color:#5a3f6e;color:var(--plum)">Gist<span class="mono" style="font-size:.72rem;color:var(--ink2);font-weight:400">this recipe</span></div><div class="parrow">&rarr;</div>
+  <div class="pnode" style="border-color:#5a3f6e;color:var(--plum)">Steno<span class="mono" style="font-size:.72rem;color:var(--ink2);font-weight:400">this recipe</span></div><div class="parrow">&rarr;</div>
   <div class="pnode">Smaller model, shorter prompt</div>
 </div>
-<p class="lead">A distilled student model still receives the fixed preamble on each call. Running the gisting recipe on it aims to reduce both <b>model size</b> and <b>prompt length</b>.</p>
+<p class="lead">A distilled student model still receives the fixed preamble on each call. Running the Steno recipe on it aims to reduce both <b>model size</b> and <b>prompt length</b>.</p>
 <p style="margin-top:1.2rem"><span class="tag warn">proposal &middot; not yet tested</span></p>''')
 
 # ---- 8 JETSTREAM ----
 slide('''
 <div class="eyebrow">Where it could land &middot; proposal</div>
 <h2>A first home in the Jetstream inner loop</h2>
-<p class="lead">The Jetstream inner loop takes a ticket to a PR through coding agents on different harnesses. We propose it as the first place to trial gisting, one harness and model pair at a time.</p>
+<p class="lead">The Jetstream inner loop takes a ticket to a PR through coding agents on different harnesses. We propose it as the first place to trial Steno, one harness and model pair at a time.</p>
 <p style="margin-top:1.2rem"><span class="tag warn">proposal</span></p>
-<p class="caption">Gisting applies where the agent calls a model whose weights we host.</p>''')
+<p class="caption">Steno applies where the agent calls a model whose weights we host.</p>''')
 
 # ---- 9 LEDGER ----
 slide('''
@@ -262,7 +262,7 @@ slide('''
 # ---- 10 ASK ----
 slide('''
 <div class="eyebrow">The ask</div>
-<h2>Make gisting a Lattice pillar</h2>
+<h2>Make Steno a Lattice pillar</h2>
 <div class="grid3" style="margin-top:1rem">
   <div class="card plum" style="border-color:#5a3f6e"><div class="k">1 &middot; Next pair</div><div class="v">Run the experiment suite, span study first, on the next <b>harness and distilled-model pair</b>. Tests whether the recipe carries.</div></div>
   <div class="card"><div class="k">2 &middot; Validate</div><div class="v">Held-out tasks, repeated runs, and quality checked at production load.</div></div>
@@ -286,22 +286,22 @@ slide('''
 <h2>Roughly even across the two cards</h2>
 <div style="display:flex;gap:40px;flex-wrap:wrap;margin:1.2rem 0 1rem">
   <div><div class="bignum" style="color:#8a9aa0">16.16</div><div class="unit">H100 &middot; full prompt</div></div>
-  <div><div class="bignum plum">23.23</div><div class="unit">H100 &middot; gist 8:1</div></div>
+  <div><div class="bignum plum">23.23</div><div class="unit">H100 &middot; Steno 8:1</div></div>
   <div><div class="bignum petrol">23.38</div><div class="unit">H200 &middot; full prompt</div></div>
-  <div><div class="bignum" style="color:#8a9aa0">22.83</div><div class="unit">H200 &middot; gist 8:1</div></div>
+  <div><div class="bignum" style="color:#8a9aa0">22.83</div><div class="unit">H200 &middot; Steno 8:1</div></div>
 </div>
 <p class="caption" style="margin-top:0">peak replay requests per minute per dollar-hour, quoted prices: H100 $2.64/h, H200 $3.65/h</p>
-<p class="lead" style="margin-top:1.2rem">On the H100 the gist lifts peak replay output per dollar by about 44%. The H100 with the gist lands level with the H200 without it, so this does <b>not</b> show that a cheaper card can replace a pricier one.</p>''')
+<p class="lead" style="margin-top:1.2rem">On the H100 Steno lifts peak replay output per dollar by about 44%. The H100 with Steno lands level with the H200 without it, so this does <b>not</b> show that a cheaper card can replace a pricier one.</p>''')
 
 # ---- APPENDIX C: THE FAILURE ----
 slide('''
 <div class="eyebrow">Appendix C &middot; the failure we caught</div>
-<h2>What to keep out of the gist</h2>
+<h2>What to keep out of the compressed prompt</h2>
 <div class="ba">
   <div><span class="tag warn big">BEFORE</span></div>
-  <div class="baflow"><span class="pill plum">gist: rules + &hellip;/&lt;session-id&gt;/</span><span class="parrow">&rarr;</span><span class="pill bad">writes to an invented directory &#10007;</span></div>
+  <div class="baflow"><span class="pill plum">Steno: rules + &hellip;/&lt;session-id&gt;/</span><span class="parrow">&rarr;</span><span class="pill bad">writes to an invented directory &#10007;</span></div>
   <div><span class="tag good big">AFTER</span></div>
-  <div class="baflow"><span class="pill plum">gist: rules</span><span class="plus">+</span><span class="pill">raw: session path, date, model</span><span class="parrow">&rarr;</span><span class="pill ok">writes to the intended path &#10003;</span></div>
+  <div class="baflow"><span class="pill plum">Steno: rules</span><span class="plus">+</span><span class="pill">raw: session path, date, model</span><span class="parrow">&rarr;</span><span class="pill ok">writes to the intended path &#10003;</span></div>
 </div>
 <p class="lead" style="margin-top:1.5rem">After keeping session values raw and retraining, corrected 8:1 scored <b style="color:var(--good)">16/16</b>, up from 11/16 (15/15 from 11/15 excluding one defective probe). Other run conditions also changed, and one invented-path event remained.</p>
 <p class="caption">For each new pair, check which session-specific values must remain raw.</p>''')
@@ -341,7 +341,7 @@ addEventListener('keydown',e=>{
 });
 """
 
-html = ('<title>Gisting for Lattice</title>\n'
+html = ('<title>Steno for Lattice</title>\n'
  '<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>'
  '<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">'
  '<style>'+CSS+'</style>\n'

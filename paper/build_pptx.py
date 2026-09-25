@@ -115,6 +115,14 @@ for i,(k,c,ln,body) in enumerate([("Meta-harness",PETROL,LINE,""),("Adaptive rou
     tf=tb(s,l+0.28,3.5,cw-0.56,1.0); first(tf,k.upper(),12,c,bold=True,font=MONO,after=6)
     if body: addpara(tf,body,15,INK)
 
+# 3b WHAT STENO IS
+s=slide(); eyebrow(s,"What Steno is made of"); title(s,"Five parts, all built and run on this study")
+cards(s,[("1 · Span analysis",COPPER,"Measures what the harness re-sends on every call, and splits the fixed part from the per-session values that must stay raw.",RGBColor(0x5a,0x40,0x2a)),
+         ("2 · Trainer",PLUM,"Adds new token rows to the model and trains them by self-distillation, with the base model frozen.",PLUMLN),
+         ("3 · Proxy",PETROL,"Sits in front of the model and swaps the fixed span for the Steno tokens. The agent and serving engine are unchanged.")],2.0,2.1,3,size=14)
+cards(s,[("4 · Evaluation",PETROL,"Task suites scored against the full prompt, plus a serving benchmark for throughput and latency."),
+         ("5 · Auto loop",GOOD,"A controller that provisions a GPU, trains, serves, evaluates, syncs results and tears down, with spend guards. Most experiments after the first ran through it.",OKLN)],4.35,1.95,2,size=14)
+
 # 4 SPAN + RECIPE
 s=slide(); eyebrow(s,"The span, and why it is per pair"); title(s,"What the agent re-sends, measured on one pair")
 by,bh,total=1.95,0.95,11.9; cx=0.7
@@ -125,8 +133,7 @@ for name,sub,frac,col in [("Tool schemas","~16,000 tokens  ·  >90% of the block
     cx+=w
 for i,(n,c,u) in enumerate([("17.5–21k",COPPER,"fixed tokens per call, across the span configurations we measured"),("0.72",PETROL,"mean share of input across eight logged sessions")]):
     first(tb(s,0.7+i*5.5,3.05,5.2,0.6),n,26,c,bold=True,font=MONO); first(tb(s,0.7+i*5.5,3.62,5.2,0.5),u,11,INK2,font=MONO)
-cards(s,[("Recipe used",PETROL,"Base model frozen. New token rows trained by self-distillation. A proxy swaps them in for the fixed span."),
-         ("Rerun per pair",COPPER,"The whole experiment suite, span study first, runs again for each harness and distilled-model pair. Needs a model whose weights we host.",RGBColor(0x5a,0x40,0x2a))],4.3,1.65,2,size=14)
+cards(s,[("Rerun per pair",COPPER,"The whole experiment suite, span study first, runs again for each harness and distilled-model pair. Needs a model whose weights we host.",RGBColor(0x5a,0x40,0x2a))],4.3,1.4,1,size=15)
 caption(s,"Measured on Claude Code with the Qwen tokenizer only. For each new pair, measure the repeated prompt and check which session-specific values must remain raw.",6.15,12.5)
 
 # 5 PROOF
@@ -155,7 +162,18 @@ tf=tb(s,8.4,2.1,4.3,4.9)
 first(tf,"2x",28,PLUM,bold=True,font=MONO,after=2); addpara(tf,"highest tested arrival rate passing each arm’s own latency threshold (18 → 36 req/min)",11.5,INK2,font=MONO,after=10)
 addpara(tf,"+44%",28,PETROL,bold=True,font=MONO,after=2); addpara(tf,"peak throughput, same H100 (42.7 → 61.3 req/min)",11.5,INK2,font=MONO,after=10)
 addpara(tf,"A capacity lever, not a speed lever: a single reply is barely faster.",14,INK,spacing=1.15,after=8)
-addpara(tf,"Threshold: twice each arm’s unloaded median latency, about 8.5 s full and 8.0 s Steno. Short, fixed-output replays on one GPU class, mean of three repeats; they did not measure task quality at load or isolate prefix-cache effects. On a larger H200 the peak difference was near zero (appendix).",10.5,INK2,spacing=1.12)
+addpara(tf,"Threshold: twice each arm’s unloaded median latency, about 8.5 s full and 8.0 s Steno. Short, fixed-output replays on one GPU class, mean of three repeats; they did not measure task quality at load or isolate prefix-cache effects. On a larger H200 the peak difference was near zero (next slide).",10.5,INK2,spacing=1.12)
+
+# 6b H200
+s=slide(); eyebrow(s,"Second GPU · H200 NVL, 143 GB"); title(s,"On a larger GPU, the peak gain was near zero")
+for i,(hdr,vals) in enumerate([("H100 NVL · 95 GB",[("42.7",SLATE,"full prompt"),("61.3",PLUM,"Steno 8:1 · +44%")]),("H200 NVL · 143 GB",[("85.3",PETROL,"full prompt"),("83.3",PLUM,"Steno 8:1 · −2%")])]):
+    l=0.7+i*6.05; rrect(s,l,2.0,5.85,1.9,fill=BG2,line=LINE)
+    first(tb(s,l+0.28,2.18,5.3,0.4),hdr.upper(),11,PETROL,bold=True,font=MONO)
+    for j,(n,c,u) in enumerate(vals):
+        first(tb(s,l+0.28+j*2.7,2.65,2.6,0.7),n,32,c,bold=True,font=MONO); first(tb(s,l+0.28+j*2.7,3.35,2.6,0.4),u,11,INK2,font=MONO)
+first(tb(s,0.7,4.0,11.9,0.4),"peak replay requests per minute",11,INK2,font=MONO)
+first(tb(s,0.7,4.5,11.9,1.3),"The two are indistinguishable at peak on the H200: the full-prompt runs swung by up to 26 req/min between repeats of the same test, while Steno repeated almost exactly. Per rental dollar, the H100 with Steno and the H200 without it come out roughly even (appendix B).",16,INK2,spacing=1.2)
+tag(s,"two repeats · H100-tuned server settings",6.0,4.6)
 
 # 7 SYNERGY
 s=slide(); eyebrow(s,"Synergy within Lattice · proposal"); title(s,"Distil first, then apply Steno to it")
@@ -232,7 +250,7 @@ for i,(n,w) in enumerate(nodes):
     if i<len(nodes)-1: first(tb(s,cx,y,0.55,h,anchor=MSO_ANCHOR.MIDDLE),"→",20,PETROL,bold=True,align=PP_ALIGN.CENTER); cx+=0.55
 rrect(s,0.7,4.1,11.9,0.95,fill=RGBColor(0x22,0x1a,0x11),line=RGBColor(0x5a,0x4a,0x2a))
 first(tb(s,0.95,4.1,11.4,0.95,anchor=MSO_ANCHOR.MIDDLE),"SPEND-SAFETY · structural  ·  idle watchdog · ledger at creation · sync-before-destroy · global deadline",13,COPPER,font=MONO)
-caption(s,"One controller ran this pair’s recipe end to end, unattended. The next experiment will establish what transfers to a new pair and what needs adaptation.",5.4,14)
+caption(s,"Most experiments after the first ran through this controller rather than by hand. The next experiment will establish what transfers to a new pair and what needs adaptation.",5.4,14)
 
 
 prs.save(OUT)

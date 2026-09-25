@@ -1,37 +1,49 @@
-Subject: Gisting a coding agent: artifacts, journey, and what we learned
+# Note to Srini: gisting as a Lattice pillar
 
-Hi,
+Two versions of the same message: the email, and a shorter Slack cut.
 
-Sharing the outcome of a short research program on "gisting" for coding agents: compressing the large fixed preamble (behavioural rules + tool schemas) that a coding agent re-sends to the model on every step, by replacing it with a handful of learned "gist" tokens trained with the base model frozen.
+---
 
-This follows Shopify's engineering report on gisting (shopify.engineering/gisting), which applied the technique to their production coding agent and reported substantial serving savings. We set out to test whether it **transfers** to a different setup (a preamble that's overwhelmingly tool schemas, on a model we host ourselves), and what holds up under scrutiny.
+## Email
 
-Two parts below: where everything is, and what we found.
+**Subject:** Gisting: following up on the Shopify blog, as a new Lattice pillar
 
-## 1. The artifacts
+Hi Srini,
 
-Start with the two primary reads: the deck for the overview, the whitepaper for the full detail.
+In our last meeting you pointed us to Shopify's post on gisting. We took the idea and tried it on our own setup, and I'd like to propose it as a new pillar under Lattice.
 
-- **Whitepaper** (`Gisting-NeurIPS-paper.docx`): the full account, with method, results, honest limitations, and an independent adversarial review reconciled in.
-- **Executive deck** (TCO lens, ~10 min read): `Gisting-CTO-deck.pptx` (editable) and a web version. Bottom line is on slide 2.
-- **Code + everything above**: GitHub: `arunmenon/gisting-coding-agent`.
-- **Trained weights + data** (Hugging Face, private, access on request): model `ledzepu2/gisting-qwen38-gist`, dataset `ledzepu2/gisting-coding-agent-sessions`.
+**What it is, in brief.** A coding agent re-sends the same fixed preamble, mostly tool schemas plus rules, to the model on every call. Gisting replaces that preamble with a small set of learned tokens. The base model stays frozen, only the new token embeddings are trained, and a proxy swaps them in, so neither the agent nor the serving engine changes.
 
-## 2. The journey and the insights
+**What we did.** One pair: Claude Code with Qwen3.8-27B, self-hosted.
 
-We ran it in phases: measure the fixed preamble from real logged sessions; grow the model's vocabulary and train the gist by self-distillation; push the compression to find where it breaks; measure what it buys at serving time; and report what we couldn't score. The whole thing ran through an automated, cost-guarded loop (provision GPU → train → serve → evaluate → destroy).
+- The fixed preamble was 17.5 to 21k tokens per call, over 90% of it tool schemas.
+- At 8:1 compression, input per turn fell from 24.3k to 9.4k tokens, and task scores matched the full prompt on our suites.
+- In short H100 replays, the gisted setup handled 2x the request rate within each arm's own latency threshold and reached 44% higher peak throughput.
 
-What we learned. This is a development study, so single runs on small, partly reused task sets, not a validated benchmark:
+**What isn't proven yet.** This is one harness and model pair on our own task suites. Savings per successful task, quality at production load, and the reason for the throughput gain are still open. An external review caught a measurement defect in our load generator along the way; we corrected it, and the deck notes it.
 
-- **The preamble is a real, recurring tax**: ~17.5–21k tokens per turn, over 90% tool schemas, ~0.72 of a short session's input.
-- **A gist can match the full prompt** on our suite at every ratio from 2:1 to 16:1, cutting tokens read per turn by roughly half to two-thirds.
-- **The one failure that mattered**: session-specific values (a path with a session id) got baked into the gist and reproduced wrong; keeping them raw fixed it. Every deployment will hit this.
-- **J10 measured a replay advantage.** On H100, finite-window tests with 200-token outputs recorded **2x the target request rate passing the chosen latency criterion** (18 versus 36 req/min) and **+44% observed peak throughput** (42.7 versus 61.3 req/min; 43.75% unrounded). The mechanism and deployment capacity are not established. J11 confirmed a client connection-limit defect in the high-concurrency tests; removing the cap reduced throughput in three of four comparisons and changed the gist/full ratios. Those historical points are not uniformly conservative. The lower-concurrency peak, cache-off and open-loop figures are not invalidated by that defect; their other review qualifications remain open.
-- **The cost comparison is corrected.** The observed H200 peak difference was -2%, using H100-selected settings; its historical 3.1x ratio at 128 requests was client-capped. On consistent quoted rental prices ($2.64/h H100, $3.65/h H200), H100+gist gives **23.23** requests per minute per ($/h), slightly below H200+full at **23.38**. The previous 22.5 H200 figure used an effective price. These replay measurements do not establish cheaper-card substitution or savings per successful coding task.
-- **Recommended operating point: 8:1.** It's the ratio we actually hardened and validated, and it sits at the knee of diminishing returns.
+**How it fits Lattice.** It sits alongside the meta-harness, adaptive routing and model distillation tracks. One synergy we'd propose testing: distil a model first, then gist the distilled model. We'd also propose the Jetstream inner loop as the first place to trial it.
 
-The reviewer verified 202 archived J10 runs with zero recorded request errors; J11 adds eight separate runs with zero request errors, one per condition and no quality measurement. J11 measured 137 gist versus 126 full requests resident at 256 offered, with nearly full cache and preemptions. These are sampled observations, not precise hardware ceilings. Prefix-cache hit rates remain unequal (full 0.791 to 0.840, gist 0.580 to 0.626), favouring full in cached fraction; the effect on the comparison was not controlled. Generalisation, fair tuning, sustained performance and deployment economics remain to be validated.
+**The ask.** Run the same experiment suite, starting with the span study, on the next harness and distilled-model pair; validate on held-out work; then a guarded pilot.
 
-Happy to walk through any of it.
+- Deck, 10 slides plus appendix: https://claude.ai/artifact/FC9EqhEMaNjchaeDns41Pb (PowerPoint attached)
+- White paper: https://claude.ai/code/artifact/ba7fae28-8e2c-4312-b94e-693f112eb963 (Word version attached)
+- Code and results: GitHub `arunmenon/gisting-coding-agent`
+
+Happy to walk you through it.
 
 Arun
+
+---
+
+## Slack
+
+Hi Srini, following up on the Shopify gisting post you shared in our last meeting. We tried it on our own stack and I'd like to propose it as a new Lattice pillar.
+
+In brief: a coding agent re-sends the same fixed preamble (tool schemas and rules) on every call. Gisting swaps it for a few learned tokens, with the base model frozen and a proxy in front, so the agent and serving engine don't change.
+
+On Claude Code with Qwen3.8-27B at 8:1: input per turn went from 24.3k to 9.4k tokens with task scores matching the full prompt on our suites, and short H100 replays showed 2x the request rate within latency and 44% higher peak throughput. One pair only; savings per task and quality at load are still to prove.
+
+Proposal: rerun the same experiment suite on the next harness and distilled-model pair, then a guarded trial in the Jetstream inner loop.
+
+Deck: https://claude.ai/artifact/FC9EqhEMaNjchaeDns41Pb · White paper: https://claude.ai/code/artifact/ba7fae28-8e2c-4312-b94e-693f112eb963

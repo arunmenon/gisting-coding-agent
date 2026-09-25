@@ -96,15 +96,13 @@ eyebrow(s,"Lattice · cost optimization · new pillar",0.9)
 first(tb(s,0.7,1.35,11.5,2.6),"Steno: learned prompt compression for agent calls",44,INK,bold=True,font=HEAD,spacing=1.02)
 first(tb(s,0.7,4.2,10.5,1.3),"A learned shorthand for the fixed preamble a coding agent re-sends to the model: the technique Shopify calls gisting. Shown on one harness and model pair; the next step tests whether it carries to others.",18,INK2,spacing=1.2)
 tf=tb(s,0.7,6.0,11.5,0.9)
-first(tf,"Arun Menon · arumenon@paypal.com",13,INK2,font=MONO)
-addpara(tf,"Pair studied: Claude Code → proxy → vLLM → Qwen3.8-27B (open weights, self-hosted)",12,PETROL,font=MONO)
+first(tf,"PAI",13,INK2,font=MONO)
 
 # 2 BLUF
-s=slide(); eyebrow(s,"Bottom line up front"); title(s,"The answer in four lines")
+s=slide(); eyebrow(s,"Bottom line up front"); title(s,"The answer in three lines")
 cards(s,[("Where it fits",PETROL,"A new pillar under Lattice, alongside the meta-harness, adaptive routing and model distillation tracks. Steno shortens the fixed prompt a coding agent re-sends to the model."),
          ("What we showed",PLUM,"On Claude Code with Qwen at 8:1, input per turn fell from 24.3k to 9.4k tokens with scores matching the full prompt on our suites. Short H100 replays: 2x the request rate within each arm’s latency threshold, +44% peak throughput."),
-         ("What it isn’t yet",WARN,"One pair, our own task suites, short replay windows. Savings per successful task are not proven, and the mechanism is still open."),
-         ("The ask",GOOD,"Run the same experiment suite on the next harness and distilled-model pair, validate on held-out work, then a guarded pilot.")],2.1,4.3,4,size=14)
+         ("The ask",GOOD,"Run the same experiment suite on the next harness and distilled-model pair, validate on held-out work, then a guarded pilot.")],2.1,4.3,3,size=15)
 
 # 3 LATTICE
 s=slide(); eyebrow(s,"Lattice · cost optimization"); title(s,"A new pillar under Lattice")
@@ -120,8 +118,8 @@ s=slide(); eyebrow(s,"What Steno is made of"); title(s,"Five parts, designed for
 cards(s,[("1 · Span analysis",COPPER,"A harness adapter per harness feeds one shared analysis. It checks every call, splits the fixed part from per-session values, and fails on anything it cannot explain.",RGBColor(0x5a,0x40,0x2a)),
          ("2 · Trainer",PLUM,"Adds new token rows to the model and trains them by self-distillation, with the base model frozen.",PLUMLN),
          ("3 · Proxy",PETROL,"Swaps the fixed span for the Steno tokens and adopts the same harness adapter. No change to the agent or the engine’s code; the served model carries the new token rows.")],2.0,2.1,3,size=14)
-cards(s,[("4 · Evaluation",PETROL,"Task suites scored against the full prompt, plus a serving benchmark for throughput and latency."),
-         ("5 · Auto loop",GOOD,"Runs today: one run spec, span study first, budget and pass gates, verified teardown. Built on top: failure triage, lessons turned into checks, gated promotion, and a next-recipe proposer a person approves.",OKLN)],4.35,1.95,2,size=14)
+cards(s,[("4 · Benchmark pack",PETROL,"Task suites scored against the full prompt, plus a serving benchmark for throughput and latency."),
+         ("5 · Auto loop",GOOD,"Runs the other four as stages. Runs today: one run spec, span study first, budget and pass gates, verified teardown. Built on top: failure triage, lessons turned into checks, gated promotion, and a next-recipe proposer a person approves.",OKLN)],4.35,1.95,2,size=14)
 
 # 4 SPAN + RECIPE
 s=slide(); eyebrow(s,"The span, and why it is per pair"); title(s,"What the agent re-sends, measured on one pair")
@@ -177,18 +175,21 @@ tf=tb(s,8.4,2.1,4.3,4.9)
 first(tf,"2x",28,PLUM,bold=True,font=MONO,after=2); addpara(tf,"highest tested arrival rate passing each arm’s own latency threshold (18 → 36 req/min)",11.5,INK2,font=MONO,after=10)
 addpara(tf,"+44%",28,PETROL,bold=True,font=MONO,after=2); addpara(tf,"peak throughput, same H100 (42.7 → 61.3 req/min)",11.5,INK2,font=MONO,after=10)
 addpara(tf,"A capacity lever, not a speed lever: a single reply is barely faster.",14,INK,spacing=1.15,after=8)
-addpara(tf,"Threshold: twice each arm’s unloaded median latency, about 8.5 s full and 8.0 s Steno. Short, fixed-output replays on one GPU class, mean of three repeats; they did not measure task quality at load or isolate prefix-cache effects. On a larger H200 the peak difference was near zero (next slide).",10.5,INK2,spacing=1.12)
+addpara(tf,"Threshold: twice each arm’s unloaded median latency, about 8.5 s full and 8.0 s Steno. Short, fixed-output replays on one GPU class, mean of three repeats; they did not measure task quality at load or isolate prefix-cache effects. On a larger H200, Steno was level at peak and ahead under heavy load (next slide).",10.5,INK2,spacing=1.12)
 
 # 6b H200
-s=slide(); eyebrow(s,"Second GPU · H200 NVL, 143 GB"); title(s,"On a larger GPU, the peak gain was near zero")
-for i,(hdr,vals) in enumerate([("H100 NVL · 95 GB",[("42.7",SLATE,"full prompt"),("61.3",PLUM,"Steno 8:1 · +44%")]),("H200 NVL · 143 GB",[("85.3",PETROL,"full prompt"),("83.3",PLUM,"Steno 8:1 · −2%")])]):
-    l=0.7+i*6.05; rrect(s,l,2.0,5.85,1.9,fill=BG2,line=LINE)
-    first(tb(s,l+0.28,2.18,5.3,0.4),hdr.upper(),11,PETROL,bold=True,font=MONO)
+s=slide(); eyebrow(s,"Second GPU · H200 NVL, 143 GB"); title(s,"On a larger GPU, the gain shows up under heavy load")
+cw=(11.9-0.4)/3
+for i,(hdr,ln,vals) in enumerate([("At each arm’s peak",LINE,[("85.3",PETROL,"full prompt"),("83.3",PLUM,"Steno 8:1 · level")]),
+                                  ("128 sessions · cap lifted",PLUMLN,[("47.0",SLATE,"full prompt"),("80.7",PLUM,"Steno 8:1 · 1.7x")]),
+                                  ("256 sessions · cap lifted",PLUMLN,[("46.3",SLATE,"full prompt"),("56.7",PLUM,"Steno 8:1 · 1.2x")])]):
+    l=0.7+i*(cw+0.2); rrect(s,l,2.0,cw,1.9,fill=BG2,line=ln)
+    first(tb(s,l+0.25,2.15,cw-0.5,0.4),hdr.upper(),10.5,PETROL,bold=True,font=MONO)
     for j,(n,c,u) in enumerate(vals):
-        first(tb(s,l+0.28+j*2.7,2.65,2.6,0.7),n,32,c,bold=True,font=MONO); first(tb(s,l+0.28+j*2.7,3.35,2.6,0.4),u,11,INK2,font=MONO)
-first(tb(s,0.7,4.0,11.9,0.4),"peak replay requests per minute",11,INK2,font=MONO)
-first(tb(s,0.7,4.5,11.9,1.3),"The two are indistinguishable at peak on the H200: the full-prompt runs swung by up to 26 req/min between repeats of the same test, while Steno repeated almost exactly. Per rental dollar, the H100 with Steno and the H200 without it come out roughly even (appendix B).",16,INK2,spacing=1.2)
-tag(s,"two repeats · H100-tuned server settings",6.0,4.6)
+        first(tb(s,l+0.25+j*1.85,2.6,1.8,0.7),n,28,c,bold=True,font=MONO); first(tb(s,l+0.25+j*1.85,3.3,1.8,0.4),u,10,INK2,font=MONO)
+first(tb(s,0.7,4.0,11.9,0.4),"replay requests per minute",11,INK2,font=MONO)
+first(tb(s,0.7,4.45,11.9,1.4),"At each arm’s best point the two run level. Pushed to 128 and 256 concurrent sessions with our client’s connection cap removed, the full prompt fell to about 47 req/min as the cache filled, while Steno served 1.2 to 1.7 times more. Per rental dollar, the H100 with Steno and the H200 without it come out roughly even (appendix B).",15,INK2,spacing=1.2)
+tag(s,"peak: two repeats, H100-tuned settings · heavy load: one run per condition",6.05,7.4)
 
 # 7 SYNERGY
 s=slide(); eyebrow(s,"Synergy within Lattice · proposal"); title(s,"Distil first, then apply Steno to it")

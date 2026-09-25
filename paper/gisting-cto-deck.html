@@ -25,7 +25,7 @@ b,strong{color:var(--ink);font-weight:600}
 .tag.warn{color:var(--warn);border-color:#5a4a24}
 .tag.good{color:var(--good);border-color:#2c5040}
 /* title */
-.title-wrap{max-width:46ch}
+.title-wrap{max-width:62ch}
 .byline{font-family:var(--mono);color:var(--ink2);font-size:.9rem;margin-top:2.2rem}
 .stack{font-family:var(--mono);color:var(--petrol);font-size:.8rem;letter-spacing:.05em;margin-top:.5rem}
 /* grids */
@@ -105,15 +105,13 @@ svg text{font-family:var(--mono)}
   <div class="eyebrow">Lattice &middot; cost optimization &middot; new pillar</div>
   <h1>Steno: learned prompt compression for agent calls</h1>
   <p class="lead">A learned shorthand for the fixed preamble a coding agent re-sends to the model: the technique Shopify calls gisting. Shown on one harness and model pair; the next step tests whether it carries to others.</p>
-  <div class="byline">Arun Menon &middot; arumenon@paypal.com</div>
-  <div class="stack">Pair studied: Claude Code &rarr; proxy &rarr; vLLM &rarr; Qwen3.8-27B (open weights, self-hosted)</div>
+  <div class="byline">PAI</div>
 </div></section><section class="slide">
 <div class="eyebrow">Bottom line up front</div>
-<h2>The answer in four lines</h2>
-<div class="grid4" style="margin-top:1.2rem">
+<h2>The answer in three lines</h2>
+<div class="grid3" style="margin-top:1.2rem">
   <div class="card"><div class="k">Where it fits</div><div class="v">A new pillar under <b>Lattice</b>, alongside the meta-harness, adaptive routing and model distillation tracks. Steno shortens the <b>fixed prompt</b> a coding agent re-sends to the model.</div></div>
   <div class="card plum"><div class="k">What we showed</div><div class="v">On Claude Code with Qwen at 8:1, input per turn fell from <b>24.3k to 9.4k</b> tokens with scores matching the full prompt on our suites. Short H100 replays: <b>2x the request rate</b> within each arm&rsquo;s latency threshold, <b>+44% peak</b> throughput.</div></div>
-  <div class="card warn"><div class="k">What it isn&rsquo;t yet</div><div class="v">One pair, our own task suites, short replay windows. <b>Savings per successful task are not proven</b>, and the mechanism is still open.</div></div>
   <div class="card good"><div class="k">The ask</div><div class="v">Run the same experiment suite on the <b>next harness and distilled-model pair</b>, validate on held-out work, then a guarded pilot.</div></div>
 </div></section><section class="slide">
 <div class="eyebrow">Lattice &middot; cost optimization</div>
@@ -133,8 +131,8 @@ svg text{font-family:var(--mono)}
   <div class="card"><div class="k">3 &middot; Proxy</div><div class="v">Swaps the fixed span for the Steno tokens and adopts the same harness adapter. No change to the agent or the engine&rsquo;s code; the served model carries the new token rows.</div></div>
 </div>
 <div class="grid2" style="margin-top:22px">
-  <div class="card"><div class="k">4 &middot; Evaluation</div><div class="v">Task suites scored against the full prompt, plus a serving benchmark for throughput and latency.</div></div>
-  <div class="card good"><div class="k">5 &middot; Auto loop</div><div class="v"><b>Runs today:</b> one run spec, span study first, budget and pass gates, verified teardown. <b>Built on top:</b> failure triage, lessons turned into checks, gated promotion, and a next-recipe proposer a person approves.</div></div>
+  <div class="card"><div class="k">4 &middot; Benchmark pack</div><div class="v">Task suites scored against the full prompt, plus a serving benchmark for throughput and latency.</div></div>
+  <div class="card good"><div class="k">5 &middot; Auto loop</div><div class="v">Runs the other four as stages. <b>Runs today:</b> one run spec, span study first, budget and pass gates, verified teardown. <b>Built on top:</b> failure triage, lessons turned into checks, gated promotion, and a next-recipe proposer a person approves.</div></div>
 </div></section><section class="slide">
 <div class="eyebrow">The span, and why it is per pair</div>
 <h2>What the agent re-sends, measured on one pair</h2>
@@ -189,26 +187,31 @@ svg text{font-family:var(--mono)}
     </div>
     <div style="margin:.2rem 0 .6rem"><span class="tag" style="color:#8a9aa0">full prompt</span> <span class="tag" style="color:#c39be0;border-color:#5a3f6e">Steno 8:1</span></div>
     <p class="lead">A <b>capacity</b> lever, not a speed lever: a single reply is barely faster.</p>
-    <p class="caption">Threshold: twice each arm&rsquo;s unloaded median latency, about 8.5 s full and 8.0 s Steno. Short, fixed-output replays on one GPU class, mean of three repeats; they did not measure task quality at load or isolate prefix-cache effects. On a larger H200 the peak difference was near zero (next slide).</p>
+    <p class="caption">Threshold: twice each arm&rsquo;s unloaded median latency, about 8.5 s full and 8.0 s Steno. Short, fixed-output replays on one GPU class, mean of three repeats; they did not measure task quality at load or isolate prefix-cache effects. On a larger H200, Steno was level at peak and ahead under heavy load (next slide).</p>
   </div>
 </div></section><section class="slide">
 <div class="eyebrow">Second GPU &middot; H200 NVL, 143 GB</div>
-<h2>On a larger GPU, the peak gain was near zero</h2>
-<div class="grid2" style="margin-top:1rem">
-  <div class="card"><div class="k">H100 NVL &middot; 95 GB</div>
-    <div style="display:flex;gap:30px;flex-wrap:wrap;margin-top:.4rem">
-      <div><div class="bignum" style="color:#8a9aa0">42.7</div><div class="unit">full prompt</div></div>
-      <div><div class="bignum plum">61.3</div><div class="unit">Steno 8:1 &middot; +44%</div></div>
-    </div></div>
-  <div class="card"><div class="k">H200 NVL &middot; 143 GB</div>
-    <div style="display:flex;gap:30px;flex-wrap:wrap;margin-top:.4rem">
+<h2>On a larger GPU, the gain shows up under heavy load</h2>
+<div class="grid3" style="margin-top:1rem">
+  <div class="card"><div class="k">At each arm&rsquo;s peak</div>
+    <div style="display:flex;gap:26px;flex-wrap:wrap;margin-top:.4rem">
       <div><div class="bignum petrol">85.3</div><div class="unit">full prompt</div></div>
-      <div><div class="bignum plum">83.3</div><div class="unit">Steno 8:1 &middot; &minus;2%</div></div>
+      <div><div class="bignum plum">83.3</div><div class="unit">Steno 8:1 &middot; level</div></div>
+    </div></div>
+  <div class="card plum" style="border-color:#5a3f6e"><div class="k">128 sessions &middot; cap lifted</div>
+    <div style="display:flex;gap:26px;flex-wrap:wrap;margin-top:.4rem">
+      <div><div class="bignum" style="color:#8a9aa0">47.0</div><div class="unit">full prompt</div></div>
+      <div><div class="bignum plum">80.7</div><div class="unit">Steno 8:1 &middot; 1.7x</div></div>
+    </div></div>
+  <div class="card plum" style="border-color:#5a3f6e"><div class="k">256 sessions &middot; cap lifted</div>
+    <div style="display:flex;gap:26px;flex-wrap:wrap;margin-top:.4rem">
+      <div><div class="bignum" style="color:#8a9aa0">46.3</div><div class="unit">full prompt</div></div>
+      <div><div class="bignum plum">56.7</div><div class="unit">Steno 8:1 &middot; 1.2x</div></div>
     </div></div>
 </div>
-<p class="caption" style="margin-top:.6rem">peak replay requests per minute</p>
-<p class="lead" style="margin-top:1rem">The two are <b>indistinguishable at peak</b> on the H200: the full-prompt runs swung by up to 26 req/min between repeats of the same test, while Steno repeated almost exactly. Per rental dollar, the H100 with Steno and the H200 without it come out <b>roughly even</b> (appendix B).</p>
-<p style="margin-top:1rem"><span class="tag warn">two repeats &middot; H100-tuned server settings</span></p></section><section class="slide">
+<p class="caption" style="margin-top:.6rem">replay requests per minute</p>
+<p class="lead" style="margin-top:1rem">At each arm&rsquo;s best point the two run <b>level</b>. Pushed to 128 and 256 concurrent sessions with our client&rsquo;s connection cap removed, the full prompt fell to about 47 req/min as the cache filled, while Steno served <b>1.2 to 1.7 times more</b>. Per rental dollar, the H100 with Steno and the H200 without it come out roughly even (appendix B).</p>
+<p style="margin-top:1rem"><span class="tag warn">peak: two repeats, H100-tuned settings &middot; heavy load: one run per condition</span></p></section><section class="slide">
 <div class="eyebrow">Synergy within Lattice &middot; proposal</div>
 <h2>Distil first, then apply Steno to it</h2>
 <div class="pipe">

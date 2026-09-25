@@ -101,23 +101,18 @@ addpara(tf,"First pairing: Claude Code → proxy → vLLM → Qwen3.8-27B (open 
 
 # 2 BLUF
 s=slide(); eyebrow(s,"Bottom line up front"); title(s,"The answer in four lines")
-cards(s,[("Where it fits",PETROL,"A fourth Lattice lever. Routing and distillation cut cost per token; the meta-harness shapes calls. Gisting cuts the fixed tokens every call carries."),
+cards(s,[("Where it fits",PETROL,"A new pillar under Lattice, alongside the meta-harness, adaptive routing and model distillation tracks. Gisting cuts the fixed prompt a coding agent re-sends on every call."),
          ("What we showed",PLUM,"On Claude Code with Qwen: task scores held at every compression ratio, input per turn more than halved, and on an H100 2x the request rate within the latency target, +44% peak throughput."),
          ("What it isn’t yet",WARN,"One pairing, our own task suite, short replay windows. Savings per task are not proven, and the mechanism is still open."),
-         ("The ask",GOOD,"Take the recipe to a second harness and model pairing through the meta-harness, validate on held-out work, then a guarded pilot.")],2.1,4.2,4,size=14.5)
+         ("The ask",GOOD,"Run the same experiment suite on the next harness and distilled-model pair, validate on held-out work, then a guarded pilot.")],2.1,4.2,4,size=14.5)
 
-# 3 LATTICE MAP
-s=slide(); eyebrow(s,"Where gisting sits in Lattice"); title(s,"Four levers on one cost equation")
-cx=0.7
-for txt,hot in [("cost per task",0),("=",-1),("calls",0),("×",-1),("tokens per call",1),("×",-1),("cost per token",0)]:
-    if hot<0: first(tb(s,cx,2.05,0.45,0.6,anchor=MSO_ANCHOR.MIDDLE),txt,20,PETROL,bold=True,font=MONO,align=PP_ALIGN.CENTER); cx+=0.45; continue
-    w=0.3+0.155*len(txt); rrect(s,cx,2.05,w,0.6,fill=BG2,line=PLUMLN if hot else LINE)
-    first(tb(s,cx,2.05,w,0.6,anchor=MSO_ANCHOR.MIDDLE),txt,16,PLUM if hot else INK,font=MONO,align=PP_ALIGN.CENTER); cx+=w+0.1
-cards(s,[("Lattice meta-harness",PETROL,"One adapter from any harness to any model. The control point for how calls are made and which model serves them.",LINE,"calls · where they land"),
-         ("Gisting · this pillar",PLUM,"Learned shorthand for the preamble every call repeats: tool schemas and rules.",PLUMLN,"fixed tokens per call"),
-         ("Adaptive routing",PETROL,"Sends each request to the cheapest model that can handle it.",LINE,"cost per token"),
-         ("Model distillation",PETROL,"Smaller student models for the work that allows it.",LINE,"cost per token")],3.0,2.9,4,size=14)
-caption(s,"The levers multiply rather than compete. A distilled model reached through the router still reads the full preamble on every call, unless it is gisted.",6.2)
+# 3 LATTICE
+s=slide(); eyebrow(s,"Lattice · cost optimization"); title(s,"A new pillar under Lattice")
+first(tb(s,0.7,2.0,11.6,0.9),"Gisting’s lever on total cost: the model reads fewer tokens on every agent call, so the same GPU does more work.",17,INK2,spacing=1.2)
+cards(s,[("Meta-harness",PETROL,"Adapter that routes different harnesses to underlying models."),
+         ("Adaptive routing",PETROL,"Research track."),
+         ("Model distillation",PETROL,"Research track."),
+         ("Gisting · new",PLUM,"Shrinks the fixed prompt every agent call carries. This deck.",PLUMLN)],3.2,2.4,4,size=15)
 
 # 4 THE TAX
 s=slide(); eyebrow(s,"The tax"); title(s,"Most of every call is the same boilerplate")
@@ -129,11 +124,11 @@ for name,sub,frac,col in [("Tool schemas","~16,000 tokens  ·  >90% of the block
     cx+=w
 for i,(n,c,u) in enumerate([("17.5–21k",COPPER,"fixed tokens on every call"),(">90%",COPPER,"is tool schemas, not rules"),("0.72",PETROL,"of a short session’s input")]):
     first(tb(s,0.7+i*4.0,4.25,3.8,0.7),n,30,c,bold=True,font=MONO); first(tb(s,0.7+i*4.0,4.87,3.8,0.5),u,12,INK2,font=MONO)
-caption(s,"Measured on Claude Code with the Qwen tokenizer. Any harness that exposes tools pays a version of this, but its size and makeup differ, so every new pairing starts with the same span study.",5.8)
+caption(s,"Measured on Claude Code with the Qwen tokenizer. Any harness that exposes tools pays a version of this, but its size and makeup differ, so the span study is rerun for every harness and model pair.",5.8)
 
 # 5 THE RECIPE
 s=slide(); eyebrow(s,"The recipe"); title(s,"Four steps, most of them reusable")
-steps=[("00 · PER PAIRING","Study the span","Measure what that harness re-sends, what is fixed and what is per-session, and its share of each call."),("01","Grow the vocabulary","Add a few thousand new “gist” tokens, seeded from the block they replace."),
+steps=[("00 · PER PAIR","Study the span","Measure what the harness re-sends on every call: what is fixed, what is per-session, and its share of each call."),("01","Grow the vocabulary","Add a few thousand new “gist” tokens, seeded from the block they replace."),
        ("02","Self-distil","The model learns to behave the same on the short form. Base weights frozen; only the new rows train."),
        ("03","Swap in a proxy","The proxy replaces the preamble with gist tokens. No change to the harness or the engine.")]
 sw,gap,y,h=2.7,0.35,2.05,2.45
@@ -141,8 +136,8 @@ for i,(n,t,b) in enumerate(steps):
     l=0.7+i*(sw+gap); rrect(s,l,y,sw,h,fill=BG2,line=LINE); tf=tb(s,l+0.3,y+0.25,sw-0.6,h-0.5)
     first(tf,n,12,COPPER if i==0 else PETROL,bold=True,font=MONO,after=4); addpara(tf,t,18,WHITE,bold=True,font=HEAD,after=6); addpara(tf,b,12.5,INK2,spacing=1.12)
     if i<3: first(tb(s,l+sw-0.02,y+h/2-0.35,gap+0.1,0.7,anchor=MSO_ANCHOR.MIDDLE),"→",26,PETROL,bold=True,align=PP_ALIGN.CENTER)
-cards(s,[("Portable across pairings",GOOD,"Training loop, proxy, evaluation harness, and the automated GPU lab that runs them.",OKLN),
-         ("Redone per pairing",COPPER,"The span study for that harness and its tokenizer, then new rows trained for that model. Needs open weights we host; closed models get provider prompt caching instead.",RGBColor(0x5a,0x40,0x2a))],4.75,1.85,2,size=14)
+cards(s,[("Reused as is",GOOD,"Training loop, proxy, evaluation harness, and the automated GPU lab that runs them.",OKLN),
+         ("Rerun per pair",COPPER,"The whole experiment suite, span study first, runs again for each harness and distilled-model pair. Needs a model whose weights we host.",RGBColor(0x5a,0x40,0x2a))],4.75,1.85,2,size=14)
 
 # 6 PROOF
 s=slide(); eyebrow(s,"Proof on the first pairing · Claude Code × Qwen3.8"); title(s,"The short prompt did the same work")
@@ -172,19 +167,23 @@ addpara(tf,"+44%",30,PETROL,bold=True,font=MONO,after=2); addpara(tf,"peak throu
 addpara(tf,"A capacity lever, not a speed lever: a single reply is barely faster. The gain comes on top of prefix caching.",14,INK,spacing=1.2,after=10)
 addpara(tf,"Short replay windows on one GPU class. On a larger H200 the peak gain was near zero, and the per-dollar comparison came out roughly even (appendix).",11.5,INK2,spacing=1.15)
 
-# 8 STACKING
-s=slide(); eyebrow(s,"How it compounds with Lattice"); title(s,"Built to plug into the other pillars")
-cards(s,[("Meta-harness",PETROL,"The adapter already sits between harness and model. The gist swap is a proxy step, so it can live there and serve every harness routed through it."),
-         ("Distillation",PETROL,"A student model still reads the full preamble on every call. The same recipe trains rows for the student: smaller model, shorter prompt."),
-         ("Adaptive routing",PETROL,"A gisted endpoint becomes a cheaper target for the router, with the full-prompt path kept as a fallback.")],2.2,3.1,3,size=15)
-tag(s,"design fit · not yet measured",5.65,3.6)
+# 8 SYNERGY
+s=slide(); eyebrow(s,"Synergy within Lattice · proposal"); title(s,"Distil first, then gist the distilled model")
+y,h=2.3,1.15; cx=0.7
+nodes=[("Base model",1.8,LINE,WHITE,None),("Distil",1.6,LINE,WHITE,"distillation track"),("Student model",2.0,LINE,WHITE,None),("Gist",1.5,PLUMLN,PLUM,"this recipe"),("Smaller model, shorter prompt",2.6,LINE,WHITE,None)]
+for i,(n,w,ln,tc,sub) in enumerate(nodes):
+    rrect(s,cx,y,w,h,fill=BG2,line=ln); tf=tb(s,cx,y,w,h,anchor=MSO_ANCHOR.MIDDLE); first(tf,n,14,tc,bold=True,align=PP_ALIGN.CENTER)
+    if sub: addpara(tf,sub,10,INK2,font=MONO,align=PP_ALIGN.CENTER)
+    cx+=w
+    if i<len(nodes)-1: first(tb(s,cx,y,0.45,h,anchor=MSO_ANCHOR.MIDDLE),"→",20,PETROL,bold=True,align=PP_ALIGN.CENTER); cx+=0.45
+first(tb(s,0.7,3.9,11.6,1.3),"A distilled student model still receives the same fixed preamble on every call. Running the gisting recipe on it attacks both costs at once: a smaller model reading a shorter prompt.",18,INK2,spacing=1.25)
+tag(s,"proposal · not yet tested",5.5,3.4)
 
 # 9 JETSTREAM
-s=slide(); eyebrow(s,"Where it lands · Jetstream PDLC"); title(s,"Coding agents on many harnesses, many models")
-cards(s,[("Inner loop · ticket to PR",PLUM,"Best fit. Many short agent steps, each re-sending the same tool preamble. The closest match to what we tested.",PLUMLN),
-         ("Outer loop · vision, PRD, HLD",PETROL,"Smaller fit. Fewer, document-heavy calls, where the fixed preamble is a smaller share of each call."),
-         ("Memory",PETROL,"Complementary. Memory is session-specific, so it stays raw; gisting covers only what never changes. That boundary is the lesson from our one real failure.")],2.2,3.1,3,size=15)
-caption(s,"Applies to Jetstream traffic that reaches an open-weights model we host through the meta-harness. Calls to closed models keep using provider prompt caching.",5.65)
+s=slide(); eyebrow(s,"Where it could land · proposal"); title(s,"A first home in the Jetstream inner loop")
+first(tb(s,0.7,2.2,11.2,1.5),"The Jetstream inner loop takes a ticket to a PR through coding agents on different harnesses. We propose it as the first place to trial gisting, one harness and model pair at a time.",19,INK2,spacing=1.25)
+tag(s,"proposal",4.0,1.6)
+caption(s,"Gisting applies where the agent calls a model whose weights we host.",4.8)
 
 # 10 LEDGER
 s=slide(); eyebrow(s,"Honest ledger"); title(s,"What’s proven, what isn’t")
@@ -193,7 +192,7 @@ def col(l,kicker,kc,items,linec):
     tf=tb(s,l+0.3,2.4,5.15,3.9); first(tf,kicker.upper(),12,kc,bold=True,font=MONO,after=10)
     for it in items: addpara(tf,"▪  "+it,14.5,INK,spacing=1.12,after=8)
 col(0.7,"Established",GOOD,["Equal task scores at every ratio on our suites.","Half to two thirds fewer tokens read per turn.","H100 replay: 2x rate within the latency target, +44% peak.","A reusable, spend-safe lab that runs the recipe end to end."],OKLN)
-col(6.85,"Not yet",WARN,["A second harness and model pairing, including its span study.","Quality on held-out work, and at production load.","Savings per task, and why the gain happens. An external review withdrew our first explanation.","Audit that compressed rules still bind."],WARNLN)
+col(6.85,"Not yet",WARN,["The experiment suite on a second harness and distilled-model pair.","Quality on held-out work, and at production load.","Savings per task, and why the gain happens. An external review withdrew our first explanation.","Audit that compressed rules still bind."],WARNLN)
 
 # 11 THE LAB
 s=slide(); eyebrow(s,"The capability"); title(s,"The next pairing is cheap to try")
@@ -210,10 +209,10 @@ caption(s,"One controller drives a recipe end to end, unattended. Swapping in a 
 
 # 12 ASK
 s=slide(); eyebrow(s,"The ask"); title(s,"Make gisting a Lattice pillar")
-cards(s,[("1 · Second pairing",PLUM,"A Jetstream inner-loop harness on an open-weights model, through the meta-harness, starting with its span study. Proves the recipe carries.",PLUMLN),
+cards(s,[("1 · Next pair",PLUM,"Run the experiment suite, span study first, on the next harness and distilled-model pair. Shows the recipe carries.",PLUMLN),
          ("2 · Validate",PETROL,"Held-out tasks, repeated runs, and quality checked at production load."),
-         ("3 · Guarded pilot",PETROL,"Inner loop, behind the meta-harness, with an automatic fallback to the full prompt.")],2.1,2.5,3,size=15)
-first(tb(s,0.7,4.9,11.0,1.1),"The lever is real on one pairing. The next step is showing it travels.",26,WHITE,bold=True,font=HEAD,spacing=1.1)
+         ("3 · Guarded pilot",PETROL,"Proposed for the Jetstream inner loop, with rule-audit and write-target checks at the serving boundary.")],2.1,2.5,3,size=15)
+first(tb(s,0.7,4.9,11.0,1.1),"The lever is real on one pairing. Next, show it carries to a distilled model on another harness.",24,WHITE,bold=True,font=HEAD,spacing=1.1)
 first(tb(s,0.7,6.35,11.9,0.5),"White paper, code and results: GitHub arunmenon/gisting-coding-agent  ·  weights and data on Hugging Face (private)",12,PETROL,font=MONO)
 
 # APPENDIX A
@@ -245,7 +244,7 @@ pill(2.2,3.6,2.3,"gist: rules",PLUM,PLUMLN); arrow(4.55,3.6,"+",INK2,0.4)
 pill(5.0,3.6,3.4,"raw: session path, date, model",INK,LINE); arrow(8.5,3.6)
 pill(9.1,3.6,3.2,"writes correctly   ✓",GOOD,OKLN)
 first(tb(s,0.7,4.95,11.9,0.8),"Keeping session-specific values raw restored the score 11/16 → 16/16 at 8:1.",18,INK,spacing=1.2)
-caption(s,"Every new pairing will hit this boundary. It is also why memory and gisting are complementary rather than overlapping.",5.95)
+caption(s,"Every new harness and model pair will hit this boundary, which is why the span study comes first.",5.95)
 
 
 prs.save(OUT)

@@ -94,7 +94,7 @@ svg text{font-family:var(--mono)}
 .pnode span{display:block}
 .safety{background:rgba(224,138,76,.09);border:1px solid #5a4a2a;border-radius:14px;padding:16px 20px;font-family:var(--mono);font-size:.92rem;color:var(--ink2);margin-top:.4rem}
 .safety b{color:var(--copper);font-weight:600}
-.eqline{display:flex;flex-wrap:wrap;align-items:center;gap:12px;font-family:var(--mono);font-size:clamp(1rem,1.8vw,1.3rem);margin:.6rem 0 1.4rem;color:var(--ink2)}
+.eqline-unused{display:flex;flex-wrap:wrap;align-items:center;gap:12px;font-family:var(--mono);font-size:clamp(1rem,1.8vw,1.3rem);margin:.6rem 0 1.4rem;color:var(--ink2)}
 .eqline span{border:1px solid var(--line);border-radius:10px;padding:8px 14px;color:var(--ink);background:var(--bg2)}
 .eqline span.hot{border-color:#5a3f6e;color:var(--plum)}
 .eqline i{font-style:normal;color:var(--petrol)}
@@ -111,21 +111,20 @@ svg text{font-family:var(--mono)}
 <div class="eyebrow">Bottom line up front</div>
 <h2>The answer in four lines</h2>
 <div class="grid4" style="margin-top:1.2rem">
-  <div class="card"><div class="k">Where it fits</div><div class="v">A fourth Lattice lever. Routing and distillation cut <b>cost per token</b>; the meta-harness shapes <b>calls</b>. Gisting cuts the <b>fixed tokens</b> every call carries.</div></div>
+  <div class="card"><div class="k">Where it fits</div><div class="v">A new pillar under <b>Lattice</b>, alongside the meta-harness, adaptive routing and model distillation tracks. Gisting cuts the <b>fixed prompt</b> a coding agent re-sends on every call.</div></div>
   <div class="card plum"><div class="k">What we showed</div><div class="v">On Claude Code with Qwen: task scores held at every compression ratio, input per turn <b>more than halved</b>, and on an H100 <b>2x the request rate</b> within the latency target, <b>+44% peak throughput</b>.</div></div>
   <div class="card warn"><div class="k">What it isn&rsquo;t yet</div><div class="v">One pairing, our own task suite, short replay windows. <b>Savings per task are not proven</b>, and the mechanism is still open.</div></div>
-  <div class="card good"><div class="k">The ask</div><div class="v">Take the recipe to a <b>second harness and model pairing</b> through the meta-harness, validate on held-out work, then a guarded pilot.</div></div>
+  <div class="card good"><div class="k">The ask</div><div class="v">Run the same experiment suite on the <b>next harness and distilled-model pair</b>, validate on held-out work, then a guarded pilot.</div></div>
 </div></section><section class="slide">
-<div class="eyebrow">Where gisting sits in Lattice</div>
-<h2>Four levers on one cost equation</h2>
-<div class="eqline"><span>cost per task</span><i>=</i><span>calls</span><i>&times;</i><span class="hot">tokens per call</span><i>&times;</i><span>cost per token</span></div>
+<div class="eyebrow">Lattice &middot; cost optimization</div>
+<h2>A new pillar under Lattice</h2>
+<p class="lead" style="margin-bottom:1.4rem">Gisting&rsquo;s lever on total cost: the model reads <b>fewer tokens on every agent call</b>, so the same GPU does more work.</p>
 <div class="grid4">
-  <div class="card"><div class="k">Lattice meta-harness</div><div class="term">calls &middot; where they land</div><div class="v">One adapter from any harness to any model. The control point for how calls are made and which model serves them.</div></div>
-  <div class="card plum" style="border-color:#5a3f6e"><div class="k">Gisting &middot; this pillar</div><div class="term">fixed tokens per call</div><div class="v">Learned shorthand for the preamble every call repeats: tool schemas and rules.</div></div>
-  <div class="card"><div class="k">Adaptive routing</div><div class="term">cost per token</div><div class="v">Sends each request to the cheapest model that can handle it.</div></div>
-  <div class="card"><div class="k">Model distillation</div><div class="term">cost per token</div><div class="v">Smaller student models for the work that allows it.</div></div>
-</div>
-<p class="caption">The levers multiply rather than compete. A distilled model reached through the router still reads the full preamble on every call, unless it is gisted.</p></section><section class="slide">
+  <div class="card"><div class="k">Meta-harness</div><div class="v">Adapter that routes different harnesses to underlying models.</div></div>
+  <div class="card"><div class="k">Adaptive routing</div><div class="v">Research track.</div></div>
+  <div class="card"><div class="k">Model distillation</div><div class="v">Research track.</div></div>
+  <div class="card plum" style="border-color:#5a3f6e"><div class="k">Gisting &middot; new</div><div class="v">Shrinks the fixed prompt every agent call carries. <b>This deck.</b></div></div>
+</div></section><section class="slide">
 <div class="eyebrow">The tax</div>
 <h2>Most of every call is the same boilerplate</h2>
 <div class="compbar">
@@ -138,11 +137,11 @@ svg text{font-family:var(--mono)}
   <div><div class="bignum copper">&gt;90%</div><div class="unit">is tool schemas, not rules</div></div>
   <div><div class="bignum petrol">0.72</div><div class="unit">of a short session&rsquo;s input</div></div>
 </div>
-<p class="caption">Measured on Claude Code with the Qwen tokenizer. Any harness that exposes tools pays a version of this, but its size and makeup differ, so every new pairing starts with the same span study.</p></section><section class="slide">
+<p class="caption">Measured on Claude Code with the Qwen tokenizer. Any harness that exposes tools pays a version of this, but its size and makeup differ, so the span study is rerun for every harness and model pair.</p></section><section class="slide">
 <div class="eyebrow">The recipe</div>
 <h2>Four steps, most of them reusable</h2>
 <div class="flow">
-  <div class="step" style="border-color:var(--copper)"><div class="n" style="color:var(--copper)">00 &middot; per pairing</div><h3>Study the span</h3><p>Measure what that harness re-sends, what is fixed and what is per-session, and its share of each call.</p></div>
+  <div class="step" style="border-color:var(--copper)"><div class="n" style="color:var(--copper)">00 &middot; per pair</div><h3>Study the span</h3><p>Measure what the harness re-sends on every call: what is fixed, what is per-session, and its share of each call.</p></div>
   <div class="arrow">&rarr;</div>
   <div class="step"><div class="n">01</div><h3>Grow the vocabulary</h3><p>Add a few thousand new &ldquo;gist&rdquo; tokens, seeded from the block they replace.</p></div>
   <div class="arrow">&rarr;</div>
@@ -151,8 +150,8 @@ svg text{font-family:var(--mono)}
   <div class="step"><div class="n">03</div><h3>Swap in a proxy</h3><p>The proxy replaces the preamble with gist tokens. <b>No change to the harness or the engine.</b></p></div>
 </div>
 <div class="grid2" style="margin-top:.4rem">
-  <div class="card good"><div class="k">Portable across pairings</div><div class="v">Training loop, proxy, evaluation harness, and the automated GPU lab that runs them.</div></div>
-  <div class="card copper"><div class="k">Redone per pairing</div><div class="v">The span study for that harness and its tokenizer, then new rows trained for that model. Needs <b>open weights we host</b>; closed models get provider prompt caching instead.</div></div>
+  <div class="card good"><div class="k">Reused as is</div><div class="v">Training loop, proxy, evaluation harness, and the automated GPU lab that runs them.</div></div>
+  <div class="card copper"><div class="k">Rerun per pair</div><div class="v">The whole experiment suite, span study first, runs again for <b>each harness and distilled-model pair</b>. Needs a model whose weights we host.</div></div>
 </div></section><section class="slide">
 <div class="eyebrow">Proof on the first pairing &middot; Claude Code &times; Qwen3.8</div>
 <h2>The short prompt did the same work</h2>
@@ -178,22 +177,22 @@ svg text{font-family:var(--mono)}
     <p class="caption">Short replay windows on one GPU class. On a larger H200 the peak gain was near zero, and the cost comparison between the two cards came out roughly even (appendix).</p>
   </div>
 </div></section><section class="slide">
-<div class="eyebrow">How it compounds with Lattice</div>
-<h2>Built to plug into the other pillars</h2>
-<div class="grid3" style="margin-top:1rem">
-  <div class="card"><div class="k">Meta-harness</div><div class="v">The adapter already sits between harness and model. The gist swap is a proxy step, so it can live there and serve <b>every harness routed through it</b>.</div></div>
-  <div class="card"><div class="k">Distillation</div><div class="v">A student model still reads the full preamble on every call. The same recipe trains rows for the student: <b>smaller model, shorter prompt</b>.</div></div>
-  <div class="card"><div class="k">Adaptive routing</div><div class="v">A gisted endpoint becomes a cheaper target for the router, with the full-prompt path kept as a <b>fallback</b>.</div></div>
+<div class="eyebrow">Synergy within Lattice &middot; proposal</div>
+<h2>Distil first, then gist the distilled model</h2>
+<div class="pipe">
+  <div class="pnode">Base model</div><div class="parrow">&rarr;</div>
+  <div class="pnode">Distil<span class="mono" style="font-size:.72rem;color:var(--ink2);font-weight:400">distillation track</span></div><div class="parrow">&rarr;</div>
+  <div class="pnode">Student model</div><div class="parrow">&rarr;</div>
+  <div class="pnode" style="border-color:#5a3f6e;color:var(--plum)">Gist<span class="mono" style="font-size:.72rem;color:var(--ink2);font-weight:400">this recipe</span></div><div class="parrow">&rarr;</div>
+  <div class="pnode">Smaller model, shorter prompt</div>
 </div>
-<p style="margin-top:1.2rem"><span class="tag warn">design fit &middot; not yet measured</span></p></section><section class="slide">
-<div class="eyebrow">Where it lands &middot; Jetstream PDLC</div>
-<h2>Coding agents on many harnesses, many models</h2>
-<div class="grid3" style="margin-top:1rem">
-  <div class="card plum" style="border-color:#5a3f6e"><div class="k">Inner loop &middot; ticket to PR</div><div class="v"><b>Best fit.</b> Many short agent steps, each re-sending the same tool preamble. The closest match to what we tested.</div></div>
-  <div class="card"><div class="k">Outer loop &middot; vision, PRD, HLD</div><div class="v"><b>Smaller fit.</b> Fewer, document-heavy calls, where the fixed preamble is a smaller share of each call.</div></div>
-  <div class="card"><div class="k">Memory</div><div class="v"><b>Complementary.</b> Memory is session-specific, so it stays raw; gisting covers only what never changes. That boundary is the lesson from our one real failure.</div></div>
-</div>
-<p class="caption">Applies to Jetstream traffic that reaches an open-weights model we host through the meta-harness. Calls to closed models keep using provider prompt caching.</p></section><section class="slide">
+<p class="lead">A distilled student model still receives the same fixed preamble on every call. Running the gisting recipe on it attacks both costs at once: a <b>smaller model</b> reading a <b>shorter prompt</b>.</p>
+<p style="margin-top:1.2rem"><span class="tag warn">proposal &middot; not yet tested</span></p></section><section class="slide">
+<div class="eyebrow">Where it could land &middot; proposal</div>
+<h2>A first home in the Jetstream inner loop</h2>
+<p class="lead">The Jetstream inner loop takes a ticket to a PR through coding agents on different harnesses. We propose it as the first place to trial gisting, one harness and model pair at a time.</p>
+<p style="margin-top:1.2rem"><span class="tag warn">proposal</span></p>
+<p class="caption">Gisting applies where the agent calls a model whose weights we host.</p></section><section class="slide">
 <div class="eyebrow">Honest ledger</div>
 <h2>What&rsquo;s proven, what isn&rsquo;t</h2>
 <div class="grid2" style="margin-top:1rem">
@@ -207,7 +206,7 @@ svg text{font-family:var(--mono)}
   </div>
   <div class="card warn"><div class="k">Not yet</div>
     <ul class="clean warn" style="margin:0">
-      <li>A second harness and model pairing, including its span study.</li>
+      <li>The experiment suite on a second harness and distilled-model pair.</li>
       <li>Quality on held-out work, and at production load.</li>
       <li>Savings per task, and why the gain happens. An external review withdrew our first explanation.</li>
       <li>Audit that compressed rules still bind.</li>
@@ -229,11 +228,11 @@ svg text{font-family:var(--mono)}
 <div class="eyebrow">The ask</div>
 <h2>Make gisting a Lattice pillar</h2>
 <div class="grid3" style="margin-top:1rem">
-  <div class="card plum" style="border-color:#5a3f6e"><div class="k">1 &middot; Second pairing</div><div class="v">A Jetstream inner-loop harness on an open-weights model, through the meta-harness, starting with its span study. Proves the recipe carries.</div></div>
+  <div class="card plum" style="border-color:#5a3f6e"><div class="k">1 &middot; Next pair</div><div class="v">Run the experiment suite, span study first, on the next <b>harness and distilled-model pair</b>. Shows the recipe carries.</div></div>
   <div class="card"><div class="k">2 &middot; Validate</div><div class="v">Held-out tasks, repeated runs, and quality checked at production load.</div></div>
-  <div class="card"><div class="k">3 &middot; Guarded pilot</div><div class="v">Inner loop, behind the meta-harness, with an automatic fallback to the full prompt.</div></div>
+  <div class="card"><div class="k">3 &middot; Guarded pilot</div><div class="v">Proposed for the Jetstream inner loop, with rule-audit and write-target checks at the serving boundary.</div></div>
 </div>
-<p class="big-verdict" style="margin-top:1.6rem">The lever is real on one pairing. The next step is showing it travels.</p>
+<p class="big-verdict" style="margin-top:1.6rem">The lever is real on one pairing. Next, show it carries to a distilled model on another harness.</p>
 <div class="stack" style="margin-top:1.2rem">White paper, code and results: GitHub arunmenon/gisting-coding-agent &middot; weights and data on Hugging Face (private)</div></section><section class="slide">
 <div class="eyebrow">Appendix A &middot; a correction we made</div>
 <h2>Our first explanation of the gain was wrong</h2>
@@ -259,7 +258,7 @@ svg text{font-family:var(--mono)}
   <div class="baflow"><span class="pill plum">gist: rules</span><span class="plus">+</span><span class="pill">raw: session path, date, model</span><span class="parrow">&rarr;</span><span class="pill ok">writes to the right place &#10003;</span></div>
 </div>
 <p class="lead" style="margin-top:1.5rem">Keeping session-specific values <b>raw</b> restored the score <b style="color:var(--good)">11/16 &rarr; 16/16</b> at 8:1.</p>
-<p class="caption">Every new pairing will hit this boundary. It is also why memory and gisting are complementary rather than overlapping.</p></section></div><div class="rail"><div class="count" id="count">01 / 15</div><div class="dots" id="dots"></div></div><script>
+<p class="caption">Every new harness and model pair will hit this boundary, which is why the span study comes first.</p></section></div><div class="rail"><div class="count" id="count">01 / 15</div><div class="dots" id="dots"></div></div><script>
 const slides=[...document.querySelectorAll('.slide')];
 const dots=document.getElementById('dots'), count=document.getElementById('count');
 slides.forEach((s,i)=>{const b=document.createElement('b');b.onclick=()=>slides[i].scrollIntoView();dots.appendChild(b);});

@@ -130,11 +130,11 @@ svg text{font-family:var(--mono)}
 <div class="grid3" style="margin-top:1rem">
   <div class="card copper"><div class="k">1 &middot; Span analysis</div><div class="v">Measures what the harness re-sends on every call, and splits the fixed part from the per-session values that must stay raw.</div></div>
   <div class="card plum" style="border-color:#5a3f6e"><div class="k">2 &middot; Trainer</div><div class="v">Adds new token rows to the model and trains them by self-distillation, with the base model frozen.</div></div>
-  <div class="card"><div class="k">3 &middot; Proxy</div><div class="v">Sits in front of the model and swaps the fixed span for the Steno tokens. The agent and serving engine are unchanged.</div></div>
+  <div class="card"><div class="k">3 &middot; Proxy</div><div class="v">Sits in front of the model and swaps the fixed span for the Steno tokens. No change to the agent or the engine&rsquo;s code; the served model carries the new token rows and a matching chat template.</div></div>
 </div>
 <div class="grid2" style="margin-top:22px">
   <div class="card"><div class="k">4 &middot; Evaluation</div><div class="v">Task suites scored against the full prompt, plus a serving benchmark for throughput and latency.</div></div>
-  <div class="card good"><div class="k">5 &middot; Auto loop</div><div class="v">A controller that provisions a GPU, trains, serves, evaluates, syncs results and tears down, with spend guards. Most experiments after the first ran through it.</div></div>
+  <div class="card good"><div class="k">5 &middot; Auto loop</div><div class="v">Scripts and a controller that provision a GPU, train, serve, evaluate, sync results and tear down, with spend guards. Most experiments after the first ran through it; a single end-to-end entry point is still to build.</div></div>
 </div></section><section class="slide">
 <div class="eyebrow">The span, and why it is per pair</div>
 <h2>What the agent re-sends, measured on one pair</h2>

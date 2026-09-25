@@ -119,9 +119,9 @@ for i,(k,c,ln,body) in enumerate([("Meta-harness",PETROL,LINE,""),("Adaptive rou
 s=slide(); eyebrow(s,"What Steno is made of"); title(s,"Five parts, all built and run on this study")
 cards(s,[("1 · Span analysis",COPPER,"Measures what the harness re-sends on every call, and splits the fixed part from the per-session values that must stay raw.",RGBColor(0x5a,0x40,0x2a)),
          ("2 · Trainer",PLUM,"Adds new token rows to the model and trains them by self-distillation, with the base model frozen.",PLUMLN),
-         ("3 · Proxy",PETROL,"Sits in front of the model and swaps the fixed span for the Steno tokens. The agent and serving engine are unchanged.")],2.0,2.1,3,size=14)
+         ("3 · Proxy",PETROL,"Sits in front of the model and swaps the fixed span for the Steno tokens. No change to the agent or the engine’s code; the served model carries the new token rows and a matching chat template.")],2.0,2.1,3,size=14)
 cards(s,[("4 · Evaluation",PETROL,"Task suites scored against the full prompt, plus a serving benchmark for throughput and latency."),
-         ("5 · Auto loop",GOOD,"A controller that provisions a GPU, trains, serves, evaluates, syncs results and tears down, with spend guards. Most experiments after the first ran through it.",OKLN)],4.35,1.95,2,size=14)
+         ("5 · Auto loop",GOOD,"Scripts and a controller that provision a GPU, train, serve, evaluate, sync results and tear down, with spend guards. Most experiments after the first ran through it; a single end-to-end entry point is still to build.",OKLN)],4.35,1.95,2,size=14)
 
 # 4 SPAN + RECIPE
 s=slide(); eyebrow(s,"The span, and why it is per pair"); title(s,"What the agent re-sends, measured on one pair")

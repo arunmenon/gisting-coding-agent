@@ -12,15 +12,17 @@ Hi Srini,
 
 In our last meeting you pointed us to Shopify's post on gisting. We took the idea and tried it on our own setup, and I'd like to propose it as a new pillar under Lattice. We're calling it **Steno**: learned prompt compression for agent calls.
 
-**What it is, in brief.** A coding agent re-sends the same fixed preamble, mostly tool schemas plus rules, to the model on every call. Steno replaces that preamble with a small set of learned tokens, the technique Shopify calls gisting. The base model stays frozen, only the new token embeddings are trained, and a proxy swaps them in, so neither the agent nor the serving engine changes.
+**What it is, in brief.** A coding agent re-sends the same fixed preamble, mostly tool schemas plus rules, to the model on every call. Steno replaces that preamble with a small set of learned tokens, the technique Shopify calls gisting. The base model stays frozen, only the new token embeddings are trained, and a proxy swaps them in, so neither the agent nor the serving engine's code changes; the served model carries the new token rows.
 
 **What Steno is made of.** Five parts, all built and run in this study:
 
 1. **Span analysis:** measures what the harness re-sends on every call, and separates the fixed part from the per-session values that must stay raw.
 2. **Trainer:** adds new token rows to the model and trains them by self-distillation, with the base model frozen.
-3. **Proxy:** swaps the fixed span for the Steno tokens, so the agent and serving engine stay unchanged.
+3. **Proxy:** swaps the fixed span for the Steno tokens, with no change to the agent or the serving engine's code.
 4. **Evaluation:** task suites scored against the full prompt, plus a serving benchmark.
-5. **Auto loop:** provisions a GPU, trains, serves, evaluates, syncs results and tears down, with spend guards.
+5. **Auto loop:** scripts and a controller that provision a GPU, train, serve, evaluate, sync results and tear down, with spend guards.
+
+An independent review of these five parts found them working for the pair we studied but still coupled to it. The gaps are tracked as a TODO list in `steno-capability.md` in the repo, and the P1 items there need closing before the next-pair run.
 
 **What we did.** One pair: Claude Code with Qwen3.8-27B, self-hosted.
 
@@ -49,7 +51,7 @@ Arun
 
 Hi Srini, following up on the Shopify gisting post you shared in our last meeting. We tried it on our own stack and I'd like to propose it as a new Lattice pillar, which we're calling Steno: learned prompt compression for agent calls.
 
-In brief: a coding agent re-sends the same fixed preamble (tool schemas and rules) on every call. Steno swaps it for a few learned tokens, with the base model frozen and a proxy in front, so the agent and serving engine don't change.
+In brief: a coding agent re-sends the same fixed preamble (tool schemas and rules) on every call. Steno swaps it for a few learned tokens, with the base model frozen and a proxy in front, so the agent and serving engine's code don't change.
 
 Steno is five parts: span analysis, a trainer, a proxy, an evaluation suite and an auto loop that runs experiments on rented GPUs.
 

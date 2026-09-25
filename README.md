@@ -7,6 +7,10 @@ base model **frozen**.
 Target: Claude Code driving a self-hosted **Qwen3.8-27B** (hybrid attention) served
 through vLLM, with **no changes to the client or the inference engine**.
 
+Internally the capability is now called **Steno** (learned prompt compression for agent calls).
+Its five parts, their status and the open TODO list are tracked in
+[`steno-capability.md`](steno-capability.md).
+
 This is a **development study, not a validated benchmark**: every evaluation is a single
 run of small, partly reused, author-designed task sets. The whitepaper reports negative
 and unscored results plainly and incorporates an independent adversarial review.

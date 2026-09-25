@@ -27,6 +27,48 @@ GIST_OUT = os.environ.get("GIST_OUT") or os.path.join(HERE, "out")
 TOKENIZER_DIR = os.path.join(GIST_OUT, "tokenizer")
 SEGMENTS = json.load(open(os.path.join(GIST_OUT, "segments.json")))
 
+# --- B3 enforcement (opt-in): only imported/used when a bundle path is passed to main(). Guarded
+# sys.path insert of the repo root, same pattern as experiments/proxy/tap.py, so plain dataset
+# building (no bundle argument) never depends on steno/ being importable.
+_REPO_ROOT = os.path.abspath(os.path.join(HERE, "..", ".."))
+
+
+def load_bundle_context(bundle_path):
+    """Loads the bundle, checks that the artifacts this build actually uses -- the global
+    SEGMENTS map and the tokenizer file under TOKENIZER_DIR -- are the ones this bundle
+    identifies (W-X4: a valid bundle alone proves nothing about which map/tokenizer were loaded
+    next to it), and returns (bundle, gate) where gate(request_dict) -> (ok, reason) checks one
+    request. Raises ValueError if the bundle, the segment map, or the tokenizer are not bound
+    together; that is meant to stop the whole build, not be caught per-example."""
+    if _REPO_ROOT not in sys.path:
+        sys.path.insert(0, _REPO_ROOT)
+    from steno.span.adapters.claude_code import ClaudeCodeAdapter
+    from steno.span.enforce import bind_segments_to_bundle, bind_tokenizer_to_bundle, check_request_against_bundle, load_bundle
+
+    bundle = load_bundle(bundle_path)
+
+    segments_ok, segments_reasons = bind_segments_to_bundle(SEGMENTS, bundle)
+    if not segments_ok:
+        raise ValueError("segment map at %s is not bound to bundle %s: %s" % (
+            os.path.join(GIST_OUT, "segments.json"), bundle_path, "; ".join(segments_reasons)))
+
+    tokenizer_file = os.path.join(TOKENIZER_DIR, "tokenizer.json")
+    tokenizer_ok, tokenizer_reason = bind_tokenizer_to_bundle(tokenizer_file, bundle)
+    if not tokenizer_ok:
+        raise ValueError("tokenizer at %s is not bound to bundle %s: %s" % (tokenizer_file, bundle_path, tokenizer_reason))
+
+    adapter = ClaudeCodeAdapter()
+
+    def gate(request):
+        try:
+            call = adapter.parse_request({"path": "/v1/messages", "request": request})
+        except Exception as error:
+            return False, "adapter could not parse request: %r" % (error,)
+        ok, reasons = check_request_against_bundle(call, bundle)
+        return ok, ("ok" if ok else "; ".join(reasons))
+
+    return bundle, gate
+
 
 def system_text_as_served(request):
     """vLLM's Anthropic adapter: top-level system block texts, then inline role=system messages
@@ -149,13 +191,23 @@ def build_example(tokenizer, record):
 def main():
     log_path = sys.argv[1]
     out_path = sys.argv[2]
+    bundle_path = sys.argv[3] if len(sys.argv) > 3 else None  # optional: opt-in B3 enforcement
+    bundle_gate = load_bundle_context(bundle_path)[1] if bundle_path else None  # raises if bundle/segments/tokenizer aren't bound
+
     tokenizer = AutoTokenizer.from_pretrained(TOKENIZER_DIR)
-    count = skipped = 0
+    count = skipped = bundle_rejected = 0
     with open(out_path, "w") as out_file:
         for line in open(log_path):
             record = json.loads(line)
             if record.get("status") != 200 or not record.get("response") or not (record.get("request") or {}).get("tools"):
                 continue
+            if bundle_gate is not None:
+                ok, reason = bundle_gate(record["request"])
+                if not ok:
+                    bundle_rejected += 1
+                    if bundle_rejected <= 3:
+                        print("bundle reject:", reason)
+                    continue
             try:
                 example = build_example(tokenizer, record)
             except Exception as error:
@@ -167,7 +219,9 @@ def main():
             count += 1
             if count <= 2 or count % 100 == 0:
                 print("example %d: teacher %d student %d response %d tokens (prefix saved %d)" % (count, len(example["teacher_ids"]), len(example["student_ids"]), len(example["response_ids"]), len(example["teacher_ids"]) - len(example["student_ids"])))
-    print("wrote", count, "examples, skipped", skipped, "->", out_path)
+    print("wrote", count, "examples, skipped", skipped,
+          ("bundle_rejected %d" % bundle_rejected) if bundle_gate is not None else "(bundle enforcement off)",
+          "->", out_path)
 
 
 if __name__ == "__main__":

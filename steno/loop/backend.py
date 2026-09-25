@@ -1,37 +1,75 @@
-"""The compute backend protocol (steno-design.md section 2, "Compute backends").
+"""The compute backend contract (steno-design.md section 2, "Compute backends").
 
-    quote(resources); provision(spec, idempotency_key); inspect(id); execute(id, stage_plan)
+    quote(request); provision(compute, idempotency_key); inspect(id); execute(id, stage_plan)
     transfer(id, manifest); cost(id); destroy(id); confirm_destroyed(id)
 
-Local and vast.ai are the two backends the design calls for. This wave ships
-only ``FakeBackend``, a test double used to exercise the runner and lifecycle
-without any network or GPU access, and a documented ``VastBackend`` stub that
-raises NotImplementedError so the interface is visible before wave 2 implements
-it against experiments/vast/*.sh.
+Wave 1 shipped only ``FakeBackend`` and a documented ``VastBackend`` stub.
+Wave 2 (steno-design.md section 3, build order step 6) formalises this module
+into the provider-neutral contract every backend must satisfy, moves each
+concrete backend into its own module under ``steno/loop/backends/`` (so no
+provider import ever needs to happen outside that provider's own file), and
+implements ``LocalBackend`` and ``VastBackend`` for real.
+
+This module re-exports ``FakeBackend`` and ``VastBackend`` from their new
+homes so wave 1 imports (``from steno.loop.backend import FakeBackend``)
+keep working unchanged. New code should import backends from
+``steno.loop.backends`` (or via the registry in ``steno.loop.backends``)
+instead.
 """
 
 from __future__ import annotations
 
-import time
-import uuid
+from abc import ABC, abstractmethod
+from typing import Any
+
+from .compute import ComputeOffer, ComputeRequest, ResourceHandle
+
+# Backward-compatible alias: wave 1 called the provisioning result
+# ProvisionResult; wave 2's provider-neutral name is ResourceHandle.
+ProvisionResult = ResourceHandle
+
 from dataclasses import dataclass, field
-from typing import Any, Callable, Protocol
 
 
-@dataclass
-class Quote:
-    """The estimated hourly price and specs for a requested resource."""
+class BackendError(RuntimeError):
+    """The one exception type a backend should raise for a failed provider
+    call it cannot otherwise turn into a typed result (Codex review X-7).
 
-    hourly_usd: float
-    gpu_name: str
-    details: dict[str, Any] = field(default_factory=dict)
+    A backend MUST NOT let a raw SDK exception (or its __cause__/__context__
+    chain, or a message built from that exception's own text) escape: an SDK
+    exception can carry the API credential (for example in
+    ``error.response.request.headers["Authorization"]``, confirmed
+    empirically for vast.ai's HTTPError). Every backend call site that
+    touches a provider SDK should catch broadly and raise
+    ``BackendError(message) from None`` with a message built only from
+    caller-known facts (which call, which resource id, the exception's
+    *type* name) -- never from ``str(error)`` or the exception object itself.
+    """
 
 
-@dataclass
-class ProvisionResult:
-    resource_id: str
-    host: str
-    port: int
+class AmbiguousProvisionError(BackendError):
+    """Raised by provision() when a create call's outcome could not be
+    confirmed (the request may or may not have succeeded server-side) and
+    reconciliation could not resolve it within a bounded window (Codex
+    review X-1). A caller must NOT respond to this by provisioning again
+    with a fresh call; the safe response is to stop and let a human (or a
+    later, deliberate resume) reconcile against the provider first, since a
+    blind retry risks renting a second resource for work the first one may
+    already be doing."""
+
+
+def stage_plan_has_work(stage_plan: dict[str, Any]) -> bool:
+    """The stage-plan contract every backend and the runner share (Codex
+    review X-6): a plan is only legitimate if it carries an ``executor``
+    callable (run in-process; how FakeBackend and the CLI's dry-run work) or
+    a ``command`` (an argv list, run out-of-process; how LocalBackend and
+    VastBackend work). A plan with neither is not a valid no-op: a backend
+    that is not explicitly a test double must reject it (``ok=False,
+    kind="infra_failure"``) rather than silently reporting success for work
+    that never ran, which is what let a stage report success without a
+    registered executor in the wave 2 review's offline probes.
+    """
+    return callable(stage_plan.get("executor")) or bool(stage_plan.get("command"))
 
 
 @dataclass
@@ -62,181 +100,159 @@ class TransferResult:
     detail: str = ""
 
 
-class ComputeBackend(Protocol):
-    """The provider-agnostic contract the runner drives every backend through."""
+class ComputeBackend(ABC):
+    """The provider-agnostic contract the runner drives every backend through.
 
-    def quote(self, resources: dict[str, Any]) -> Quote: ...
+    Every method below documents three things a backend author must get
+    right: the semantics the runner relies on, what idempotency means for
+    that call (if any), and what an exception vs. a returned value means.
+    Unless a method's docstring says otherwise, an ordinary exception must
+    never be raised for an expected outcome (like "not ready yet"); it should
+    be reserved for a call that could not be completed at all (a network
+    error, a malformed provider response). The runner (see runner.py's W-2)
+    catches exceptions from every one of these calls once it owns a resource
+    and turns them into typed failures, so a backend that raises instead of
+    returning a typed "not ok" result does not crash the run, but it does
+    lose the specific reason a typed result would have carried.
 
-    def provision(self, spec: dict[str, Any], idempotency_key: str) -> ProvisionResult:
-        """Must be idempotent: calling twice with the same idempotency_key for a
-        resource that already exists returns the existing resource rather than
-        creating a second one."""
-        ...
+    ``name`` identifies the backend in ledger rows, logs and the registry.
+    ``capabilities`` is a small dict of feature flags the runner/CLI can
+    check before relying on optional behavior, for example
+    ``{"credit_lookup": True}`` when the backend can report available
+    provider credit for preflight (see runner.py's credit check).
+    """
 
-    def inspect(self, resource_id: str) -> InspectResult: ...
+    name: str = "unnamed"
+    capabilities: dict[str, Any] = {}
 
-    def execute(self, resource_id: str, stage_plan: dict[str, Any]) -> ExecuteResult: ...
+    @abstractmethod
+    def quote(self, request: ComputeRequest) -> list[ComputeOffer]:
+        """Return candidate offers matching ``request``, cheapest first.
 
-    def transfer(self, resource_id: str, manifest: dict[str, Any]) -> TransferResult: ...
+        Read-only: must not reserve, rent or otherwise commit anything.
+        Not idempotent in any meaningful sense (prices move); callers must
+        not assume a later provision() will get the same offer or price.
+        An empty list means no matching offer was found, not an error; raise
+        only when the lookup itself could not be performed.
+        """
 
+    @abstractmethod
+    def provision(self, compute: dict[str, Any], idempotency_key: str) -> ResourceHandle:
+        """Provision one resource for this run and return a handle to it.
+
+        Must be idempotent on ``idempotency_key``: calling this twice with
+        the same key for a resource that already exists (by this backend's
+        own bookkeeping, not a guess) returns the existing resource rather
+        than creating a second one, so a crash-and-retry can never double
+        rent. ``compute`` is the spec's ``compute`` mapping; a backend reads
+        ``compute.get("request")`` (a ComputeRequest-shaped dict) and
+        ``compute.get("backend_options")`` (its own opaque extras), falling
+        back to treating the whole mapping as backend_options when neither
+        key is present (wave 1 compatibility). Raise only when provisioning
+        itself could not be attempted or confirmed; a provider-side rejection
+        (out of stock, insufficient credit) should raise a clear exception
+        since the runner cannot proceed without a resource either way.
+        """
+
+    @abstractmethod
+    def inspect(self, resource_id: str) -> InspectResult:
+        """Return the provider's current ground truth for ``resource_id``.
+
+        Never idempotent in the sense of caching; must reflect live state (or
+        the backend's best local reconciliation of it) on every call. An
+        unknown id returns ``exists=False``, never an exception, so resume
+        logic can treat "gone" and "never existed" alike. Reserve exceptions
+        for a lookup that could not be performed at all (network/API error);
+        the runner treats such an exception as "cannot confirm right now",
+        never as confirmation of either existence or absence.
+        """
+
+    @abstractmethod
+    def execute(self, resource_id: str, stage_plan: dict[str, Any]) -> ExecuteResult:
+        """Run one stage's work against the resource and report a typed result.
+
+        Must honor a deadline internally (a stage or launch timeout) rather
+        than blocking forever; a timeout is reported as
+        ``ExecuteResult(ok=False, kind="infra_failure", ...)``, not an
+        exception, since it is an expected outcome the runner already knows
+        how to handle. Not idempotent by contract: a retried stage may repeat
+        side effects; stage-level retry policy (``max_attempts_per_stage``)
+        lives in the runner, not here.
+        """
+
+    @abstractmethod
+    def transfer(self, resource_id: str, manifest: dict[str, Any]) -> TransferResult:
+        """Sync artifacts named in ``manifest`` (path -> expected content hash)
+        off the resource and verify them against that hash.
+
+        ``TransferResult.ok`` must be True only when every path in the
+        manifest was actually retrieved and its hash matches; a partial or
+        mismatched transfer is ``ok=False`` with the mismatching paths named
+        in ``detail``, never silently accepted. Safe to retry (re-running a
+        verified transfer must not corrupt or lose the already-verified
+        copy).
+        """
+
+    @abstractmethod
     def cost(self, resource_id: str) -> float:
-        """Cumulative spend in USD for this resource so far."""
-        ...
+        """Return cumulative spend in USD for this resource so far.
 
+        Must never raise for an ordinary "still running" resource; the
+        runner treats any exception here as "assume budget exceeded" (fail
+        safe), so a backend that raises when it simply doesn't know the exact
+        figure yet will incorrectly abort a healthy run. Return the best
+        available estimate instead (for example ``0.0`` before the first
+        billing sample) rather than raising.
+        """
+
+    @abstractmethod
     def destroy(self, resource_id: str) -> bool:
-        """Request destruction. Returns True if the request itself succeeded
-        (not confirmation of actual teardown; see confirm_destroyed)."""
-        ...
+        """Request destruction. Returns True only if the destroy *request*
+        itself was accepted by the provider, not confirmation of actual
+        teardown (see confirm_destroyed). Idempotent: calling destroy() on an
+        already-destroyed or already-gone resource must return True rather
+        than raising, so a retried destroy is always safe.
+        """
 
+    @abstractmethod
     def confirm_destroyed(self, resource_id: str) -> bool | None:
-        """True: provider confirms the resource is gone. False: provider says it
-        still exists. None: an API error occurred, meaning unknown, never
-        treated as destroyed."""
-        ...
+        """True: provider confirms the resource is gone. False: provider says
+        it still exists. None: an API error occurred while checking, meaning
+        unknown -- an "unknown" result must never be treated as "destroyed"
+        by any caller. Idempotent and safe to call repeatedly until it
+        returns True.
+        """
 
 
 class VastBackend:
-    """Documented stub for the vast.ai backend (build order step 6, wave 2).
+    """Backward-compatible re-export; see steno.loop.backends.vast.VastBackend.
 
-    Intended shape, mapping onto experiments/vast/*.sh and experiments/vast/rsh.sh:
-      - quote(): vastai search_offers, ranked by dph_total, filtered by the
-        spec's compute.gpu_query.
-      - provision(): vastai create instance, immediately write the ledger row
-        (see experiments/vast/bench_provision.sh's "spend-safety rule"), keyed
-        by idempotency_key so a resumed run never double-creates.
-      - inspect(): vastai show instance, reconciled against local state.
-      - execute(): rsh.sh run against the picked endpoint, honoring the
-        launch/stage deadline independent of stage activity.
-      - transfer(): rsh.sh get plus a checksum manifest comparison.
-      - cost(): dph_total * elapsed hours from vastai show instance.
-      - destroy() / confirm_destroyed(): vastai destroy instance, then poll
-        show_instances to confirm it no longer appears (see bench_provision.sh
-        "abort" cleanup logic for the shape of this check).
-    This wave intentionally leaves the implementation undone: no network, no
-    vast.ai calls, no GPU, are made by this package in wave 1.
+    Kept importable from this module for wave 1 call sites. Importing the
+    real implementation requires the ``vastai`` package; if it is not
+    installed, importing *this* module still succeeds (no provider import
+    happens here), but constructing ``backend.VastBackend`` will raise
+    ``ImportError`` at call time instead of at import time.
     """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        raise NotImplementedError(
-            "VastBackend is not implemented in wave 1; see the class docstring "
-            "for the intended shape (build order step 6 in steno-design.md)."
-        )
+    def __new__(cls, *args: Any, **kwargs: Any):  # pragma: no cover - thin re-export shim
+        from .backends.vast import VastBackend as _RealVastBackend
+
+        return _RealVastBackend(*args, **kwargs)
 
 
-class FakeBackend:
-    """A test double compute backend. Not for production use.
+# Re-export FakeBackend from its new home so `from steno.loop.backend import
+# FakeBackend` (wave 1's import path, and this wave's tests) keeps working.
+from .backends.fake import FakeBackend  # noqa: E402  (import after class defs to avoid a cycle)
 
-    Simulates cost accrual over an injected clock, and can be configured to
-    fail specific operations so tests can exercise infra failure paths without
-    any real provisioning:
-      - fail_sync: transfer() returns ok=False once (or every time if 'always').
-      - unreachable_hosts: set of resource_ids that inspect()/execute() report
-        as unreachable until made reachable again.
-      - fail_destroy: destroy() returns False (the destroy *request* fails).
-      - fail_destroy_confirmation: confirm_destroyed() raises to simulate an
-        API error (translated by callers into destroy_unknown, never destroyed).
-    """
-
-    def __init__(self, clock: Callable[[], float], hourly_usd: float = 1.0) -> None:
-        self._clock = clock
-        self._hourly_usd = hourly_usd
-        self._resources: dict[str, dict[str, Any]] = {}
-        self._provisioned_keys: dict[str, str] = {}  # idempotency_key -> resource_id
-        self.fail_sync = False
-        self.unreachable_hosts: set[str] = set()
-        self.fail_destroy = False
-        self.fail_destroy_confirmation = False
-        self._destroyed: set[str] = set()
-
-    def quote(self, resources: dict[str, Any]) -> Quote:
-        return Quote(hourly_usd=self._hourly_usd, gpu_name=resources.get("gpu_name", "fake-gpu"))
-
-    def provision(self, spec: dict[str, Any], idempotency_key: str) -> ProvisionResult:
-        existing = self._provisioned_keys.get(idempotency_key)
-        if existing is not None:
-            record = self._resources[existing]
-            return ProvisionResult(resource_id=existing, host=record["host"], port=record["port"])
-        resource_id = f"fake-{uuid.uuid4().hex[:12]}"
-        self._resources[resource_id] = {
-            "host": f"{resource_id}.fake",
-            "port": 22,
-            "created_at": self._clock(),
-            "destroyed": False,
-            "artifacts": {},  # path -> hash, only what execute() actually "wrote" to this resource
-        }
-        self._provisioned_keys[idempotency_key] = resource_id
-        return ProvisionResult(resource_id=resource_id, host=self._resources[resource_id]["host"], port=22)
-
-    def inspect(self, resource_id: str) -> InspectResult:
-        record = self._resources.get(resource_id)
-        if record is None:
-            return InspectResult(resource_id=resource_id, exists=False, reachable=False, status_text="unknown")
-        reachable = resource_id not in self.unreachable_hosts and not record["destroyed"]
-        return InspectResult(
-            resource_id=resource_id,
-            exists=not record["destroyed"],
-            reachable=reachable,
-            status_text="destroyed" if record["destroyed"] else ("unreachable" if not reachable else "ready"),
-        )
-
-    def execute(self, resource_id: str, stage_plan: dict[str, Any]) -> ExecuteResult:
-        if resource_id in self.unreachable_hosts:
-            return ExecuteResult(ok=False, kind="infra_failure", detail="host unreachable")
-        record = self._resources.get(resource_id)
-        if record is None or record["destroyed"]:
-            return ExecuteResult(ok=False, kind="infra_failure", detail="resource does not exist")
-        # A stage executor callable may be attached to the plan by the runner's
-        # caller; FakeBackend just runs it (or no-ops) and reports the outcome.
-        executor = stage_plan.get("executor")
-        if executor is not None:
-            result = executor(resource_id, stage_plan)
-        else:
-            outputs = stage_plan.get("outputs", {})
-            result = ExecuteResult(ok=True, kind="ok", output_manifest=dict(outputs))
-        if result.ok:
-            # Model the output as actually written to this resource, so a
-            # later transfer() can only hand back what really exists there
-            # (never fabricate verification for a destroyed or empty box).
-            record["artifacts"].update(result.output_manifest)
-        return result
-
-    def transfer(self, resource_id: str, manifest: dict[str, Any]) -> TransferResult:
-        if resource_id in self.unreachable_hosts:
-            return TransferResult(ok=False, detail="host unreachable during transfer")
-        record = self._resources.get(resource_id)
-        if record is None or record["destroyed"]:
-            return TransferResult(ok=False, detail="resource no longer exists; cannot transfer from a destroyed box")
-        if self.fail_sync:
-            return TransferResult(ok=False, detail="simulated sync failure")
-        stored = record["artifacts"]
-        missing_or_mismatched = {k: v for k, v in manifest.items() if stored.get(k) != v}
-        if missing_or_mismatched:
-            return TransferResult(
-                ok=False,
-                detail=f"resource is missing or mismatches {list(missing_or_mismatched)}",
-            )
-        return TransferResult(ok=True, manifest={k: stored[k] for k in manifest})
-
-    def cost(self, resource_id: str) -> float:
-        record = self._resources.get(resource_id)
-        if record is None:
-            return 0.0
-        end = record["created_at"] if record["destroyed"] else self._clock()
-        elapsed_hours = max(0.0, (end - record["created_at"]) / 3600.0)
-        return round(elapsed_hours * self._hourly_usd, 6)
-
-    def destroy(self, resource_id: str) -> bool:
-        if self.fail_destroy:
-            return False
-        record = self._resources.get(resource_id)
-        if record is not None:
-            record["destroyed"] = True
-        return True
-
-    def confirm_destroyed(self, resource_id: str) -> bool | None:
-        if self.fail_destroy_confirmation:
-            return None
-        record = self._resources.get(resource_id)
-        if record is None:
-            return True
-        return bool(record["destroyed"])
+__all__ = [
+    "AmbiguousProvisionError",
+    "BackendError",
+    "ComputeBackend",
+    "ExecuteResult",
+    "FakeBackend",
+    "InspectResult",
+    "ProvisionResult",
+    "TransferResult",
+    "VastBackend",
+    "stage_plan_has_work",
+]

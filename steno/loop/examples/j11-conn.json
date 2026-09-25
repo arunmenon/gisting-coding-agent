@@ -1,0 +1,46 @@
+{
+  "_comment": "J11 (experiments/journeys/j11-conn) migrated onto the run loop, wave 2 / B7. Dry-run only: steno/loop/executors/dryrun.py validates this spec, checks required local inputs, prints the stage plan, and replays the journey's real STATE file through steno/loop/executors/j11.py's marker parsers. Nothing here is wired to a real backend yet (VastBackend is still a stub); 'pair' below names the pairing this journey served, not a file this wave requires to exist.",
+  "schema": "steno-run/v1",
+  "pair": "pairs/claude-code-qwen38-gist8-r8v2.yaml",
+  "inputs": {
+    "captures": "experiments/bench/corpus/reqs_full.jsonl",
+    "tasks": "experiments/bench/corpus/corpus_meta.json",
+    "recipe": {
+      "checkpoint": "experiments/gist/out_r8v2",
+      "gist_corpus": "experiments/bench/corpus/reqs_gist8.jsonl",
+      "chain_script": "experiments/vast/conn_chain.sh",
+      "note": "serving/benchmark journey: no train stage. span reports checkpoint_share (checkpoint composition) always, and share only with a provenance-bearing span report, which does not exist for J11 yet, so the span stage fails closed by default (see steno/loop/executors/README.md, X-10)"
+    }
+  },
+  "stages": ["span", "serve", "benchmark"],
+  "budget": {
+    "max_usd": 10,
+    "max_hours": 3,
+    "min_credit": 5,
+    "cleanup_reserve_usd": 1,
+    "max_attempts_per_stage": 1
+  },
+  "gates": {
+    "span": {"checkpoint_share_min": 0.5},
+    "benchmark": {"max_running_max_min": 100}
+  },
+  "compute": {
+    "backend": "vast",
+    "request": {
+      "gpu_count": 1,
+      "gpu_memory_gb_min": 140,
+      "gpu_families": ["h200"],
+      "disk_gb_min": 150,
+      "reliability_min": 0.98,
+      "requires_direct_ssh": true,
+      "max_hourly_usd": 5,
+      "image": "vllm/vllm-openai:latest"
+    },
+    "backend_options": {},
+    "port_base": 8000
+  },
+  "artifacts": {
+    "store": "experiments/journeys/j11-conn/results",
+    "emergency_policy": "terminate_and_record_loss"
+  }
+}

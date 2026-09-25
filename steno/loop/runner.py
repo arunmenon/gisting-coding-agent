@@ -119,9 +119,58 @@ def _resolve_pair_path(spec: RunSpec) -> str | None:
     return None
 
 
+class _CreditLookupFailed:
+    """Sentinel distinguishing "the backend has no credit_lookup capability"
+    (None; the spec's asserted compute.available_credit is used instead,
+    unchanged from before) from "the backend HAS the capability but the live
+    lookup failed or returned garbage" (this sentinel; Codex review X-14:
+    falling back to the spec's -- possibly stale -- asserted value in that
+    case would defeat the point of live-checking, so preflight must fail
+    closed instead)."""
+
+
+CREDIT_LOOKUP_FAILED = _CreditLookupFailed()
+
+
+def _is_finite_number(value: Any) -> bool:
+    return isinstance(value, (int, float)) and not isinstance(value, bool) and math.isfinite(value)
+
+
+def _backend_available_credit(backend: Any) -> float | _CreditLookupFailed | None:
+    """Build order step 8: the credit check calls the backend's own credit
+    lookup when it offers one (``capabilities.get("credit_lookup")`` and a
+    ``get_available_credit`` method), rather than only trusting whatever the
+    spec's ``compute.available_credit`` says.
+
+    Returns ``None`` when the backend does not advertise the capability at
+    all (the caller should use the spec's asserted value, as before).
+    Returns ``CREDIT_LOOKUP_FAILED`` when the backend DOES advertise the
+    capability but the lookup raised, returned something not coercible to
+    ``float``, or returned a non-finite value (NaN/inf, which would
+    otherwise silently pass a naive ``<`` comparison against the budget
+    floor) -- the caller must treat this as a hard preflight failure, never
+    fall back to a compute-time-authored value the live check exists to
+    supersede.
+    """
+    capabilities = getattr(backend, "capabilities", {}) or {}
+    if not capabilities.get("credit_lookup"):
+        return None
+    getter = getattr(backend, "get_available_credit", None)
+    if getter is None:
+        return None
+    try:
+        credit = float(getter())
+    except Exception:
+        return CREDIT_LOOKUP_FAILED
+    if not _is_finite_number(credit):
+        return CREDIT_LOOKUP_FAILED
+    return credit
+
+
 def _run_preflight(
     state: RunState,
     spec: RunSpec,
+    backend: Any,
     *,
     stage_executors: dict[str, Callable[..., ExecuteResult]],
     effective_stages: list[str],
@@ -140,11 +189,24 @@ def _run_preflight(
     spec.validate()  # raises SpecValidationError, allowed to propagate as-is
 
     if not dry_run:
-        available_credit = spec.compute.get("available_credit")
-        if available_credit is None or available_credit < spec.budget["min_credit"]:
+        backend_credit = _backend_available_credit(backend)
+        if backend_credit is CREDIT_LOOKUP_FAILED:
+            # X-14: the backend advertises a live credit lookup; a spec's
+            # asserted compute.available_credit is not an acceptable
+            # substitute for it when it fails, since that value could be
+            # stale (or simply wrong) and the whole point of a live lookup
+            # is to not trust it. Fail closed rather than authorizing
+            # provisioning on unverifiable credit.
+            raise PreflightError(
+                "the backend advertises a live credit lookup (capabilities['credit_lookup']) but it "
+                "failed or returned a non-finite value; refusing to fall back to compute.available_credit "
+                "for a provisioning decision the live check exists to supersede"
+            )
+        available_credit = backend_credit if backend_credit is not None else spec.compute.get("available_credit")
+        if available_credit is None or not _is_finite_number(available_credit) or available_credit < spec.budget["min_credit"]:
             raise PreflightError(
                 f"available credit ({available_credit!r}) is below the budget floor "
-                f"{spec.budget['min_credit']}; set compute.available_credit or pass dry_run=True"
+                f"{spec.budget['min_credit']} (or not a finite number); set compute.available_credit or pass dry_run=True"
             )
 
         if _resolve_pair_path(spec) is None:
@@ -424,7 +486,7 @@ def _run_under_lock(
         if preflight_status == STAGE_PENDING:
             state.transition_stage("preflight", STAGE_RUNNING)
         try:
-            _run_preflight(state, spec, stage_executors=stage_executors, effective_stages=effective_stages, dry_run=dry_run)
+            _run_preflight(state, spec, backend, stage_executors=stage_executors, effective_stages=effective_stages, dry_run=dry_run)
         except Exception as error:
             state.transition_stage("preflight", STAGE_FAILED)
             state.extra["work_outcome"] = {"status": WORK_PREFLIGHT_FAILED, "reason": str(error)}

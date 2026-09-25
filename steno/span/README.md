@@ -40,14 +40,43 @@ raw capture line -> select_and_parse -> CallRecord -> discover -> segment map ->
 ## Scope of B3 (bundle identity), honestly
 
 Build order step B3 asks for "mandatory bundle identity... enforced by proxy and dataset
-builder." This wave implements the identity types and their validation
+builder." Wave 1 implemented the identity types and their validation
 (`DiscoveryManifest`/`DeployableBundle` in `steno/span/manifest.py`, with `DeployableBundle`
-requiring a pinned model revision, tokenizer hash and template hash before it validates). **It
-does not implement enforcement**: nothing in `experiments/proxy/tap.py` or the dataset builder
-calls `DeployableBundle.validate()`, and no code in this repository currently refuses to serve or
-train on an unpinned bundle. That wiring, and the model adapter that would actually supply a
-tokenizer/template to hash, are explicitly deferred to a later wave. Treat B3 as "identity
-defined, enforcement not yet wired," not "closed."
+requiring a pinned model revision, tokenizer hash and template hash before it validates) but did
+not wire enforcement anywhere.
+
+**Wave 2 adds enforcement, opt-in.** `steno/span/enforce.py` provides:
+
+- `load_bundle(path)`: reads a bundle file (JSON; see the module docstring for the exact shape),
+  reconstructs a `DeployableBundle`, validates every required identity field is present, and
+  recomputes `bundle_sha` from the file's own content (including re-hashing the tokenizer and
+  template files from their current bytes) to detect tampering or staleness. Raises on any
+  problem; nothing recovers from a bad bundle silently.
+- `check_request_against_bundle(call_record, bundle)`: a per-request check -- does this specific
+  request's tool-catalogue hash and preamble structure match the cohort the bundle was pinned
+  for? Returns `(ok, reasons)`.
+- `legacy_map_status(segments_json)`: classifies an existing (pre-wave-2) segment map as
+  `"legacy_hashless"` (no bundle identity recorded, the shape every map had before this wave) or
+  `"identified"` (carries a `bundle_sha`).
+
+Both `experiments/proxy/tap.py` (`--bundle <path>`) and `experiments/gist/dataset.py` (an
+optional third `sys.argv` bundle-path argument) now call this. **Enforcement is opt-in**:
+without `--bundle` / the bundle argument, both tools behave exactly as before -- legacy segment
+maps keep working, nothing is checked against a bundle. With it:
+
+- the tap refuses to start at all if `load_bundle()` raises (invalid or tampered bundle);
+- per request, the tap only substitutes gist tokens when `check_request_against_bundle` passes;
+  a failing request is forwarded in full, with the reason written to stderr and to the log
+  record's `bundle_reject_reason` field;
+- the dataset builder rejects (counts, does not silently drop) any example whose request fails
+  the bundle check, before it ever reaches `build_example`.
+
+What is still not done: nothing here computes a *real* `bundle_sha` end-to-end from an actual
+served model's tokenizer/template files as part of a live pipeline (the tests and this doc's
+examples build bundle files by hand); a model adapter that discovers and pins those paths
+automatically is a later wave's work. B3 is now "identity defined, and both consumers named by
+the design refuse to compress traffic that doesn't match a validated bundle when one is
+supplied," not yet "the pipeline always requires one."
 
 ## The adapter contract
 
@@ -129,7 +158,8 @@ trusting an adapter.
   characters and tokens are interchangeable.
 - Session-consistency classification trusts that a given `session_id` came from one run; it does
   not detect a session id accidentally reused across unrelated captures.
-- Bundle-identity enforcement is not implemented; see "Scope of B3" above.
+- Bundle-identity enforcement is opt-in, not mandatory, and no pipeline yet requires a bundle to
+  run at all; see "Scope of B3" above.
 - `validate()`'s per-line check assumes a call's part has the same number of lines as the frozen
   map; a structural change (lines inserted or removed) is reported as a line-count mismatch
   rather than being re-aligned.

@@ -21,6 +21,8 @@ import os
 from dataclasses import dataclass, field
 from typing import Any
 
+from .compute import ComputeRequest, ComputeRequestError
+
 try:
     import yaml  # type: ignore
 
@@ -164,6 +166,36 @@ class RunSpec:
         self._validate_gates()
         self._validate_budget()
         self._validate_artifacts()
+        self._validate_compute()
+
+    def _validate_compute(self) -> None:
+        """Generic, provider-neutral validation only (wave 2, compute.py).
+
+        ``compute`` is not required to have a ``backend``/``request`` split at
+        all: wave 1 specs and this wave's fake/local-backend tests pass a
+        flat provider-shaped dict (for example ``{"backend": "fake"}`` with
+        no ``request`` key), and that remains valid here. When a
+        ``compute.request`` block IS present, it is validated generically
+        against ComputeRequest; ``compute.backend_options`` is never
+        inspected here (or anywhere outside the named backend module) since
+        its shape is provider-specific.
+        """
+        if not isinstance(self.compute, dict):
+            raise SpecValidationError("compute must be an object")
+        if "backend" in self.compute and (
+            not isinstance(self.compute["backend"], str) or not self.compute["backend"].strip()
+        ):
+            raise SpecValidationError("compute.backend must be a non-empty string when given")
+        if "request" in self.compute:
+            request_doc = self.compute["request"]
+            if not isinstance(request_doc, dict):
+                raise SpecValidationError("compute.request must be an object")
+            try:
+                ComputeRequest.from_dict(request_doc).validate()
+            except ComputeRequestError as error:
+                raise SpecValidationError(f"compute.request is invalid: {error}") from error
+        if "backend_options" in self.compute and not isinstance(self.compute["backend_options"], dict):
+            raise SpecValidationError("compute.backend_options must be an object when given")
 
     def _validate_inputs(self) -> None:
         if not isinstance(self.inputs, dict) or not self.inputs:

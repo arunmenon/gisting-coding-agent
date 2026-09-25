@@ -1,13 +1,25 @@
 # steno.loop
 
-Wave 1 of the Steno run loop (steno-design.md section 2, build order step 5).
+The Steno run loop (steno-design.md section 2, build order steps 5-6).
 `steno run <spec>` is meant to replace the per-journey shell scripts under
 `experiments/vast/` and `experiments/loop/` with one declarative entry point.
-This wave implements the spec, the persisted lifecycle, the compute backend
+
+Wave 1 implemented the spec, the persisted lifecycle, the compute backend
 protocol with a fake backend for tests, the runner, the ledger and a small
-CLI, all local: no network, no GPU, no vast.ai calls happen anywhere in this
-package. Revised after a Codex review (steno-build-wave1) found blocking and
-major gaps in the first draft; see "Fixed in this revision" below.
+CLI, all local: no network, no GPU, no vast.ai calls happened anywhere in
+that wave. Revised after a Codex review (steno-build-wave1) found blocking
+and major gaps in the first draft; see "Fixed in this revision" below.
+
+Wave 2 (this revision) makes the runner and spec fully provider-neutral (see
+"Compute backends" below), adds a backend registry, formalises the
+`ComputeBackend` contract, and implements two real backends: `local`
+(subprocess-based, still no network) and `vast` (the real vast.ai SDK). The
+CLI's `quote` command and the live test file are the only things in this
+package that can make a real vast.ai API call, and both are read-only
+(`search_offers`, `show_user`); nothing in `steno/loop` ever calls
+`create_instance` or `destroy_instance` except `VastBackend.provision()`/
+`destroy()` themselves, which only run when a caller explicitly drives a real
+run against the `vast` backend.
 
 ## What it does
 
@@ -197,16 +209,207 @@ stage executor that reports one to see a passing dry run.
   same atomic create, bounded so two processes racing a reclaim cannot loop
   forever.
 
-## Adding a backend
+## Compute backends (wave 2)
 
-Implement the `ComputeBackend` protocol in `steno/loop/backend.py`:
-`quote`, `provision` (idempotent via the `idempotency_key` argument),
-`inspect`, `execute`, `transfer`, `cost`, `destroy`, `confirm_destroyed`.
-`VastBackend` in the same file is a documented stub (raises
-`NotImplementedError`) describing the intended mapping onto
-`experiments/vast/*.sh` and `experiments/vast/rsh.sh` for wave 2. Do not
-implement it by copying this wave's `FakeBackend` semantics; `FakeBackend` is
-a test double, not a template for a real provider's failure modes.
+The runner and `RunSpec` are provider-neutral: neither one knows what a
+provider's query language, offer shape, or SSH endpoint fields look like.
+Only a backend, under `steno/loop/backends/<provider>.py`, knows its
+provider; no provider import happens anywhere else in `steno/loop`.
+
+A spec's `compute` block is now `{backend: "<name>", request: {...}, backend_options:
+{...}}`:
+
+| Field | Meaning |
+| --- | --- |
+| `backend` | The registry name the runner/CLI resolve (`fake`, `local`, `vast`, or a new one you register). |
+| `request` | A `steno.loop.compute.ComputeRequest`: `gpu_count`, `gpu_memory_gb_min`, `gpu_families` (neutral names like `"h100"`, `"h200"`, `"a100"`), `cpu_ram_gb_min`, `disk_gb_min`, `network_down_mbps_min`, `image`, `max_hourly_usd`, `reliability_min`, `requires_direct_ssh`. Validated generically by `spec.validate()` when present; every field is optional. |
+| `backend_options` | Opaque, provider-specific extras (a label prefix, a disk override, a raw query fragment). Never inspected outside the named backend module. |
+
+This is fully backward compatible with wave 1: a flat `compute` dict with no
+`request`/`backend_options` split (for example `{"backend": "fake"}`, or the
+example spec's `gpu_query`/`image`/`port_base` keys) is still valid, and
+`FakeBackend`/`LocalBackend` read the whole mapping themselves. Only a
+backend that needs `ComputeRequest` fields (currently `VastBackend`) reads
+`compute["request"]`.
+
+### The contract
+
+`steno.loop.backend.ComputeBackend` (an ABC) is the contract every backend
+must satisfy: `quote(request)`, `provision(compute, idempotency_key)`
+(idempotent: two calls with the same key never provision twice), `inspect`,
+`execute` (a timeout is a typed `infra_failure`, never an uncaught
+exception), `transfer` (verifies a checksum manifest; a mismatch is
+`ok=False`, never silently accepted), `cost`, `destroy` (idempotent),
+`confirm_destroyed` (`True`/`False`/`None`; `None` means "API error, unknown"
+and must never be treated as "destroyed" by any caller). Each method's
+docstring in `backend.py` spells out its idempotency and exception semantics
+in full; read them before implementing a new backend.
+
+### Adding a backend for a new provider
+
+For example, an internal PayPal GPU cluster:
+
+1. Write `steno/loop/backends/paypal_cluster.py` implementing `ComputeBackend`.
+   All PayPal-specific imports (an internal SDK, an auth client) live only in
+   this file.
+2. At the bottom of that file, call
+   `register_backend("paypal_cluster", PayPalClusterBackend)`.
+3. Import the module once from `steno/loop/backends/__init__.py` (guard the
+   import if the SDK might be missing, as `vast.py` does, so one missing
+   optional dependency never breaks the registry for the others).
+4. Reference it from a spec: `compute: {backend: "paypal_cluster", request:
+   {...}, backend_options: {...}}`.
+5. Add it to the conformance suite's `HARNESS_NAMES` in
+   `tests/loop/test_backend_contract.py` with a `BackendHarness` (see
+   `make_local_harness` for the simplest real example).
+
+### Built-in backends
+
+- **`fake`** (`backends/fake.py`): the wave 1 test double, moved here
+  unchanged in behavior; `steno.loop.backend` re-exports `FakeBackend` so
+  `from steno.loop.backend import FakeBackend` still works.
+- **`local`** (`backends/local.py`): "provisions" a local working directory
+  and runs stage commands (`stage_plan["command"]`, an argv list, never a
+  shell string) as subprocesses with a timeout; `transfer()` copies files out
+  and verifies a sha256 manifest; `destroy()` removes the directory; `cost()`
+  is always zero. Exists to prove the contract is not vast-shaped, and is
+  useful on its own for developing stage plans without renting anything.
+- **`vast`** (`backends/vast.py`): the real vast.ai backend, using the
+  `vastai` SDK and the call shapes already proven in
+  `experiments/vast/bench_provision.sh` and `experiments/vast/rsh.sh`.
+  - `quote()` maps neutral `gpu_families` to vast's `gpu_name` values through
+    one table in this file (`NEUTRAL_GPU_FAMILY_TO_VAST_GPU_NAME`), builds a
+    vast query string, and orders by `dph_total`. Note: vast's search query
+    field `gpu_ram` is denominated in **GB**, unlike the returned offer
+    dict's own `gpu_ram` field, which is in MB (confirmed empirically while
+    building this backend); the query builder accounts for this.
+  - `provision()` uses the idempotency key as the instance **label** and
+    searches `show_instances()` for that label before ever calling
+    `create_instance`, so a retried/resumed run cannot double-rent.
+  - `inspect()` maps `actual_status`/`cur_state` to the neutral
+    exists/reachable fields.
+  - `execute()`/`transfer()` resolve the direct-port endpoint
+    (`public_ipaddr` + `ports['22/tcp'][0]['HostPort']`) first, falling back
+    to the proxy (`ssh_host`/`ssh_port`) only if no direct port exists; both
+    run `ssh`/`scp` via `subprocess` with an argv list (no shell string) and
+    a timeout. `transfer()` verifies each path with a remote `sha256sum`
+    before copying it down.
+  - `cost()` is `dph_total * elapsed hours`; `destroy()` calls
+    `destroy_instance`; `confirm_destroyed()` returns `True` only when the id
+    is absent from `show_instances()`, `False` when still present, and
+    `None` (never "destroyed") on an API error.
+  - `get_available_credit()` (from `show_user()['credit']`) backs the
+    runner's preflight credit check (`capabilities = {"credit_lookup":
+    True}`); `runner._backend_available_credit` calls it when the backend
+    offers the capability, falling back to `compute.available_credit` from
+    the spec otherwise.
+  - The vast.ai API key is read from a key file (default `~/.vast_api_key`,
+    overridable via the `key_file` constructor argument) exactly once,
+    directly into the SDK client constructor; it is never assigned to an
+    attribute of `VastBackend`, so it cannot appear in a `repr()` of the
+    backend. Do not print `backend._client` (the SDK object) directly.
+
+### Conformance suite
+
+`tests/loop/test_backend_contract.py` runs one parametrised suite
+(`TestBackendContract`) against `fake`, `local`, and `vast` (wired to
+`RecordedVastSDK`, a small in-file test double with the same method names as
+`vastai.VastAI`, so the vast translation logic is tested with no network and
+no real vast.ai calls). It checks: idempotent provision, inspect's
+exists/not-exists states, execute's ok and typed-timeout outcomes, transfer's
+checksum verification (and rejection of a mismatch, and that a destination is
+required and the artifact survives destroy()), destroy-then-confirm, that
+confirm never reports `True` before destroy, and (for backends with an
+external API to fail against) that an API error surfaces as `None`
+("unknown"), never `False`/`True`. `LocalBackend` has no such failure mode by
+construction and is exempted from that one check
+(`supports_unknown_confirm=False`).
+
+A second round of review (steno-build-wave2's Codex review, findings X-1
+through X-17) found gaps an offline probe could reach even though the shared
+suite passed; the fixes and their dedicated tests, all in this same file plus
+`test_runner.py`, are:
+
+- **X-1** (double-rental risk on an ambiguous create): the SDK's own
+  automatic retry is disabled (`CLIENT_RETRY_ATTEMPTS = 1`); an ambiguous
+  create_instance() outcome (raised, or a response with no `new_contract`)
+  triggers a bounded label-reconciliation poll (`_reconcile_or_raise`,
+  `RECONCILE_ATTEMPTS`/`RECONCILE_DELAY_SECONDS`) instead of ever calling
+  create_instance() again; if reconciliation cannot resolve it,
+  `AmbiguousProvisionError` stops the run rather than risking a duplicate.
+  `AmbiguousCreateSDK` in the test file models both "response lost, instance
+  already created" and "label visible only after N polls".
+- **X-7** (a raw SDK exception can carry the API credential): every SDK call
+  goes through `_call`/`_call_with_deadline`, which raise a sanitised
+  `BackendError` via `_raise_sanitized`. An offline probe found
+  `raise ... from None` alone insufficient -- Python still populates
+  `__context__` with the original exception, just hides it from a printed
+  traceback -- so `_raise_sanitized` explicitly clears `__context__` after
+  raising. `SecretLeakingSDK` (a double whose every method raises an
+  HTTPError-shaped exception carrying a synthetic secret) proves no path
+  (constructor, quote, provision, inspect, execute, destroy, confirm) lets it
+  escape, in `str()`, `__cause__`, or `__context__`.
+- **X-8** (unknown treated as absence): `_show_instances_validated` rejects a
+  `None`/non-list response as `BackendError` rather than `instances or []`;
+  `confirm_destroyed()`/`destroy()` never coerce that into `True`.
+  `destroy()` validates the response's `success` field instead of "did not
+  raise". `MalformedResponseSDK` exercises null and malformed responses.
+- **X-3** (shell interpretation): `execute()` builds one already-quoted
+  remote command string (`shlex.join`) passed as a single ssh argv element;
+  `transfer()` no longer runs any remote command at all (see X-2) and quotes
+  scp's remote path segment (`shlex.quote`). Every manifest/output path is
+  validated by `compute.validate_relative_artifact_path` (absolute paths and
+  `..` rejected) in both `local.py` and `vast.py`.
+- **X-2** (transfer success without proof): `transfer()` on both real
+  backends now requires an explicit `manifest["_destination"]` and hashes the
+  copied file at the destination (not the source, not a remote `sha256sum`)
+  before reporting success. `test_artifacts_survive_teardown` transfers,
+  destroys the resource, then reads the destination file directly off disk.
+- **X-6** (a real backend silently no-oping a plan with no work): the shared
+  `backend.stage_plan_has_work()` check is enforced by `LocalBackend.execute`
+  and `VastBackend.execute`; `test_runner.py`'s
+  `test_run_with_a_non_fake_backend_fails_a_stage_that_has_no_executor_or_command`
+  drives this through `run()` (LocalBackend, dry_run=True, no executors)
+  rather than only calling `backend.execute()` directly.
+- **X-9** (LocalBackend loses state across restart): resource/key metadata
+  is persisted to a `_steno_local_registry.json` file under `root_dir`
+  (atomic write); `destroy()` verifies the directory is actually gone before
+  recording it destroyed. `test_local_backend_recovers_resource_across_restart`
+  and `test_local_backend_destroy_reports_failure_when_removal_is_incomplete`
+  cover both.
+- **X-12** (quote ignores constraints / wrong storage pricing): `cpu_ram_gb_min`
+  is now translated (**not** network-verified this round -- the units
+  assumption follows `gpu_ram`'s confirmed GB convention but should be
+  spot-checked with one real `search_offers` call before relying on it); a
+  field this backend cannot translate raises `BackendError`
+  (`_TRANSLATED_REQUEST_FIELDS`); `quote()` passes the *actually requested*
+  disk size as `search_offers`'s `storage` argument so `dph_total` (and any
+  `max_hourly_usd` filter) reflects real pricing.
+- **X-13** (deadline excludes endpoint lookup): `execute()`/`transfer()`
+  compute one deadline up front and pass it through `_call_with_deadline`
+  (a small shared `ThreadPoolExecutor`, `_get_deadline_pool()`) covering
+  the SDK lookup, with the remaining budget then bounding the subprocess.
+  `test_vast_execute_deadline_covers_slow_endpoint_resolution` uses a double
+  with an artificially slow `show_instance` to prove the overall deadline is
+  enforced, not just the subprocess's own timeout.
+- **X-14** (credit lookup failure falls back to a stale assertion):
+  `runner._backend_available_credit` now returns a distinct
+  `CREDIT_LOOKUP_FAILED` sentinel (not `None`) when a backend that
+  advertises `credit_lookup` fails or returns a non-finite value; preflight
+  fails closed on that sentinel instead of falling back to
+  `compute.available_credit`. `test_runner.py` covers a raising lookup, a
+  NaN lookup, and a successful live lookup overriding a too-low asserted
+  value.
+- **X-17** (`create_backend("fake")` raised `TypeError`): the registry now
+  wraps `FakeBackend` in a factory supplying a default `clock` (`time.time`)
+  while still accepting an injected one.
+
+### Live vast.ai test
+
+`tests/loop/test_backend_contract_live.py` has two `@pytest.mark.live`
+tests (read-only: `quote()`/`get_available_credit()` only, never
+provision/destroy) skipped unless `STENO_LIVE_VAST=1` is set. A bare
+`pytest tests/loop` never runs them and never touches vast.ai.
 
 ## Running tests and the dry run
 
@@ -219,15 +422,21 @@ experiments/.venv/bin/python -m steno.loop.cli validate steno/loop/examples/clau
 
 # dry-run against FakeBackend: no network, no GPU, no vast.ai calls
 experiments/.venv/bin/python -m steno.loop.cli dry-run steno/loop/examples/claude-code-qwen38.json --run-dir /tmp/steno-dry-run
+
+# read-only: print the spec's backend's offers (no provisioning). For a spec
+# whose compute.backend is "vast" this makes real (but read-only) vast.ai
+# API calls: search_offers and, indirectly through get_available_credit(),
+# show_user. It never creates, starts or destroys anything.
+experiments/.venv/bin/python -m steno.loop.cli quote steno/loop/examples/claude-code-qwen38.json
 ```
 
 ## Known gaps (left for the next wave)
 
-- No real backend: `VastBackend` is a stub. Wave 2 implements it against
-  `experiments/vast/bench_provision.sh` and `experiments/vast/rsh.sh`.
 - No mapping from stages to the existing chain scripts
   (`experiments/vast/*chain*.sh`, `experiments/loop/controller.py`); this
   wave's `stage_executors` argument is the seam where that mapping plugs in.
+  `VastBackend.execute()` can now run an arbitrary remote command over SSH,
+  but nothing yet translates a stage name into the right chain script.
 - No gate evaluation: `spec.gates` is validated for shape and carried through
   but never checked against a stage's result. `gate.json`-style thresholds
   (as in `experiments/loop/gate.json`) still need a generic evaluator.
@@ -238,3 +447,12 @@ experiments/.venv/bin/python -m steno.loop.cli dry-run steno/loop/examples/claud
   instance separate train/serve boxes) are out of scope for this wave.
 - The run-directory lock is a local pid file; it does not protect against two
   different machines racing on a shared filesystem.
+- `VastBackend.quote()` queries one GPU family at a time (vast's query
+  language has no clean OR); a spec wanting a fallback family needs two
+  `quote()` calls or a future `backend_options` extension.
+- No `steno run` (live) CLI command yet, only `validate`/`dry-run`/`quote`;
+  wiring a real backend into a live run through the CLI, plus the
+  stage-to-chain-script mapping above, is wave 3 work.
+- The conformance suite's vast case exercises translation logic through a
+  recorded SDK double, not the real API's actual latency/error shapes; the
+  `@pytest.mark.live` file is the (opt-in, unrun-by-default) bridge to that.

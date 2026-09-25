@@ -672,3 +672,85 @@ def test_gate_structured_value_fails_closed():
 
     ok, reason = _evaluate_gate("evaluate", {"teacher_reference": {"score": 12}}, {"teacher_reference": 12})
     assert not ok and "not evaluable" in reason
+
+
+# --- X-14: credit lookup failure must never fall back to a stale assertion ---
+
+
+class _CreditCapableFakeBackend(FakeBackend):
+    """A FakeBackend subclass that advertises capabilities['credit_lookup']
+    (FakeBackend itself does not), so preflight's live-lookup path can be
+    exercised without touching VastBackend/network at all."""
+
+    capabilities = {"credit_lookup": True}
+
+    def __init__(self, *args, credit_result=None, credit_raises=False, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._credit_result = credit_result
+        self._credit_raises = credit_raises
+
+    def get_available_credit(self):
+        if self._credit_raises:
+            raise RuntimeError("simulated credit lookup failure")
+        return self._credit_result
+
+
+def test_preflight_fails_closed_when_credit_lookup_raises_even_with_a_high_asserted_credit(tmp_path):
+    # compute.available_credit asserts plenty of credit; the live lookup
+    # (which the backend advertises) fails. Preflight must not fall back to
+    # the (possibly stale) asserted value.
+    spec = make_spec(compute={"backend": "fake", "available_credit": 100000})
+    clock = FakeClock(step=1.0)
+    backend = _CreditCapableFakeBackend(clock=clock, hourly_usd=1.0, credit_raises=True)
+
+    outcome = run(spec, backend, stage_executors=ALL_STAGE_EXECUTORS, run_dir=str(tmp_path), clock=clock, run_id="r1")
+
+    assert outcome.work_status == "preflight_failed"
+    assert "live credit lookup" in outcome.work_reason
+
+
+def test_preflight_fails_closed_when_credit_lookup_returns_nan(tmp_path):
+    spec = make_spec(compute={"backend": "fake", "available_credit": 100000})
+    clock = FakeClock(step=1.0)
+    backend = _CreditCapableFakeBackend(clock=clock, hourly_usd=1.0, credit_result=float("nan"))
+
+    outcome = run(spec, backend, stage_executors=ALL_STAGE_EXECUTORS, run_dir=str(tmp_path), clock=clock, run_id="r1")
+
+    assert outcome.work_status == "preflight_failed"
+    assert "live credit lookup" in outcome.work_reason
+
+
+def test_preflight_uses_live_credit_when_lookup_succeeds_even_if_spec_asserts_less(tmp_path):
+    # The spec's own asserted value is below the budget floor; the LIVE
+    # lookup (which preflight must actually use) is above it, so preflight
+    # should succeed on the live value, not the stale/understated assertion.
+    spec = make_spec(compute={"backend": "fake", "available_credit": 1})
+    pair_path = tmp_path / "pair.yaml"
+    pair_path.write_text("placeholder")
+    spec.pair = str(pair_path)
+    clock = FakeClock(step=1.0)
+    backend = _CreditCapableFakeBackend(clock=clock, hourly_usd=1.0, credit_result=100.0)
+
+    outcome = run(spec, backend, stage_executors=ALL_STAGE_EXECUTORS, run_dir=str(tmp_path / "rundir"), clock=clock, run_id="r1", dry_run=False)
+
+    assert outcome.work_status != "preflight_failed"
+
+
+# --- X-6: a real backend must reject a stage_plan with no executor/command,
+# tested through run() (not just by calling backend.execute() directly) ---
+
+
+def test_run_with_a_non_fake_backend_fails_a_stage_that_has_no_executor_or_command(tmp_path):
+    from steno.loop.backends.local import LocalBackend
+
+    spec = make_spec(stages=["span"])
+    clock = FakeClock(step=1.0)
+    backend = LocalBackend(backend_options={"root_dir": str(tmp_path / "local-root")})
+
+    # dry_run=True relaxes preflight's executor-registration check (as the
+    # CLI's dry-run does against FakeBackend); against a REAL backend this
+    # must not silently report success for a stage that never ran anything.
+    outcome = run(spec, backend, stage_executors={}, run_dir=str(tmp_path / "rundir"), clock=clock, run_id="r1", dry_run=True)
+
+    assert outcome.work_status == "failed"
+    assert outcome.state.stage_status("span") == "failed"

@@ -76,15 +76,28 @@ Two capabilities turn the single-pair implementation into something PayPal teams
 - **B3 partly done:** discovery manifest and deployable bundle with required hashes. Enforcement in the proxy and dataset builder is the next step.
 - **B5 done:** run spec, fail-closed preflight and gates, persisted lifecycle for stages and rented resources, crash recovery, confirmed teardown, attempt limits, OS-level run lock, and a fake backend for testing. The vast.ai backend (B6) is next.
 
+**Wave 2 landed on 2026-09-25**, with 247 tests. Codex reviewed it once (17 findings, 6 blocking) and the builders fixed all of them; the fixes themselves were not re-reviewed, by decision, to keep the scope bounded (`experiments/journeys/reviews/steno-build-wave2/`).
+
+- **B3 done:** opt-in bundle enforcement in the proxy (`--bundle`) and the dataset builder, bound to the segment map and tokenizer actually in use, with legacy hashless maps rejected in enforcement mode.
+- **B6 done, offline-verified:** a provider-neutral compute contract and backend registry, with fake, local and vast.ai backends passing one conformance suite. The vast.ai backend guards against double renting, sanitises every SDK error so the key cannot leak, treats unknown provider responses as unknown, quotes shell arguments, and verifies copied artifacts at the destination.
+- **B7 done as a dry run:** J11 expressed as a run spec with executors wrapping its existing scripts; replaying its real results reproduces the recorded metrics. Its span stage fails closed, because no span study exists for that journey.
+
+Open from wave 2:
+
+- [ ] P1 · Auto loop · One live smoke test of the vast.ai backend on the cheapest box: provision, execute, transfer, destroy, confirm (a few cents; not run yet) · steno/loop/backends/vast.py, tests/loop/test_backend_contract_live.py
+- [ ] P2 · Auto loop · Confirm the `cpu_ram` query translation against one real read-only quote call · steno/loop/backends/vast.py
+- [ ] P2 · Auto loop · Wire J11's serve and benchmark executors to a real backend, and add a train-stage executor · steno/loop/executors/
+- [ ] P3 · Auto loop · A Codex recheck of the wave 2 fixes · experiments/journeys/reviews/steno-build-wave2/
+
 These carry out the design and close most of the P1 items above. Steps 1, 2 and 5 come first.
 
 - [x] B1 · Span analysis · Define the canonical call record and pair manifest; move Claude Code parsing behind a harness adapter with no behaviour change; one serialisation for all three code paths · experiments/analysis/static_span.py, experiments/gist/span.py, experiments/gist/dataset.py, experiments/proxy/tap.py
 - [x] B2 · Span analysis · All-call discovery with catalogue cohorts and a per-call invariance report as stage zero; fail on any uncovered difference · experiments/gist/segments.py, experiments/analysis/static_span.py
-- [ ] B3 · Span analysis · Mandatory bundle identity (harness, adapter, model, tokenizer, template, catalogue, rules hashes), enforced by proxy and dataset builder; mark hashless maps legacy · experiments/gist/segments.py, experiments/proxy/tap.py, experiments/gist/dataset.py
+- [x] B3 · Span analysis · Mandatory bundle identity (harness, adapter, model, tokenizer, template, catalogue, rules hashes), enforced by proxy and dataset builder; mark hashless maps legacy · experiments/gist/segments.py, experiments/proxy/tap.py, experiments/gist/dataset.py
 - [ ] B4 · Span analysis · Qwen model adapter: remove model literals from span code, add the server parity check · experiments/gist/span.py, experiments/gist/segments.py, experiments/gist/dataset.py
 - [x] B5 · Auto loop · Run spec schema, preflight and persisted lifecycle, tested against a fake backend for restart, failed sync, unreachable host and failed teardown · experiments/loop/
-- [ ] B6 · Auto loop · vast.ai backend with independent deadlines, incremental sync and confirmed teardown; ledger as JSONL · experiments/vast/, experiments/loop/controller.py
-- [ ] B7 · Auto loop · Migrate one journey into a spec using the existing stage scripts; confirm clean artifact restore · experiments/loop/, experiments/vast/
+- [x] B6 · Auto loop · vast.ai backend with independent deadlines, incremental sync and confirmed teardown; ledger as JSONL · experiments/vast/, experiments/loop/controller.py
+- [x] B7 · Auto loop · Migrate one journey into a spec using the existing stage scripts; confirm clean artifact restore · experiments/loop/, experiments/vast/
 - [ ] B8 · Auto loop · Typed stage markers and failure triage; then lessons as enforced checks · experiments/vast/*chain*.sh, experiments/loop/
 - [ ] B9 · Span analysis · Golden fixtures and onboarding packet for the Claude Code adapter, as the template for the next harness · experiments/proxy/, experiments/analysis/
 - [ ] B10 · Auto loop · Gated promotion against a frozen held-out suite, then the next-recipe proposer, inside a bounded pilot · experiments/loop/, experiments/driver/

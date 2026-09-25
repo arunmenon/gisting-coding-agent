@@ -30,13 +30,64 @@ EFFORT_REMAP = {"high": "medium", "max": "xhigh"}
 NORMALIZE = []  # list of (old, new) applied to the system text before gist anchoring
 GIST = None  # set by --gist: {"tools": "<gist_..>" string, "segments": [gisted system segments]}
 
+# --- B3 enforcement (opt-in via --bundle) ------------------------------------------------
+# Without --bundle, behaviour is byte-for-byte unchanged from before this wave: legacy segment
+# maps keep working, nothing is checked against a bundle. With --bundle, the tap refuses to
+# start on an invalid/tampered bundle, and each request is only substituted when it passes
+# steno.span.enforce.check_request_against_bundle; otherwise it is forwarded in full and the
+# reason is logged (gist_applied stays False, "bundle_reject_reason" is set on the record).
+BUNDLE = None  # a loaded steno.span.manifest.DeployableBundle, or None (no enforcement)
+_REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
+
+
+def load_claude_code_adapter():
+    """Guarded import: steno.span is only needed when --bundle is passed, and importing it must
+    never break plain --gist usage if steno/ is not on the path for some other reason."""
+    if _REPO_ROOT not in sys.path:
+        sys.path.insert(0, _REPO_ROOT)
+    from steno.span.adapters.claude_code import ClaudeCodeAdapter  # noqa: E402
+    return ClaudeCodeAdapter()
+
+
+def check_request_bundle_gate(request_json):
+    """Returns (ok, reason). ok=True means this request may be substituted; ok=False means it
+    must be forwarded raw. Called only when BUNDLE is set. Never raises: an adapter parse error
+    is itself a reason to forward raw rather than to guess."""
+    if _REPO_ROOT not in sys.path:
+        sys.path.insert(0, _REPO_ROOT)
+    from steno.span.enforce import check_request_against_bundle
+    try:
+        adapter = load_claude_code_adapter()
+        call = adapter.parse_request({"path": "/v1/messages", "request": request_json})
+    except Exception as error:
+        return False, "adapter could not parse request: %r" % (error,)
+    ok, reasons = check_request_against_bundle(call, BUNDLE)
+    return ok, ("ok" if ok else "; ".join(reasons))
+
 
 def load_gist(segments_path):
     spec = json.load(open(segments_path))
     tools = next(s for s in spec["segments"] if s["name"] == "tools")
     gisted = [s for s in spec["segments"] if s["name"].startswith("system_") and not s.get("dynamic")]
     to_str = lambda s: "".join("<gist_%d>" % i for i in range(s["gist_start"], s["gist_start"] + s["gist_count"]))
-    return {"tools": to_str(tools), "segments": [(s["text"], to_str(s)) for s in gisted], "tools_hash": spec.get("tools_hash")}
+    return {
+        "tools": to_str(tools), "segments": [(s["text"], to_str(s)) for s in gisted],
+        "tools_hash": spec.get("tools_hash"),
+        "raw_spec": spec,  # kept so main() can check this exact map's identity against --bundle (W-X4)
+    }
+
+
+def check_segments_bound_to_bundle(raw_spec, bundle):
+    """Returns (ok, reason): does the segment map actually being served (`raw_spec`, the whole
+    loaded segments.json) carry the bundle's own identity? A valid, untampered bundle proves
+    nothing about which segment map was loaded next to it (W-X4) -- a legacy (hashless) map, or
+    one stamped for a different bundle, must be rejected outright when enforcement is on, not
+    merely trusted because --bundle also loaded cleanly."""
+    if _REPO_ROOT not in sys.path:
+        sys.path.insert(0, _REPO_ROOT)
+    from steno.span.enforce import bind_segments_to_bundle
+    ok, reasons = bind_segments_to_bundle(raw_spec, bundle)
+    return ok, ("ok" if ok else "; ".join(reasons))
 
 
 def gist_system_text(system_text):
@@ -164,24 +215,35 @@ class TapHandler(BaseHTTPRequestHandler):
         # array stays in the request (the engine's tool-call parser needs it); the serving chat template
         # skips rendering the tool block when it sees gist tokens in the system content.
         gist_applied = False
+        bundle_reject_reason = None
         if GIST is not None and request_json and self.path.startswith("/v1/messages") and request_json.get("system") and request_json.get("tools"):
-            system = request_json["system"]
-            system_text = system if isinstance(system, str) else "".join(b.get("text", "") for b in system if b.get("type") == "text" and b.get("text"))
-            for old, new in NORMALIZE:
-                system_text = system_text.replace(old, new)
-            import hashlib
-            live_hash = hashlib.sha256(json.dumps(request_json["tools"], sort_keys=False, separators=(",", ":"), ensure_ascii=False).encode()).hexdigest()
-            if GIST.get("tools_hash") and live_hash != GIST["tools_hash"]:
-                sys.stderr.write("gist: tool catalogue hash mismatch, passthrough\n"); request_json = request_json  # explicit no-op: served raw
-            try:
+            # B3 enforcement gate (opt-in via --bundle): without a bundle loaded, behaviour is
+            # exactly as before. With one, a request is only eligible for substitution once it
+            # passes check_request_against_bundle; a failing request is forwarded raw below, with
+            # the reason logged, rather than guessed at.
+            bundle_ok = True
+            if BUNDLE is not None:
+                bundle_ok, bundle_reject_reason = check_request_bundle_gate(request_json)
+                if not bundle_ok:
+                    sys.stderr.write("bundle: request rejected, passthrough (%s)\n" % bundle_reject_reason)
+            if bundle_ok:
+                system = request_json["system"]
+                system_text = system if isinstance(system, str) else "".join(b.get("text", "") for b in system if b.get("type") == "text" and b.get("text"))
+                for old, new in NORMALIZE:
+                    system_text = system_text.replace(old, new)
+                import hashlib
+                live_hash = hashlib.sha256(json.dumps(request_json["tools"], sort_keys=False, separators=(",", ":"), ensure_ascii=False).encode()).hexdigest()
                 if GIST.get("tools_hash") and live_hash != GIST["tools_hash"]:
-                    raise ValueError("catalogue hash mismatch")
-                gisted = GIST["tools"] + gist_system_text(system_text)
-                request_json["system"] = [{"type": "text", "text": gisted}]
-                request_body = json.dumps(request_json).encode("utf-8")
-                gist_applied = True
-            except ValueError as error:  # span not found: pass through untouched, but log it
-                sys.stderr.write("gist: span anchor not found, passthrough (%s)\n" % error)
+                    sys.stderr.write("gist: tool catalogue hash mismatch, passthrough\n"); request_json = request_json  # explicit no-op: served raw
+                try:
+                    if GIST.get("tools_hash") and live_hash != GIST["tools_hash"]:
+                        raise ValueError("catalogue hash mismatch")
+                    gisted = GIST["tools"] + gist_system_text(system_text)
+                    request_json["system"] = [{"type": "text", "text": gisted}]
+                    request_body = json.dumps(request_json).encode("utf-8")
+                    gist_applied = True
+                except ValueError as error:  # span not found: pass through untouched, but log it
+                    sys.stderr.write("gist: span anchor not found, passthrough (%s)\n" % error)
 
         forward_headers = {k: v for k, v in self.headers.items() if k.lower() not in HOP_BY_HOP_HEADERS}
         forward_headers["Content-Length"] = str(len(request_body))
@@ -252,6 +314,8 @@ class TapHandler(BaseHTTPRequestHandler):
             "request": request_json,
             "original_effort": original_effort,
             "gist_applied": gist_applied,
+            "bundle_enforced": BUNDLE is not None,
+            "bundle_reject_reason": bundle_reject_reason,
         }
         if self.path.startswith("/v1/messages") and upstream_response.status == 200:
             if is_stream:
@@ -273,12 +337,35 @@ def main():
     parser.add_argument("--log", default=os.path.join(os.path.dirname(__file__), "..", "logs", "requests.jsonl"))
     parser.add_argument("--gist", default=None, help="segments.json; enables gist substitution of the static span")
     parser.add_argument("--normalize", action="append", default=[], help="old=new replacement applied to the system text before anchoring (repeatable)")
+    parser.add_argument("--bundle", default=None, help="opt-in B3 enforcement: a steno.span bundle file (see steno/span/enforce.py); "
+                                                         "the tap refuses to start if it does not load and validate cleanly")
     args = parser.parse_args()
-    global GIST, NORMALIZE
+    global GIST, NORMALIZE, BUNDLE
     NORMALIZE = [tuple(item.split("=", 1)) for item in args.normalize]
     if args.gist:
         GIST = load_gist(args.gist)
         print("gist mode: tools gist %d tokens, %d system segments" % (GIST["tools"].count("<gist_"), len(GIST["segments"])))
+    if args.bundle:
+        if _REPO_ROOT not in sys.path:
+            sys.path.insert(0, _REPO_ROOT)
+        from steno.span.enforce import load_bundle
+        try:
+            BUNDLE = load_bundle(args.bundle)
+        except (ValueError, FileNotFoundError, OSError) as error:
+            print("refusing to start: invalid bundle %r: %s" % (args.bundle, error), file=sys.stderr)
+            sys.exit(1)
+        print("bundle enforcement: loaded %s (bundle_sha=%s)" % (args.bundle, BUNDLE.bundle_sha))
+
+    if BUNDLE is not None and GIST is not None:
+        # W-X4: a valid bundle says nothing about which segment map was loaded alongside it. The
+        # map actually handing out gist tokens must itself be authenticated against this bundle,
+        # or the tap refuses to start (a legacy/hashless map, or one stamped for a different
+        # bundle, is rejected here regardless of whether its content looks compatible).
+        ok, reason = check_segments_bound_to_bundle(GIST["raw_spec"], BUNDLE)
+        if not ok:
+            print("refusing to start: segment map %r is not bound to bundle %r: %s" % (args.gist, args.bundle, reason), file=sys.stderr)
+            sys.exit(1)
+        print("bundle enforcement: segment map is bound to the loaded bundle")
 
     upstream_parts = urlsplit(args.upstream)
     TapHandler.upstream = (upstream_parts.scheme, upstream_parts.netloc)

@@ -1,88 +1,123 @@
-# Steno explainer video: production plan and prompts
+# Steno explainer video: production plan and prompts (v2)
 
-A 3Blue1Brown-style narrated explainer of our gisting white paper and the Steno capability, generated with Manim Community Edition plus a synced voiceover.
+A 3Blue1Brown-style narrated explainer of our gisting research and the Steno capability built from it, generated with Manim Community Edition plus a synced voiceover.
+
+v2 incorporates independent reviews by Fable and Codex (`experiments/journeys/reviews/video-plan-20260925/`). Both found the arc sound, the numbers accurate, and the plan not yet buildable: qualifiers were missing, scene 7 spent numbers scene 8 had not yet explained, and the pipeline assumed LaTeX and word-timed voices this machine does not have.
 
 ## 1. Brief
 
 | Item | Decision |
 |---|---|
-| Source | `Gisting-NeurIPS-paper.html`, `steno-capability.md`, `steno-design.md`, and the J10 and J11 journey records |
-| Audience | Engineering leaders who know LLMs and coding agents, not gisting internals |
-| Length | 6 to 8 minutes, about 1,000 to 1,200 spoken words |
+| Audience | Internal engineering leadership: they know LLMs and coding agents, not gisting |
+| Length | 6 to 8 minutes; scene budgets are set from measured audio, not word counts |
 | Tone | 3Blue1Brown: curious, patient, visual first, one idea at a time, no hype |
-| Output | 1080p MP4 with burned-in-free captions plus a separate `.srt`, and a 30-second teaser cut |
+| Pilot | Scenes 1 and 8 end to end first: the pipeline and the hardest visual, before the other seven |
+| Voice | macOS `say` for every iteration render; Kokoro, running locally, for the final. No cloud voice, because the script carries internal numbers |
+| Output | 1080p30 MP4, a separate `.srt` caption file, and later a 30-second teaser with its own qualified script |
 | Branding | Title card "Steno · PAI"; no personal names |
+
+### Source precedence
+
+Where sources disagree, this order decides:
+
+1. **Measurement claims:** the corrected white paper (`Gisting-NeurIPS-paper.html`), then the reconciled reviews (`experiments/journeys/reviews/review-20260915T073918Z-codex.md`, `findings-20260915-j11-remediation.md`).
+2. **Framing and capability status:** the deck (`Gisting-CTO-deck.html`) and `steno-capability.md`.
+3. **Historical evidence only:** journey narratives such as `experiments/journeys/j10-bench/journey.md` and `j11-conn/log.md`. Several still state explanations that were later withdrawn. Never take a claim from them that the paper does not also make.
+
+Every prompt must flag a conflict rather than pick whichever source reads best.
 
 ## 2. Story arc (nine scenes)
 
-Each scene has one job. Numbers come only from the claims register in section 4.
+Each scene has one job and a status label: demonstrated on one pair, implemented, or planned.
 
 | # | Scene | The one idea | Core visual |
 |---|---|---|---|
-| 1 | The re-read | A coding agent re-sends the same ~20k-token manual on every call | A conversation grows turn by turn; a thick grey block re-appears before every turn and a token counter climbs |
-| 2 | Anatomy of the tax | Most of that block is tool schemas, and it is 0.72 of a short session | The block splits into a proportional bar: tool schemas, rules, per-session values |
-| 3 | The shorthand | Replace the fixed span with a few learned tokens | A long ribbon of tokens folds down to one eighth its length; the new tokens glow |
-| 4 | Teaching it | Self-distillation with the base model frozen; only new embedding rows train | Teacher reads the full prompt, student reads the shorthand; two output distributions converge; a lock sits on the model, a small new block of rows lights up |
-| 5 | Does it still work | Scores held at every ratio; input fell from 24.3k to 9.4k at 8:1 | Four ratio chips flip to 12/12; a token bar shrinks |
-| 6 | The one failure | Session values baked into the shorthand send writes to an invented directory; keeping them raw fixes it | A file path travels into the gist and comes out wrong; a "raw" lane routes it around; 11/16 becomes 16/16 |
-| 7 | What it buys | H100: 2x the rate within the latency target, +44% peak; H200: level at peak, 1.2 to 1.7x under heavy load | Throughput curves draw left to right; the gap opens under load |
-| 8 | The instrument was wrong | Our own load generator capped connections at 100; lifting it showed 123 to 137 resident, and we withdrew our explanation | A gauge pinned at exactly 100 in both arms; the cap lifts and the needles move; a strike-through lands on the old explanation |
-| 9 | From experiment to Steno | Harness adapters feed a shared span analysis; a loop runs the suite with bounded self-improvement; next, a Jetstream harness | Harness boxes plug into one analysis; a loop diagram with four small RSI badges; closing card |
-
-Scene 8 is deliberate. The 3Blue1Brown register rewards the honest surprise, and it is the most memorable beat in the program.
+| 1 | The re-read | We studied one pair, Claude Code with a self-hosted Qwen model. The agent re-sends the same fixed preamble on every call; prefix caching already absorbs part of that cost. Steno is named here. | Three or four turns shown, then a repeat marker, rather than an ever-growing conversation. The fixed block reappears before each turn. |
+| 2 | Anatomy of the tax | The block is mostly tool schemas. Separately: across eight logged sessions, the static span averaged 0.72 of cumulative input, falling as history grows. | A composition bar (tool schemas, rules, per-session values; small segments labelled outside), then a separate share display. The two are never drawn as one bar. |
+| 3 | The shorthand | The fixed span becomes a small set of trained embedding rows: not a text summary, not arbitrary-context compression. Per-session values stay raw. 8:1 is the ratio for the selected span, not the whole request. | 64 small squares transform into 8 glowing ones; a separate raw lane passes through unchanged. |
+| 4 | Teaching it, and shipping it | One frozen model run twice: with the full prompt and with the shorthand. Only the new rows train. The rows ship in the model; a proxy swaps the span; the agent and engine code are unchanged. | A lock on the model, a small block of new rows lighting up, two schematic probability bars moving closer without becoming identical. Closing beat: agent, proxy, model. |
+| 5 | Does it still work | On the easy suite, every tested ratio scored 12/12, and at 8:1 input per turn fell from 24.3k to 9.4k tokens. Single runs, partly reused tasks. | Four large score tiles labelled "easy suite"; a token bar shrinking. |
+| 6 | A boundary failure | Session values baked into the shorthand sent writes to an invented directory. Keeping them raw, together with retraining, brought the harder suite level. One path error remained. | A path travels into the shorthand and comes out wrong; a raw lane routes it around; an amber residual-risk marker stays on screen. |
+| 7 | What the replay showed | H100, short fixed-output replays with caching on: twice the highest tested arrival rate passing each arm's own latency threshold, and +44% observed peak throughput. H200: similar best points. | Paired bars in sequence, not smooth curves. Only registered numbers are plotted. |
+| 8 | The instrument was wrong | External review found our load generator capped connections at 100. Lifting the cap showed more than 100 sessions resident and withdrew our explanation. It also lowered throughput in three of four cells. At the two overload points tested, the compressed prompt held up better. Cause still open. About 30 seconds. | A client gate at 100 opens; sampled counts appear as dots above the old line, labelled "more than 100", not as arm-specific needles. "Explanation withdrawn" replaces the old claim. Then the two overload points as paired bars. |
+| 9 | From experiment to Steno | Demonstrated: one pair. Implemented: harness adapters, shared span analysis, a run loop with gates and verified teardown, awaiting live verification. Planned: four bounded self-improvement mechanisms. Proposed next: a harness and distilled-model pair, possibly a Jetstream harness, then held-out validation, then a guarded trial. | The adapter chain (harness adapter, shared analysis, model adapter) in one beat; the status ladder in the next; the staged ask on the closing card. |
 
 ## 3. Visual language
 
-- Dark ground (`#0e1417`), one accent per concept, stable across scenes: petrol for the full prompt, plum for Steno, copper for per-session values, green for passing, amber for caveats. Same palette as the deck.
-- Geometry before text. Show the mechanism moving, then label it. On-screen text is short labels and numbers, never sentences the narrator is also reading.
+- Dark ground `#0e1417`; stable colour per concept: petrol `#3fb0c6` for the full prompt, plum `#c39be0` for Steno, copper `#e08a4c` for per-session values, green `#57c08a` for passing, amber `#e3b24c` for caveats. Same palette as the deck.
+- Geometry before text. On-screen text is labels and numbers, never the sentence being spoken.
 - Dim and reveal: when a part is discussed, everything else dims to 30 percent.
-- One persistent object per scene, transformed rather than replaced, so the eye can follow it.
-- Numbers animate from zero with `DecimalNumber`, and each carries its unit.
-- Fonts: a serif for titles, a monospace for numbers and code. Plain `Text` only; no LaTeX.
-- No em dashes anywhere on screen or in narration.
+- One persistent object per scene, transformed rather than replaced.
+- Minimum text size: 28 at 1080p. Safe area: 5 percent margins on every side, plus caption space at the bottom.
+- Discrete values, such as ratios and scores, appear as labels. Only continuous quantities animate.
+- No em dashes on screen or in narration.
 
-## 4. Claims register (the only numbers allowed)
+### No-LaTeX rules (this machine has no LaTeX)
 
-| Claim | Value | Source |
-|---|---|---|
-| Fixed preamble per call | 17.5k to 21k tokens, over 90% tool schemas | paper Section 4.3 |
-| Share of a short session | 0.72 (mean of eight sessions) | paper, J1 |
-| Tokens per turn at 8:1 | 24.3k to 9.4k | paper Table 2 |
-| Easy-suite scores | 12/12 at 2:1, 4:1, 8:1 and 16:1 | paper Table 2 |
-| Path failure fix | 11/16 to 16/16 at 8:1, retraining also changed | paper Table 3 |
-| H100 serving | 2x rate within each arm's latency threshold; peak 42.7 to 61.3 req/min (+44%) | paper Section 5.6 |
-| H200 at peak | 85.3 vs 83.3 req/min, level | paper Section 5.6 |
-| H200 heavy load, cap lifted | 47.0 vs 80.7 req/min at 128 sessions; 46.3 vs 56.7 at 256 | J11 log |
-| Connection-cap correction | resident sessions 100 in both arms capped; 123 to 137 uncapped | J11 log |
+- Never use `Tex`, `MathTex`, or `Brace` labels.
+- `DecimalNumber` and `Integer` default to LaTeX: always pass `mob_class=Text`.
+- Axes and number lines: `include_numbers=False`, with ticks placed by hand as `Text`.
+- Draw icons (lock, gate, badges) from primitives, not emoji.
+- Fonts: named macOS fonts verified with `manimpango.list_fonts()`, for example Georgia for titles and Menlo for numbers, each with a declared fallback.
 
-Withdrawn claims must not appear: the recurrent-state residency ceiling, "turnover not headcount", and cheaper-card substitution.
+## 4. Claims register
+
+Only these numbers and claims may appear. Each row has a qualifier that must be spoken or shown whenever the claim is used.
+
+| Claim | Value | Must say | Source |
+|---|---|---|---|
+| Fixed preamble | about 17.5k to 21k tokens across measured span configurations; over 90% tool schemas | "across the configurations we measured" | paper §1, §3.1, Table 1 (17,540 trimmed), §5.1 (21,109 full catalogue) |
+| Session share | 0.72 | "mean share of cumulative input across eight logged sessions; falls as history grows" | paper §5.1, Figure 7 |
+| Easy-suite tokens at 8:1 | 24.3k to 9.4k per turn | "easy suite, development run" | paper Table 2 |
+| Easy-suite scores | 12/12 at 2:1, 4:1, 8:1, 16:1 | "single runs, partly reused tasks" | paper Table 2, §4.5, §7 |
+| Hard suite, corrected 8:1 | 11/16 to 16/16 (11/15 to 15/15 excluding one defective probe); input about 25.5k to 10.4k | "retraining, pool and host also changed; one path error remained" | paper §5.5, Table 3 |
+| H100 arrival rate | 18 to 36 req/min, highest tested target rate passing | "each arm's own threshold, about 8.5 s and 8.0 s; short fixed-output replays; caching on" | paper §5.6 |
+| H100 peak | 42.7 to 61.3 req/min, +44% | "observed peaks; quality at load not measured; capacity not established" | paper §5.6 |
+| H200 peak | 85.3 vs 83.3 req/min | "similar best points; H100-tuned settings; two repeats, unequal variability" | paper §5.6 |
+| Connection cap | 100 resident in both arms capped; more than 100 (123 to 137 sampled) uncapped | "maximum sampled counts, not hardware ceilings" | paper §5.6, J11 log §6 |
+| Cap lifted, overload points | 47.0 vs 80.7 req/min at 128 offered; 46.3 vs 56.7 at 256 | "one run per condition; lifting the cap lowered throughput in three of four cells; at these two tested points" | J11 log §6, §7.4 |
+| Capability status | demonstrated, implemented, planned, as in scene 9 | "the self-improvement mechanisms are planned" | `steno-capability.md` |
+
+### Withdrawn or forbidden implications
+
+- The recurrent-state residency ceiling, and "turnover, not headcount".
+- Any stated cause of the throughput gap, including cache saturation or "fits more sessions".
+- Cheaper-card substitution or fleet savings.
+- General quality parity, established capacity, or savings per completed task.
+- The self-improvement mechanisms as running.
 
 ## 5. Pipeline
 
-1. **Plan.** Produce `video/script.md`: per scene, the narration text, the bookmarks (the word that triggers each animation), the visual beats, and the claims used, each checked against section 4.
-2. **Build.** One Python file per scene under `video/scenes/`, all importing a shared `video/style.py` (palette, fonts, safe text layout, arrows, a `dim_others()` helper). Each scene subclasses `VoiceoverScene` and wraps its animation blocks in `with self.voiceover(text=...) as tracker:` so animation length follows the audio.
-3. **Preview.** Render every scene at low quality (`-ql`), extract a frame every few seconds, and check them: no text overlapping, nothing off-frame, labels readable, colours consistent. Fix, re-render.
-4. **Final.** Render at 1080p, concatenate with ffmpeg, add an intro and outro card, and export captions from the narration text and audio timings.
-5. **Review.** An independent pass checks every spoken and on-screen number against section 4 and flags any withdrawn claim.
-
-Tooling: Manim Community Edition, `manim-voiceover`, ffmpeg (installed), cairo and pango (installed). No LaTeX needed.
+0. **Bootstrap and smoke test.** Create a venv with `manim` and `manim-voiceover`. Create `video/style.py`: palette, verified fonts, safe-area constants, `fit_width`, `dim_others`, Text-based number and axis helpers. Create `video/voice.py`: a small `SpeechService` subclass that calls `say -o` (later Kokoro), converts to WAV with ffmpeg, and caches by text hash. Render a 10-second smoke scene with text, a number, an arrow, audio and an `.srt` (`create_subcaption=True`). Nothing else starts until this passes.
+1. **Script.** `video/script.md`, per scene: narration split into short beats, one voiceover block per beat, and the claims used, each with its qualifier and source.
+2. **Audio first.** Generate and cache all beat audio; measure durations; set each scene's animation budget from them. No bookmarks: the word timing they need is not available from local voices without a Whisper install.
+3. **Build.** One file per scene under `video/scenes/`. Each beat is a `with self.voiceover(text=...) as tracker:` block, and animation `run_time` is set explicitly within the beat's duration.
+4. **Preview.** Render at `-ql`. Check frames at every animation boundary, not only on a fixed interval (`ffmpeg -vf fps=1/3` plus the end of each `play`). Measure text bounds against the safe area. Watch each scene with audio for sync.
+5. **Final.** Render at `-r 1920,1080 --fps 30` (not `-qh`, which is 60 fps and doubles render time). Concatenate with ffmpeg using identical codec settings; add title and end cards; build one `.srt` with cumulative offsets for the cards.
+6. **Review.** An independent pass against section 4 and the primary sources: numbers, qualifiers, omissions, visual implications, capability status, and audio sync.
 
 ## 6. Prompts
 
-### 6.1 Planning prompt
+### 6.0 Bootstrap prompt
 
-> You are writing the script for a 6 to 8 minute 3Blue1Brown-style explainer. Read `video/steno-video-plan.md` in full, then the sources it names. Follow the nine-scene arc in section 2 exactly. For each scene write: the narration (spoken, plain English, curious and patient, short sentences, no jargon without a one-clause definition, no em dashes), the bookmarks that should trigger each animation, the visual beats in order, and the claims used with their source from section 4. Use no number that is not in section 4, and none of the withdrawn claims. Target 1,000 to 1,200 spoken words in total. Output `video/script.md`.
+> Set up `video/` for Manim Community Edition on macOS with no LaTeX. Create a venv and install `manim` and `manim-voiceover`. Write `video/style.py` with the palette, the fonts from section 3 verified via `manimpango.list_fonts()` with fallbacks, safe-area constants (5 percent margins plus caption space), `fit_width`, `dim_others`, and Text-based helpers for numbers and axis ticks. Obey every no-LaTeX rule in section 3. Write `video/voice.py`: a `SpeechService` subclass that renders with `say -o`, converts to WAV with ffmpeg, and caches by text hash. Render a 10-second smoke scene exercising text, a number, an arrow, one voiceover block and an `.srt`. Report the exact package versions and the render time.
 
-### 6.2 Scene-building prompt (one per scene)
+### 6.1 Script prompt
 
-> Build scene N from `video/script.md` as `video/scenes/sceneN.py` in Manim Community Edition. Import only from `video/style.py` for colours, fonts and helpers. Subclass `VoiceoverScene`; put each narration block in a `with self.voiceover(...)` context and fire animations on its bookmarks. Keep one persistent object per scene and transform it rather than replacing it. Geometry first, labels second; on-screen text is labels and numbers only. Stay inside the 16:9 safe area. Render with `-ql`, save frames every 3 seconds to `video/previews/sceneN/`, inspect them, and fix any overlap, clipping or unreadable label before reporting. Report the render time and the frames checked.
+> Write `video/script.md` for the nine scenes in section 2, in order, for internal engineering leadership. Read the plan in full and follow the source precedence in section 1. For each scene: narration split into short beats (curious, patient, plain English, no em dashes), the visual for each beat, and every claim used, numeric or not, with its value, its "must say" qualifier from section 4, and its source location. Use nothing outside section 4, and none of the forbidden implications. Where sources conflict, list the conflict instead of choosing. Keep scene 8 to about 30 seconds. After writing, estimate each scene's duration at the chosen voice speed.
+
+### 6.2 Scene prompt (one per scene)
+
+> Build scene N from `video/script.md` as `video/scenes/sceneN.py`, importing only from `video/style.py` and `video/voice.py`. Subclass `VoiceoverScene`, call `set_speech_service` with the local service, and give each beat its own `with self.voiceover(text=...) as tracker:` block, with explicit `run_time` values that fit the beat's measured duration. No bookmarks. Obey the no-LaTeX rules. Keep one persistent object and transform it. Plot only registered numbers, and label illustrative shapes as illustrative. Render at `-ql`; check frames at every animation boundary and every 3 seconds; confirm all text sits inside the safe area at size 28 or larger; watch it with audio. Fix issues before reporting, and report render time and the frames checked.
 
 ### 6.3 Review prompt
 
-> Review the rendered video and `video/script.md` against `video/steno-video-plan.md`. For every number spoken or shown, confirm it matches section 4. Flag any withdrawn claim, any on-screen sentence that duplicates the narration, any text overlap or clipping in the preview frames, and any em dash. Output findings with the scene, timestamp and a fix.
+> Review the rendered video, `video/script.md` and the scene code against this plan and the primary sources it names, independently of the register. Check every number and claim, spoken or shown, for its value, its qualifier and its source. Flag omissions that change meaning, visuals that imply a forbidden claim, capability status shown as further along than `steno-capability.md` records, text overlap or clipping, audio and animation drift, and em dashes. Output findings with scene, timestamp, severity and a fix.
 
-## 7. Decisions needed before building
+## 7. Resolved decisions
 
-1. **Voice.** Local and private: macOS `say` (free, robotic) or Kokoro (open-source, runs locally, good quality, one model download). Or a cloud voice (OpenAI or edge-tts), which sends the script text to an external service.
-2. **Length.** Six to eight minutes as planned, or a two-minute cut first as a pilot.
-3. **Audience.** Internal leadership (as planned), or broader engineering.
+| Decision | Choice | Why |
+|---|---|---|
+| Voice | `say` while iterating; Kokoro locally for the final | Private, free, no word timing needed with one block per beat. A human recording remains an option for the final. |
+| Pilot | Scenes 1 and 8 end to end | Exercises the whole pipeline and the hardest scene before committing to the rest |
+| Audience | Internal engineering leadership | The capacity result is still a replay finding; a broader audience would need heavier qualification |

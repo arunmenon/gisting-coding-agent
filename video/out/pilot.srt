@@ -1,0 +1,80 @@
+1
+00:00:01,000 --> 00:00:04,772
+Here is a coding agent, Claude Code, talking to a model we host
+
+2
+00:00:04,872 --> 00:00:08,767
+ourselves, a Qwen model. We looked closely at one pair like this.
+
+3
+00:00:09,466 --> 00:00:13,528
+Turn one. The agent sends a long fixed block before it ever asks
+
+4
+00:00:13,628 --> 00:00:18,016
+its real question. Turn two, the same block again. Turn three, again.
+
+5
+00:00:18,200 --> 00:00:22,473
+Across the configurations we measured, that fixed block runs about seventeen
+
+6
+00:00:22,573 --> 00:00:25,868
+and a half thousand to twenty one thousand tokens, and over
+
+7
+00:00:25,968 --> 00:00:29,033
+ninety percent of it is tool schemas, not conversation.
+
+8
+00:00:29,100 --> 00:00:31,824
+Some of that cost is already absorbed by prefix
+
+9
+00:00:31,924 --> 00:00:35,369
+caching. But resending it, and re-processing it, still adds
+
+10
+00:00:35,469 --> 00:00:37,652
+up. Steno is how we shrink that block.
+
+11
+00:00:37,781 --> 00:00:40,939
+A correction. Our own load generator capped connections
+
+12
+00:00:41,039 --> 00:00:43,369
+at one hundred, in both arms. Our earlier
+
+13
+00:00:43,469 --> 00:00:46,094
+explanation used that number. It is withdrawn.
+
+14
+00:00:46,181 --> 00:00:49,743
+Cap lifted, sampled counts showed more than one hundred sessions
+
+15
+00:00:49,843 --> 00:00:53,348
+resident: one hundred twenty three to one hundred thirty seven.
+
+16
+00:00:54,247 --> 00:00:57,694
+Lifting the cap lowered throughput in three of four cells. At
+
+17
+00:00:57,794 --> 00:01:01,647
+two tested overload points, one run each, the compressed prompt held
+
+18
+00:01:01,747 --> 00:01:05,368
+up better: forty seven against eighty point seven at one hundred
+
+19
+00:01:05,468 --> 00:01:09,263
+twenty eight offered, forty six point three against fifty six point
+
+20
+00:01:09,363 --> 00:01:12,112
+seven at two hundred fifty six. Cause still open.
+

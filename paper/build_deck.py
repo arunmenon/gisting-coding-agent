@@ -173,7 +173,7 @@ slide('''
 </div>
 <div class="grid2" style="margin-top:22px">
   <div class="card"><div class="k">4 &middot; Benchmark pack</div><div class="v">Task suites scored against the full prompt, plus a serving benchmark for throughput and latency.</div></div>
-  <div class="card good"><div class="k">5 &middot; Auto loop</div><div class="v">Runs the other four as stages. <b>Runs today:</b> one run spec, span study first, budget and pass gates, verified teardown. <b>Built on top:</b> failure triage, lessons turned into checks, gated promotion, and a next-recipe proposer a person approves.</div></div>
+  <div class="card good"><div class="k">5 &middot; Auto loop</div><div class="v">Runs the other four as stages. <b>Runs today:</b> one run spec, span study first, budget and pass gates, verified teardown. <b>Bounded self-improvement (RSI, time-boxed):</b> failure triage, lessons turned into checks, gated promotion, and a next-recipe proposer a person approves.</div></div>
 </div>''')
 
 # ---- 4 SPAN + RECIPE ----

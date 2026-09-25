@@ -119,7 +119,7 @@ cards(s,[("1 · Span analysis",COPPER,"A harness adapter per harness feeds one s
          ("2 · Trainer",PLUM,"Adds new token rows to the model and trains them by self-distillation, with the base model frozen.",PLUMLN),
          ("3 · Proxy",PETROL,"Swaps the fixed span for the Steno tokens and adopts the same harness adapter. No change to the agent or the engine’s code; the served model carries the new token rows.")],2.0,2.1,3,size=14)
 cards(s,[("4 · Benchmark pack",PETROL,"Task suites scored against the full prompt, plus a serving benchmark for throughput and latency."),
-         ("5 · Auto loop",GOOD,"Runs the other four as stages. Runs today: one run spec, span study first, budget and pass gates, verified teardown. Built on top: failure triage, lessons turned into checks, gated promotion, and a next-recipe proposer a person approves.",OKLN)],4.35,1.95,2,size=14)
+         ("5 · Auto loop",GOOD,"Runs the other four as stages. Runs today: one run spec, span study first, budget and pass gates, verified teardown. Bounded self-improvement (RSI, time-boxed): failure triage, lessons turned into checks, gated promotion, and a next-recipe proposer a person approves.",OKLN)],4.35,1.95,2,size=14)
 
 # 4 SPAN + RECIPE
 s=slide(); eyebrow(s,"The span, and why it is per pair"); title(s,"What the agent re-sends, measured on one pair")

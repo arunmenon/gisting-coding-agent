@@ -20,7 +20,7 @@ In our last meeting you pointed us to Shopify's post on gisting. We took the ide
 2. **Trainer:** adds new token rows to the model and trains them by self-distillation, with the base model frozen.
 3. **Proxy:** swaps the fixed span for the Steno tokens and adopts the same harness adapter, with no change to the agent or the serving engine's code.
 4. **Benchmark pack:** task suites scored against the full prompt, plus a serving benchmark.
-5. **Auto loop:** runs the other four as stages. It runs today from one run spec, span study first, with budget and pass gates and verified teardown. Built on top of it: failure triage, lessons turned into checks, gated promotion, and a next-recipe proposer that a person approves.
+5. **Auto loop:** runs the other four as stages. It runs today from one run spec, span study first, with budget and pass gates and verified teardown. Built on top of it, bounded self-improvement (RSI, time-boxed): failure triage, lessons turned into checks, gated promotion, and a next-recipe proposer that a person approves.
 
 **Bringing our own harnesses on.** Adding a harness, including our in-house ones, means writing one adapter: capture a few sessions, map its requests to a common call record, declare its per-session values, and pass the every-call check. Everything else in Steno stays the same. On real Claude Code traffic, that check already caught 15 per-call differences the old rules missed. Two independent reviews shaped this design; the build is tracked in `steno-capability.md` in the repo.
 

@@ -48,3 +48,7 @@ experiments/analysis/__pycache__/
 # provisioning/console logs (may contain tracebacks with secrets)
 experiments/journeys/**/*.out
 experiments/journeys/**/provision_state
+
+# Steno build: test cache and local run directories
+.pytest_cache/
+runs/

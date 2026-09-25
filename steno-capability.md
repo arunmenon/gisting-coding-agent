@@ -70,13 +70,19 @@ Two capabilities turn the single-pair implementation into something PayPal teams
 
 ### Build order for the two capabilities
 
+**Wave 1 landed on 2026-09-25** in `steno/span/` and `steno/loop/`, with 135 tests. Codex reviewed it and rechecked three times until it cleared (`experiments/journeys/reviews/steno-build-wave1/`).
+
+- **B1 and B2 done:** canonical call record, harness adapter contract, Claude Code adapter, discovery separated from validation against a frozen segment map, and an every-call invariance report. On a real 43-call Claude Code capture it reports 6 cohorts and 15 unresolved per-call differences (changing token-count lines in inline system messages), which the old regex rules never caught.
+- **B3 partly done:** discovery manifest and deployable bundle with required hashes. Enforcement in the proxy and dataset builder is the next step.
+- **B5 done:** run spec, fail-closed preflight and gates, persisted lifecycle for stages and rented resources, crash recovery, confirmed teardown, attempt limits, OS-level run lock, and a fake backend for testing. The vast.ai backend (B6) is next.
+
 These carry out the design and close most of the P1 items above. Steps 1, 2 and 5 come first.
 
-- [ ] B1 · Span analysis · Define the canonical call record and pair manifest; move Claude Code parsing behind a harness adapter with no behaviour change; one serialisation for all three code paths · experiments/analysis/static_span.py, experiments/gist/span.py, experiments/gist/dataset.py, experiments/proxy/tap.py
-- [ ] B2 · Span analysis · All-call discovery with catalogue cohorts and a per-call invariance report as stage zero; fail on any uncovered difference · experiments/gist/segments.py, experiments/analysis/static_span.py
+- [x] B1 · Span analysis · Define the canonical call record and pair manifest; move Claude Code parsing behind a harness adapter with no behaviour change; one serialisation for all three code paths · experiments/analysis/static_span.py, experiments/gist/span.py, experiments/gist/dataset.py, experiments/proxy/tap.py
+- [x] B2 · Span analysis · All-call discovery with catalogue cohorts and a per-call invariance report as stage zero; fail on any uncovered difference · experiments/gist/segments.py, experiments/analysis/static_span.py
 - [ ] B3 · Span analysis · Mandatory bundle identity (harness, adapter, model, tokenizer, template, catalogue, rules hashes), enforced by proxy and dataset builder; mark hashless maps legacy · experiments/gist/segments.py, experiments/proxy/tap.py, experiments/gist/dataset.py
 - [ ] B4 · Span analysis · Qwen model adapter: remove model literals from span code, add the server parity check · experiments/gist/span.py, experiments/gist/segments.py, experiments/gist/dataset.py
-- [ ] B5 · Auto loop · Run spec schema, preflight and persisted lifecycle, tested against a fake backend for restart, failed sync, unreachable host and failed teardown · experiments/loop/
+- [x] B5 · Auto loop · Run spec schema, preflight and persisted lifecycle, tested against a fake backend for restart, failed sync, unreachable host and failed teardown · experiments/loop/
 - [ ] B6 · Auto loop · vast.ai backend with independent deadlines, incremental sync and confirmed teardown; ledger as JSONL · experiments/vast/, experiments/loop/controller.py
 - [ ] B7 · Auto loop · Migrate one journey into a spec using the existing stage scripts; confirm clean artifact restore · experiments/loop/, experiments/vast/
 - [ ] B8 · Auto loop · Typed stage markers and failure triage; then lessons as enforced checks · experiments/vast/*chain*.sh, experiments/loop/

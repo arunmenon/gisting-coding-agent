@@ -1,0 +1,51 @@
+{
+  "_comment": "Example spec (wave 1, illustrative only, not wired to a real journey yet). Reflects the studied Claude Code / Qwen3.8 pair at ratio 8, with the recipe fields from experiments/loop/recipes.jsonl (run r8) and the gate thresholds from experiments/loop/gate.json.",
+  "schema": "steno-run/v1",
+  "pair": "pairs/claude-code-qwen38.yaml",
+  "inputs": {
+    "captures": "sha256:replace-with-real-capture-digest",
+    "tasks": "sha256:replace-with-real-tasks-digest",
+    "recipe": {
+      "run": "r8",
+      "ratio": 8,
+      "lr": 0.001,
+      "accum": 8,
+      "epochs": 1,
+      "smax": 32000,
+      "init": "mean-chunk",
+      "reduce": "batch",
+      "segments": "gist/out_r8/segments.json",
+      "data": "journeys/j4-ratio-sweep/results/train_r8.jsonl.gz",
+      "teacher_cache": "journeys/j3-e3-e2/results/teacher_cache.pt"
+    }
+  },
+  "stages": ["span", "data", "train", "serve", "evaluate", "benchmark"],
+  "budget": {
+    "max_usd": 40,
+    "max_hours": 8,
+    "min_credit": 30,
+    "cleanup_reserve_usd": 5,
+    "max_attempts_per_stage": 2
+  },
+  "gates": {
+    "span": {"share_min": 0.25, "invariance": "all_calls"},
+    "evaluate": {
+      "task_pass_min_delta_points": -10,
+      "tool_name_validity_min": 0.99,
+      "malformed_json_max": 0,
+      "unswapped_turns_max": 0,
+      "teacher_reference": {"run": "teacher", "tasks_passed": 12, "tasks_total": 12}
+    },
+    "benchmark": "common_slo"
+  },
+  "compute": {
+    "backend": "vast",
+    "gpu_query": "gpu_name=H100_NVL num_gpus=1 verified=true rentable=true reliability>0.98 disk_space>150 inet_down>500 direct_port_count>0",
+    "image": "vllm/vllm-openai:v0.28.0",
+    "port_base": 8100
+  },
+  "artifacts": {
+    "store": "journeys/j-steno-example/results",
+    "emergency_policy": "terminate_and_record_loss"
+  }
+}

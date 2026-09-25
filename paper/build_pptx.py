@@ -116,12 +116,12 @@ for i,(k,c,ln,body) in enumerate([("Meta-harness",PETROL,LINE,""),("Adaptive rou
     if body: addpara(tf,body,15,INK)
 
 # 3b WHAT STENO IS
-s=slide(); eyebrow(s,"What Steno is made of"); title(s,"Five parts, built for any harness and model pair")
+s=slide(); eyebrow(s,"What Steno is made of"); title(s,"Five parts, designed for any harness and model pair")
 cards(s,[("1 · Span analysis",COPPER,"A harness adapter per harness feeds one shared analysis. It checks every call, splits the fixed part from per-session values, and fails on anything it cannot explain.",RGBColor(0x5a,0x40,0x2a)),
          ("2 · Trainer",PLUM,"Adds new token rows to the model and trains them by self-distillation, with the base model frozen.",PLUMLN),
-         ("3 · Proxy",PETROL,"Swaps the fixed span for the Steno tokens, using the same harness adapter. No change to the agent or the engine’s code; the served model carries the new token rows.")],2.0,2.1,3,size=14)
+         ("3 · Proxy",PETROL,"Swaps the fixed span for the Steno tokens and adopts the same harness adapter. No change to the agent or the engine’s code; the served model carries the new token rows.")],2.0,2.1,3,size=14)
 cards(s,[("4 · Evaluation",PETROL,"Task suites scored against the full prompt, plus a serving benchmark for throughput and latency."),
-         ("5 · Auto loop",GOOD,"One run spec drives the whole suite: span study first, budget and pass gates, verified teardown. Self-improving within bounds: failure triage, lessons turned into checks, gated promotion, and a next-recipe proposer a person approves.",OKLN)],4.35,1.95,2,size=14)
+         ("5 · Auto loop",GOOD,"Runs today: one run spec, span study first, budget and pass gates, verified teardown. Built on top: failure triage, lessons turned into checks, gated promotion, and a next-recipe proposer a person approves.",OKLN)],4.35,1.95,2,size=14)
 
 # 4 SPAN + RECIPE
 s=slide(); eyebrow(s,"The span, and why it is per pair"); title(s,"What the agent re-sends, measured on one pair")
@@ -147,8 +147,9 @@ for i,(n,w,ln,tc,sub) in enumerate([("Harness traffic",2.2,LINE,WHITE,None),("Ha
 cards(s,[("1 · Capture",PETROL,"Record a few real sessions of the harness."),
          ("2 · Adapter",PETROL,"Map its requests to the common call record, and declare its per-session values."),
          ("3 · Fixtures",PETROL,"Commit sample requests with their expected parse."),
-         ("4 · Checks",GOOD,"Pass the every-call invariance and token-parity checks on a fresh capture.",OKLN)],3.5,2.2,4,size=13.5)
-caption(s,"Everything else in Steno stays unchanged. This is how in-house PayPal harnesses come onto Steno with little effort.",5.95)
+         ("4 · Checks",GOOD,"Pass the every-call invariance check on a fresh capture, then token parity once the model adapter is in.",OKLN)],3.5,2.2,4,size=13.5)
+first(tb(s,0.7,5.85,11.9,0.5),"Already earning its keep: on real Claude Code traffic, the every-call check caught 15 per-call differences the old rules missed.",15,INK,spacing=1.15)
+caption(s,"Everything else in Steno stays unchanged. This is how in-house PayPal harnesses come onto Steno with little effort.",6.45,12)
 
 # 5 PROOF
 s=slide(); eyebrow(s,"Results on the pair studied · Claude Code × Qwen3.8"); title(s,"The short prompt did the same work")
@@ -264,7 +265,7 @@ for i,(n,w) in enumerate(nodes):
     if i<len(nodes)-1: first(tb(s,cx,y,0.55,h,anchor=MSO_ANCHOR.MIDDLE),"→",20,PETROL,bold=True,align=PP_ALIGN.CENTER); cx+=0.55
 rrect(s,0.7,4.1,11.9,0.95,fill=RGBColor(0x22,0x1a,0x11),line=RGBColor(0x5a,0x4a,0x2a))
 first(tb(s,0.95,4.1,11.4,0.95,anchor=MSO_ANCHOR.MIDDLE),"SPEND-SAFETY · structural  ·  idle watchdog · ledger at creation · sync-before-destroy · global deadline",13,COPPER,font=MONO)
-caption(s,"Most experiments after the first ran through this controller rather than by hand. The next experiment will establish what transfers to a new pair and what needs adaptation.",5.4,14)
+caption(s,"Most experiments after the first ran through this controller rather than by hand. The loop reaches compute through a provider-neutral interface; vast.ai is the first backend.",5.4,14)
 
 
 prs.save(OUT)

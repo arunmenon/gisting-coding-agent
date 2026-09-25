@@ -14,15 +14,15 @@ In our last meeting you pointed us to Shopify's post on gisting. We took the ide
 
 **What it is, in brief.** A coding agent re-sends the same fixed preamble, mostly tool schemas plus rules, to the model on every call. Steno replaces that preamble with a small set of learned tokens, the technique Shopify calls gisting. The base model stays frozen, only the new token embeddings are trained, and a proxy swaps them in, so neither the agent nor the serving engine's code changes; the served model carries the new token rows.
 
-**What Steno is made of.** Five parts, built for any harness and model pair:
+**What Steno is made of.** Five parts, designed for any harness and model pair:
 
 1. **Span analysis:** a harness adapter per harness feeds one shared analysis that checks every call, separates the fixed part from the per-session values that must stay raw, and fails on anything it cannot explain.
 2. **Trainer:** adds new token rows to the model and trains them by self-distillation, with the base model frozen.
-3. **Proxy:** swaps the fixed span for the Steno tokens using the same harness adapter, with no change to the agent or the serving engine's code.
+3. **Proxy:** swaps the fixed span for the Steno tokens and adopts the same harness adapter, with no change to the agent or the serving engine's code.
 4. **Evaluation:** task suites scored against the full prompt, plus a serving benchmark.
-5. **Auto loop:** one run spec drives the whole suite, span study first, with budget and pass gates and verified teardown. It improves itself within bounds: failure triage, lessons turned into checks, gated promotion, and a next-recipe proposer that a person approves.
+5. **Auto loop:** runs today from one run spec, span study first, with budget and pass gates and verified teardown. Built on top of it: failure triage, lessons turned into checks, gated promotion, and a next-recipe proposer that a person approves.
 
-**Bringing our own harnesses on.** Adding a harness, including our in-house ones, means writing one adapter: capture a few sessions, map its requests to a common call record, declare its per-session values, and pass the every-call and token-parity checks. Everything else in Steno stays the same. Two independent reviews shaped this design; the build is tracked in `steno-capability.md` in the repo.
+**Bringing our own harnesses on.** Adding a harness, including our in-house ones, means writing one adapter: capture a few sessions, map its requests to a common call record, declare its per-session values, and pass the every-call check. Everything else in Steno stays the same. On real Claude Code traffic, that check already caught 15 per-call differences the old rules missed. Two independent reviews shaped this design; the build is tracked in `steno-capability.md` in the repo.
 
 **What we did.** One pair: Claude Code with Qwen3.8-27B, self-hosted.
 

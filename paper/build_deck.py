@@ -167,15 +167,15 @@ slide('''
 # ---- 3b WHAT STENO IS ----
 slide('''
 <div class="eyebrow">What Steno is made of</div>
-<h2>Five parts, all built and run on this study</h2>
+<h2>Five parts, built for any harness and model pair</h2>
 <div class="grid3" style="margin-top:1rem">
-  <div class="card copper"><div class="k">1 &middot; Span analysis</div><div class="v">Measures what the harness re-sends on every call, and splits the fixed part from the per-session values that must stay raw.</div></div>
+  <div class="card copper"><div class="k">1 &middot; Span analysis</div><div class="v">A harness adapter per harness feeds one shared analysis. It checks every call, splits the fixed part from per-session values, and fails on anything it cannot explain.</div></div>
   <div class="card plum" style="border-color:#5a3f6e"><div class="k">2 &middot; Trainer</div><div class="v">Adds new token rows to the model and trains them by self-distillation, with the base model frozen.</div></div>
-  <div class="card"><div class="k">3 &middot; Proxy</div><div class="v">Sits in front of the model and swaps the fixed span for the Steno tokens. No change to the agent or the engine&rsquo;s code; the served model carries the new token rows and a matching chat template.</div></div>
+  <div class="card"><div class="k">3 &middot; Proxy</div><div class="v">Swaps the fixed span for the Steno tokens, using the same harness adapter. No change to the agent or the engine&rsquo;s code; the served model carries the new token rows.</div></div>
 </div>
 <div class="grid2" style="margin-top:22px">
   <div class="card"><div class="k">4 &middot; Evaluation</div><div class="v">Task suites scored against the full prompt, plus a serving benchmark for throughput and latency.</div></div>
-  <div class="card good"><div class="k">5 &middot; Auto loop</div><div class="v">Scripts and a controller that provision a GPU, train, serve, evaluate, sync results and tear down, with spend guards. Most experiments after the first ran through it; a single end-to-end entry point is still to build.</div></div>
+  <div class="card good"><div class="k">5 &middot; Auto loop</div><div class="v">One run spec drives the whole suite: span study first, budget and pass gates, verified teardown. Self-improving within bounds: failure triage, lessons turned into checks, gated promotion, and a next-recipe proposer a person approves.</div></div>
 </div>''')
 
 # ---- 4 SPAN + RECIPE ----
@@ -195,6 +195,24 @@ slide('''
   <div class="card copper"><div class="k">Rerun per pair</div><div class="v">The whole experiment suite, span study first, runs again for <b>each harness and distilled-model pair</b>. Needs a model whose weights we host.</div></div>
 </div>
 <p class="caption">Measured on Claude Code with the Qwen tokenizer only. For each new pair, measure the repeated prompt and check which session-specific values must remain raw.</p>''')
+
+# ---- 4b ONBOARD A HARNESS ----
+slide('''
+<div class="eyebrow">Bringing a new harness onto Steno</div>
+<h2>One adapter per harness, including our own</h2>
+<div class="pipe">
+  <div class="pnode">Harness traffic</div><div class="parrow">&rarr;</div>
+  <div class="pnode" style="border-color:var(--copper);color:var(--copper)">Harness adapter<span class="mono" style="font-size:.72rem;color:var(--ink2);font-weight:400">per harness</span></div><div class="parrow">&rarr;</div>
+  <div class="pnode">Shared span analysis<span class="mono" style="font-size:.72rem;color:var(--ink2);font-weight:400">same for all</span></div><div class="parrow">&rarr;</div>
+  <div class="pnode" style="border-color:#5a3f6e;color:var(--plum)">Model adapter<span class="mono" style="font-size:.72rem;color:var(--ink2);font-weight:400">per model</span></div>
+</div>
+<div class="grid4" style="margin-top:.6rem">
+  <div class="card"><div class="k">1 &middot; Capture</div><div class="v">Record a few real sessions of the harness.</div></div>
+  <div class="card"><div class="k">2 &middot; Adapter</div><div class="v">Map its requests to the common call record, and declare its per-session values.</div></div>
+  <div class="card"><div class="k">3 &middot; Fixtures</div><div class="v">Commit sample requests with their expected parse.</div></div>
+  <div class="card good"><div class="k">4 &middot; Checks</div><div class="v">Pass the every-call invariance and token-parity checks on a fresh capture.</div></div>
+</div>
+<p class="caption">Everything else in Steno stays unchanged. This is how in-house PayPal harnesses come onto Steno with little effort.</p>''')
 
 # ---- 5 PROOF ----
 slide('''
@@ -297,7 +315,7 @@ slide('''
 <div class="eyebrow">The ask</div>
 <h2>Make Steno a Lattice pillar</h2>
 <div class="grid3" style="margin-top:1rem">
-  <div class="card plum" style="border-color:#5a3f6e"><div class="k">1 &middot; Next pair</div><div class="v">Run the experiment suite, span study first, on the next <b>harness and distilled-model pair</b>. Tests whether the recipe carries.</div></div>
+  <div class="card plum" style="border-color:#5a3f6e"><div class="k">1 &middot; Next pair</div><div class="v">Write the harness adapter, then run the experiment suite, span study first, on the next <b>harness and distilled-model pair</b>. Tests whether the recipe carries.</div></div>
   <div class="card"><div class="k">2 &middot; Validate</div><div class="v">Held-out tasks, repeated runs, and quality checked at production load.</div></div>
   <div class="card"><div class="k">3 &middot; Guarded pilot</div><div class="v">Subject to validation, a guarded trial in the Jetstream inner loop.</div></div>
 </div>

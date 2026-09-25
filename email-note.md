@@ -14,15 +14,15 @@ In our last meeting you pointed us to Shopify's post on gisting. We took the ide
 
 **What it is, in brief.** A coding agent re-sends the same fixed preamble, mostly tool schemas plus rules, to the model on every call. Steno replaces that preamble with a small set of learned tokens, the technique Shopify calls gisting. The base model stays frozen, only the new token embeddings are trained, and a proxy swaps them in, so neither the agent nor the serving engine's code changes; the served model carries the new token rows.
 
-**What Steno is made of.** Five parts, all built and run in this study:
+**What Steno is made of.** Five parts, built for any harness and model pair:
 
-1. **Span analysis:** measures what the harness re-sends on every call, and separates the fixed part from the per-session values that must stay raw.
+1. **Span analysis:** a harness adapter per harness feeds one shared analysis that checks every call, separates the fixed part from the per-session values that must stay raw, and fails on anything it cannot explain.
 2. **Trainer:** adds new token rows to the model and trains them by self-distillation, with the base model frozen.
-3. **Proxy:** swaps the fixed span for the Steno tokens, with no change to the agent or the serving engine's code.
+3. **Proxy:** swaps the fixed span for the Steno tokens using the same harness adapter, with no change to the agent or the serving engine's code.
 4. **Evaluation:** task suites scored against the full prompt, plus a serving benchmark.
-5. **Auto loop:** scripts and a controller that provision a GPU, train, serve, evaluate, sync results and tear down, with spend guards.
+5. **Auto loop:** one run spec drives the whole suite, span study first, with budget and pass gates and verified teardown. It improves itself within bounds: failure triage, lessons turned into checks, gated promotion, and a next-recipe proposer that a person approves.
 
-An independent review of these five parts found them working for the pair we studied but still coupled to it. The gaps are tracked as a TODO list in `steno-capability.md` in the repo, and the P1 items there need closing before the next-pair run.
+**Bringing our own harnesses on.** Adding a harness, including our in-house ones, means writing one adapter: capture a few sessions, map its requests to a common call record, declare its per-session values, and pass the every-call and token-parity checks. Everything else in Steno stays the same. Two independent reviews shaped this design; the build is tracked in `steno-capability.md` in the repo.
 
 **What we did.** One pair: Claude Code with Qwen3.8-27B, self-hosted.
 
@@ -35,9 +35,9 @@ An independent review of these five parts found them working for the pair we stu
 
 **How it fits Lattice.** It sits alongside the meta-harness, adaptive routing and model distillation tracks. One synergy we'd propose testing: distil a model first, then apply Steno to the distilled model. We'd also propose the Jetstream inner loop as the first place to trial it.
 
-**The ask.** Run the same experiment suite, starting with the span study, on the next harness and distilled-model pair; validate on held-out work; then a guarded pilot.
+**The ask.** Write the harness adapter, then run the same experiment suite, starting with the span study, on the next harness and distilled-model pair; validate on held-out work; then a guarded pilot.
 
-- Deck, 12 slides plus appendix: https://claude.ai/artifact/FC9EqhEMaNjchaeDns41Pb (PowerPoint attached)
+- Deck, 13 slides plus appendix: https://claude.ai/artifact/FC9EqhEMaNjchaeDns41Pb (PowerPoint attached)
 - White paper: https://claude.ai/code/artifact/ba7fae28-8e2c-4312-b94e-693f112eb963 (Word version attached)
 - Code and results: GitHub `arunmenon/gisting-coding-agent`
 
@@ -53,10 +53,10 @@ Hi Srini, following up on the Shopify gisting post you shared in our last meetin
 
 In brief: a coding agent re-sends the same fixed preamble (tool schemas and rules) on every call. Steno swaps it for a few learned tokens, with the base model frozen and a proxy in front, so the agent and serving engine's code don't change.
 
-Steno is five parts: span analysis, a trainer, a proxy, an evaluation suite and an auto loop that runs experiments on rented GPUs.
+Steno is five parts: span analysis, a trainer, a proxy, an evaluation suite and an auto loop. New harnesses, including our in-house ones, come on by writing one adapter; the auto loop runs the suite from a single spec, with bounded self-improvement.
 
 On Claude Code with Qwen3.8-27B at 8:1: input per turn went from 24.3k to 9.4k tokens with task scores matching the full prompt on our suites, and short H100 replays showed 2x the request rate within latency and 44% higher peak throughput. On a larger H200 the peak gain was near zero. One pair only; savings per task and quality at load are still to prove.
 
-Proposal: rerun the same experiment suite on the next harness and distilled-model pair, then a guarded trial in the Jetstream inner loop.
+Proposal: write the adapter and rerun the same experiment suite on the next harness and distilled-model pair, then a guarded trial in the Jetstream inner loop.
 
 Deck: https://claude.ai/artifact/FC9EqhEMaNjchaeDns41Pb · White paper: https://claude.ai/code/artifact/ba7fae28-8e2c-4312-b94e-693f112eb963

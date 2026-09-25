@@ -116,12 +116,12 @@ for i,(k,c,ln,body) in enumerate([("Meta-harness",PETROL,LINE,""),("Adaptive rou
     if body: addpara(tf,body,15,INK)
 
 # 3b WHAT STENO IS
-s=slide(); eyebrow(s,"What Steno is made of"); title(s,"Five parts, all built and run on this study")
-cards(s,[("1 · Span analysis",COPPER,"Measures what the harness re-sends on every call, and splits the fixed part from the per-session values that must stay raw.",RGBColor(0x5a,0x40,0x2a)),
+s=slide(); eyebrow(s,"What Steno is made of"); title(s,"Five parts, built for any harness and model pair")
+cards(s,[("1 · Span analysis",COPPER,"A harness adapter per harness feeds one shared analysis. It checks every call, splits the fixed part from per-session values, and fails on anything it cannot explain.",RGBColor(0x5a,0x40,0x2a)),
          ("2 · Trainer",PLUM,"Adds new token rows to the model and trains them by self-distillation, with the base model frozen.",PLUMLN),
-         ("3 · Proxy",PETROL,"Sits in front of the model and swaps the fixed span for the Steno tokens. No change to the agent or the engine’s code; the served model carries the new token rows and a matching chat template.")],2.0,2.1,3,size=14)
+         ("3 · Proxy",PETROL,"Swaps the fixed span for the Steno tokens, using the same harness adapter. No change to the agent or the engine’s code; the served model carries the new token rows.")],2.0,2.1,3,size=14)
 cards(s,[("4 · Evaluation",PETROL,"Task suites scored against the full prompt, plus a serving benchmark for throughput and latency."),
-         ("5 · Auto loop",GOOD,"Scripts and a controller that provision a GPU, train, serve, evaluate, sync results and tear down, with spend guards. Most experiments after the first ran through it; a single end-to-end entry point is still to build.",OKLN)],4.35,1.95,2,size=14)
+         ("5 · Auto loop",GOOD,"One run spec drives the whole suite: span study first, budget and pass gates, verified teardown. Self-improving within bounds: failure triage, lessons turned into checks, gated promotion, and a next-recipe proposer a person approves.",OKLN)],4.35,1.95,2,size=14)
 
 # 4 SPAN + RECIPE
 s=slide(); eyebrow(s,"The span, and why it is per pair"); title(s,"What the agent re-sends, measured on one pair")
@@ -135,6 +135,20 @@ for i,(n,c,u) in enumerate([("17.5–21k",COPPER,"fixed tokens per call, across 
     first(tb(s,0.7+i*5.5,3.05,5.2,0.6),n,26,c,bold=True,font=MONO); first(tb(s,0.7+i*5.5,3.62,5.2,0.5),u,11,INK2,font=MONO)
 cards(s,[("Rerun per pair",COPPER,"The whole experiment suite, span study first, runs again for each harness and distilled-model pair. Needs a model whose weights we host.",RGBColor(0x5a,0x40,0x2a))],4.3,1.4,1,size=15)
 caption(s,"Measured on Claude Code with the Qwen tokenizer only. For each new pair, measure the repeated prompt and check which session-specific values must remain raw.",6.15,12.5)
+
+# 4b ONBOARD A HARNESS
+s=slide(); eyebrow(s,"Bringing a new harness onto Steno"); title(s,"One adapter per harness, including our own")
+y,h=2.0,1.15; cx=0.7
+for i,(n,w,ln,tc,sub) in enumerate([("Harness traffic",2.2,LINE,WHITE,None),("Harness adapter",2.5,RGBColor(0x5a,0x40,0x2a),COPPER,"per harness"),("Shared span analysis",2.9,LINE,WHITE,"same for all"),("Model adapter",2.4,PLUMLN,PLUM,"per model")]):
+    rrect(s,cx,y,w,h,fill=BG2,line=ln); tf=tb(s,cx,y,w,h,anchor=MSO_ANCHOR.MIDDLE); first(tf,n,14,tc,bold=True,align=PP_ALIGN.CENTER)
+    if sub: addpara(tf,sub,10,INK2,font=MONO,align=PP_ALIGN.CENTER)
+    cx+=w
+    if i<3: first(tb(s,cx,y,0.45,h,anchor=MSO_ANCHOR.MIDDLE),"→",20,PETROL,bold=True,align=PP_ALIGN.CENTER); cx+=0.45
+cards(s,[("1 · Capture",PETROL,"Record a few real sessions of the harness."),
+         ("2 · Adapter",PETROL,"Map its requests to the common call record, and declare its per-session values."),
+         ("3 · Fixtures",PETROL,"Commit sample requests with their expected parse."),
+         ("4 · Checks",GOOD,"Pass the every-call invariance and token-parity checks on a fresh capture.",OKLN)],3.5,2.2,4,size=13.5)
+caption(s,"Everything else in Steno stays unchanged. This is how in-house PayPal harnesses come onto Steno with little effort.",5.95)
 
 # 5 PROOF
 s=slide(); eyebrow(s,"Results on the pair studied · Claude Code × Qwen3.8"); title(s,"The short prompt did the same work")
@@ -204,7 +218,7 @@ col(6.85,"Not yet",WARN,["The experiment suite on a second harness and distilled
 
 # 10 ASK
 s=slide(); eyebrow(s,"The ask"); title(s,"Make Steno a Lattice pillar")
-cards(s,[("1 · Next pair",PLUM,"Run the experiment suite, span study first, on the next harness and distilled-model pair. Tests whether the recipe carries.",PLUMLN),
+cards(s,[("1 · Next pair",PLUM,"Write the harness adapter, then run the experiment suite, span study first, on the next harness and distilled-model pair. Tests whether the recipe carries.",PLUMLN),
          ("2 · Validate",PETROL,"Held-out tasks, repeated runs, and quality checked at production load."),
          ("3 · Guarded pilot",PETROL,"Subject to validation, a guarded trial in the Jetstream inner loop.")],2.1,2.5,3,size=15)
 first(tb(s,0.7,4.9,11.0,1.1),"The lever is real on one pair. Next, test whether it carries to a distilled model on another harness.",24,WHITE,bold=True,font=HEAD,spacing=1.1)

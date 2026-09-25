@@ -1,0 +1,186 @@
+=== SLIDE 1 ===
+LATTICE · COST OPTIMIZATION · NEW PILLAR
+Gisting: cutting the prompt tax every agent call pays
+A learned shorthand for the fixed preamble a coding-agent harness re-sends on every model call. Proven on one harness and model pairing, and built to carry to the others.
+Arun Menon · arumenon@paypal.com
+First pairing: Claude Code → proxy → vLLM → Qwen3.8-27B (open weights, self-hosted)
+=== SLIDE 2 ===
+BOTTOM LINE UP FRONT
+The answer in four lines
+WHERE IT FITS
+A new pillar under Lattice, alongside the meta-harness, adaptive routing and model distillation tracks. Gisting cuts the fixed prompt a coding agent re-sends on every call.
+WHAT WE SHOWED
+On Claude Code with Qwen: task scores held at every compression ratio, input per turn more than halved, and on an H100 2x the request rate within the latency target, +44% peak throughput.
+WHAT IT ISN’T YET
+One pairing, our own task suite, short replay windows. Savings per task are not proven, and the mechanism is still open.
+THE ASK
+Run the same experiment suite on the next harness and distilled-model pair, validate on held-out work, then a guarded pilot.
+=== SLIDE 3 ===
+LATTICE · COST OPTIMIZATION
+A new pillar under Lattice
+Gisting’s lever on total cost: the model reads fewer tokens on every agent call, so the same GPU does more work.
+META-HARNESS
+Adapter that routes different harnesses to underlying models.
+ADAPTIVE ROUTING
+Research track.
+MODEL DISTILLATION
+Research track.
+GISTING · NEW
+Shrinks the fixed prompt every agent call carries. This deck.
+=== SLIDE 4 ===
+THE TAX
+Most of every call is the same boilerplate
+Tool schemas
+~16,000 tokens  ·  >90% of the block
+Rules
+~1.3k
+Per-session
+kept raw
+17.5–21k
+fixed tokens on every call
+>90%
+is tool schemas, not rules
+0.72
+of a short session’s input
+Measured on Claude Code with the Qwen tokenizer. Any harness that exposes tools pays a version of this, but its size and makeup differ, so the span study is rerun for every harness and model pair.
+=== SLIDE 5 ===
+THE RECIPE
+Four steps, most of them reusable
+00 · PER PAIR
+Study the span
+Measure what the harness re-sends on every call: what is fixed, what is per-session, and its share of each call.
+→
+01
+Grow the vocabulary
+Add a few thousand new “gist” tokens, seeded from the block they replace.
+→
+02
+Self-distil
+The model learns to behave the same on the short form. Base weights frozen; only the new rows train.
+→
+03
+Swap in a proxy
+The proxy replaces the preamble with gist tokens. No change to the harness or the engine.
+REUSED AS IS
+Training loop, proxy, evaluation harness, and the automated GPU lab that runs them.
+RERUN PER PAIR
+The whole experiment suite, span study first, runs again for each harness and distilled-model pair. Needs a model whose weights we host.
+=== SLIDE 6 ===
+PROOF ON THE FIRST PAIRING · CLAUDE CODE × QWEN3.8
+The short prompt did the same work
+2:1
+12 / 12
+4:1
+12 / 12
+8:1
+12 / 12
+16:1
+12 / 12
+Every compression ratio matched the full prompt on the task suite, while input per turn fell from ~24k to ~9–11k tokens. We run at 8:1: 16:1 bought only about 60% of the serving gain for more risk.
+The one failure that mattered: session values such as the working path must stay raw. Fixing that took a harder suite from 11/16 to 16/16.
+single runs · small, partly reused suites
+=== SLIDE 7 ===
+THE PAYOFF
+More work from the same GPU
+[native line chart: requests/min vs concurrent sessions, full prompt vs gist 8:1]
+2x
+request rate within the latency target (18 → 36 req/min)
++44%
+peak throughput, same H100 (42.7 → 61.3 req/min)
+A capacity lever, not a speed lever: a single reply is barely faster. The gain comes on top of prefix caching.
+Short replay windows on one GPU class. On a larger H200 the peak gain was near zero, and the per-dollar comparison came out roughly even (appendix).
+=== SLIDE 8 ===
+SYNERGY WITHIN LATTICE · PROPOSAL
+Distil first, then gist the distilled model
+Base model
+→
+Distil
+distillation track
+→
+Student model
+→
+Gist
+this recipe
+→
+Smaller model, shorter prompt
+A distilled student model still receives the same fixed preamble on every call. Running the gisting recipe on it attacks both costs at once: a smaller model reading a shorter prompt.
+proposal · not yet tested
+=== SLIDE 9 ===
+WHERE IT COULD LAND · PROPOSAL
+A first home in the Jetstream inner loop
+The Jetstream inner loop takes a ticket to a PR through coding agents on different harnesses. We propose it as the first place to trial gisting, one harness and model pair at a time.
+proposal
+Gisting applies where the agent calls a model whose weights we host.
+=== SLIDE 10 ===
+HONEST LEDGER
+What’s proven, what isn’t
+ESTABLISHED
+▪  Equal task scores at every ratio on our suites.
+▪  Half to two thirds fewer tokens read per turn.
+▪  H100 replay: 2x rate within the latency target, +44% peak.
+▪  A reusable, spend-safe lab that runs the recipe end to end.
+NOT YET
+▪  The experiment suite on a second harness and distilled-model pair.
+▪  Quality on held-out work, and at production load.
+▪  Savings per task, and why the gain happens. An external review withdrew our first explanation.
+▪  Audit that compressed rules still bind.
+=== SLIDE 11 ===
+THE CAPABILITY
+The next pairing is cheap to try
+Provision GPU
+→
+Train
+→
+Serve
+→
+Evaluate
+→
+Destroy
+↺
+next pairing
+SPEND-SAFETY · structural  ·  idle watchdog · ledger at creation · sync-before-destroy · global deadline
+One controller drives a recipe end to end, unattended. Swapping in a new harness or model changes the inputs, not the machinery.
+=== SLIDE 12 ===
+THE ASK
+Make gisting a Lattice pillar
+1 · NEXT PAIR
+Run the experiment suite, span study first, on the next harness and distilled-model pair. Shows the recipe carries.
+2 · VALIDATE
+Held-out tasks, repeated runs, and quality checked at production load.
+3 · GUARDED PILOT
+Proposed for the Jetstream inner loop, with rule-audit and write-target checks at the serving boundary.
+The lever is real on one pairing. Next, show it carries to a distilled model on another harness.
+White paper, code and results: GitHub arunmenon/gisting-coding-agent  ·  weights and data on Hugging Face (private)
+=== SLIDE 13 ===
+APPENDIX A · A CORRECTION WE MADE
+Our first explanation of the gain was wrong
+External review found a 100-connection limit in our own load generator, and that limit, not the GPU, produced the number our explanation rested on. A follow-up with the limit removed confirmed it. We withdrew the explanation; the throughput figures measured below that limit stand.
+The model mixes 16 full-attention layers with 48 linear-attention layers, which is why its behaviour under load differs from a standard transformer. Why the gist helps on it is still open.
+=== SLIDE 14 ===
+APPENDIX B · COST PER RENTAL DOLLAR
+Roughly even across the two cards
+16.16
+H100 · full prompt
+23.23
+H100 · gist 8:1
+23.38
+H200 · full prompt
+22.83
+H200 · gist 8:1
+peak replay requests per minute per dollar-hour, quoted prices: H100 $2.64/h, H200 $3.65/h
+On the H100 the gist lifts output per dollar by about 44%. The H100 with the gist lands level with the H200 without it, so this does not yet show a cheaper card can replace a pricier one.
+=== SLIDE 15 ===
+APPENDIX C · THE FAILURE WE CAUGHT
+What to keep out of the gist
+BEFORE
+gist: rules + …/<session-id>/
+→
+writes to an invented directory   ×
+AFTER
+gist: rules
++
+raw: session path, date, model
+→
+writes correctly   ✓
+Keeping session-specific values raw restored the score 11/16 → 16/16 at 8:1.
+Every new harness and model pair will hit this boundary, which is why the span study comes first.

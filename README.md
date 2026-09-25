@@ -9,7 +9,8 @@ through vLLM, with **no changes to the client or the inference engine**.
 
 Internally the capability is now called **Steno** (learned prompt compression for agent calls).
 Its five parts, their status and the open TODO list are tracked in
-[`steno-capability.md`](steno-capability.md).
+[`steno-capability.md`](steno-capability.md); the design for harness adapters
+and the run loop is in [`steno-design.md`](steno-design.md).
 
 This is a **development study, not a validated benchmark**: every evaluation is a single
 run of small, partly reused, author-designed task sets. The whitepaper reports negative

@@ -4,9 +4,9 @@ Steno is learned prompt compression for agent calls, the technique Shopify calls
 
 This document tracks Steno as a capability: what its parts are, where they live in this repository, how far each part is from running on a new harness and distilled-model pair, and the open work. Update it whenever an item is closed or a new gap is found.
 
-**Status, as of 2026-09-25:** a single-pair research implementation, built and run for Claude Code with Qwen3.8-27B. It is not yet a reusable capability. The biggest blocker, per the capability review, is that no single pair configuration carries the harness format, model layout, tokenizer, template and artifact identities through the whole suite.
+**Status, as of 2026-09-25:** built and run end to end for Claude Code with Qwen3.8-27B. The architecture for running Steno on any harness and model pair is now defined (see below and [`steno-design.md`](steno-design.md)), and the build is under way in the order listed in the open work. The biggest remaining blocker is a single pair configuration that carries the harness format, model layout, tokenizer, template and artifact identities through the whole suite; the harness adapters and the run spec close it.
 
-Source review: `experiments/journeys/reviews/steno-capability-20260925/codex-review.md` (Codex gpt-6-astra, medium effort, read-only).
+Sources: capability review `experiments/journeys/reviews/steno-capability-20260925/codex-review.md`; design opinions from Fable and Codex in `experiments/journeys/reviews/steno-design-20260925/`.
 
 ## The five parts
 
@@ -17,6 +17,25 @@ Source review: `experiments/journeys/reviews/steno-capability-20260925/codex-rev
 | 3. Proxy | Swaps the fixed span for the Steno tokens | `experiments/proxy/tap.py`, `experiments/vast/serve_gist.sh`, `apply_gist_delta.sh`, `experiments/gist/out/chat_template_gist.jinja`, `experiments/gist/mask_gist_logits.py` | Partly. No change to the agent or to the engine's source code, but serving needs the expanded checkpoint and tokenizer, a custom chat template and a vLLM logits processor | Anthropic Messages and streaming format; Claude-to-Qwen effort remapping; one global bundle; catalogue-hash checks can be skipped |
 | 4. Evaluation | Task suites scored against the full prompt, plus a serving benchmark | `experiments/driver/`, `experiments/loop/eval_sweep.py`, `experiments/bench/` | Yes, within a narrow scope. Does not establish general quality parity or successful-task throughput | Claude Code launch flags and tool names; fixed ports and paths; hard-suite fixtures not reproducible from a clean clone; failed sessions can still score as passes |
 | 5. Auto loop | Provisions a GPU, trains, serves, evaluates, syncs results and tears down, with spend guards | `experiments/loop/`, `experiments/vast/` | Partly. The handoffs exist but are spread across per-journey scripts; there is no single span-first entry point | vast.ai CLI and SSH conventions; journey-specific run scripts and historical instance files; hardcoded artifact names |
+
+## Capabilities for any harness and model pair
+
+Two capabilities turn the single-pair implementation into something PayPal teams can apply to their own harnesses, including in-house ones. Full design in [`steno-design.md`](steno-design.md).
+
+### Harness adapters for span analysis
+
+- **Harness adapter** per harness: parses its requests into a canonical call record, rewrites requests for the proxy, declares the per-session values that must stay raw, and launches the harness for evaluation.
+- **Model adapter** per model: renders canonical calls into exact token ids, reserves the Steno tokens, supplies the Steno chat template, and checks parity with the serving engine.
+- **Generic span analysis** between them: discovery across every call, cohorts by tool catalogue, fixed versus per-session classification, an invariance report that fails on any uncovered difference, and a bundle identity that the proxy enforces.
+- **Onboarding kit** for a new harness: capture sessions, write one adapter, commit golden fixtures, pass the invariance and parity reports on a fresh validation capture.
+
+### One run loop with bounded self-improvement
+
+- **`steno run <spec.yaml>`:** one declarative run spec (pair, inputs, stages, budget, gates, compute) replaces the per-journey scripts.
+- **Stages** `preflight, span, data, train, serve, evaluate, benchmark`, each with declared inputs, content-addressed outputs, deadlines and typed results; span always gates the rest.
+- **Persisted lifecycle** for work and for rented resources; a run completes only with verified artifacts and provider-confirmed teardown.
+- **Pluggable compute backends,** local and vast.ai first, with the ledger written by the loop.
+- **Four self-improvement mechanisms,** each bounded by budget and review: failure triage with allowlisted retries, lessons turned into enforced checks, gated promotion against a frozen held-out suite, and a next-recipe proposer that a person approves. Not adopted: self-modifying code, automatic gate loosening, open-ended search, and agents with teardown authority.
 
 ## Open work
 
@@ -48,6 +67,21 @@ Source review: `experiments/journeys/reviews/steno-capability-20260925/codex-rev
 - [ ] P2 · Auto loop · Reconcile lifecycle and billing records, including failed hosts and retraining costs · experiments/ledger.md, experiments/loop/controller.py, experiments/vast/bench_provision.sh
 - [ ] P3 · Span analysis · Document the supported span contract and a measured catalogue-change/retraining procedure · README.md, experiments/gist/segments.py, experiments/journeys/
 - [ ] P3 · Evaluation · Mark superseded journey claims and reconcile protocol documentation with executable behaviour · experiments/journeys/j3-e3-e2/journey.md, experiments/journeys/j8-coverage/journey.md, experiments/journeys/j10-bench/journey.md, experiments/bench/queue.md
+
+### Build order for the two capabilities
+
+These carry out the design and close most of the P1 items above. Steps 1, 2 and 5 come first.
+
+- [ ] B1 · Span analysis · Define the canonical call record and pair manifest; move Claude Code parsing behind a harness adapter with no behaviour change; one serialisation for all three code paths · experiments/analysis/static_span.py, experiments/gist/span.py, experiments/gist/dataset.py, experiments/proxy/tap.py
+- [ ] B2 · Span analysis · All-call discovery with catalogue cohorts and a per-call invariance report as stage zero; fail on any uncovered difference · experiments/gist/segments.py, experiments/analysis/static_span.py
+- [ ] B3 · Span analysis · Mandatory bundle identity (harness, adapter, model, tokenizer, template, catalogue, rules hashes), enforced by proxy and dataset builder; mark hashless maps legacy · experiments/gist/segments.py, experiments/proxy/tap.py, experiments/gist/dataset.py
+- [ ] B4 · Span analysis · Qwen model adapter: remove model literals from span code, add the server parity check · experiments/gist/span.py, experiments/gist/segments.py, experiments/gist/dataset.py
+- [ ] B5 · Auto loop · Run spec schema, preflight and persisted lifecycle, tested against a fake backend for restart, failed sync, unreachable host and failed teardown · experiments/loop/
+- [ ] B6 · Auto loop · vast.ai backend with independent deadlines, incremental sync and confirmed teardown; ledger as JSONL · experiments/vast/, experiments/loop/controller.py
+- [ ] B7 · Auto loop · Migrate one journey into a spec using the existing stage scripts; confirm clean artifact restore · experiments/loop/, experiments/vast/
+- [ ] B8 · Auto loop · Typed stage markers and failure triage; then lessons as enforced checks · experiments/vast/*chain*.sh, experiments/loop/
+- [ ] B9 · Span analysis · Golden fixtures and onboarding packet for the Claude Code adapter, as the template for the next harness · experiments/proxy/, experiments/analysis/
+- [ ] B10 · Auto loop · Gated promotion against a frozen held-out suite, then the next-recipe proposer, inside a bounded pilot · experiments/loop/, experiments/driver/
 
 ## How to use this list
 
